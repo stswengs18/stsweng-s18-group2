@@ -6,6 +6,7 @@ export default function SimpleModal({ isOpen, onClose, title, imageCenter,
   bodyText, confirm = false, onConfirm, onCancel }) {
   // if (!isOpen) return null;
 
+  
   return (
     <AnimatePresence>
       {isOpen && (<motion.div
