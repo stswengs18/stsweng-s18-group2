@@ -34,8 +34,8 @@
 }
 
 .info-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 2rem;
+  height: 2rem;
   flex-shrink: 0;
 
   mask-image: url("/info.svg");
@@ -48,7 +48,7 @@
   -webkit-mask-position: center;
   -webkit-mask-repeat: no-repeat;
 
-  background-color: rgb(20, 100, 67);
+  background-color: #006599;
 }
 
 /* CLICKABLE ICONS */
