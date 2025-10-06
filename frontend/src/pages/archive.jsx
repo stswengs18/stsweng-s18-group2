@@ -18,6 +18,7 @@ function Archive() {
   const [currentData, setCurrentData] = useState([]);
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
+  const [selectedClients, setSelectedClients] = useState([]);
 
   const [deleteMode, setDeleteMode] = useState(false);
 
@@ -190,6 +191,14 @@ useEffect(() => {
   setArchiveEmp(filtered);
 }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
+  // toggle function for selecting clients in delete mode
+  const toggleClientSelection = (clientId) => {
+    setSelectedClients((prev) =>
+      prev.includes(clientId)
+        ? prev.filter((id) => id !== clientId)
+        : [...prev, clientId]
+    );
+  };
 
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
   if (!loadingComplete) return <Loading color={loadingColor} />;
@@ -330,7 +339,6 @@ useEffect(() => {
               <button
                 className="btn-cancel-delete font-bold-label"
                 onClick={() => setDeleteMode(false)}
-                // wip
               >
                 Cancel
               </button>
@@ -347,20 +355,64 @@ useEffect(() => {
                   <p className="font-bold-label text-center">SDW Assigned</p>
                 </div>
 
-                {currentData.length === 0 ? (
+                {currentData.length === 0 ? ( // wip
                   <p className="font-bold-label mx-auto">No Clients Found</p>
                 ) : (
-                  currentData.map((client) => (
-                    <ClientEntry
-                      key={client.id}
-                      id={client.id}
-                      sm_number={client.sm_number}
-                      spu={client.spu}
-                      name={client.name}
-                      assigned_sdw_name={client.assigned_sdw_name}
-                      archive={true}
-                    />
-                  ))
+                  currentData.map((client) => {
+                    const isSelected = selectedClients.includes(client.id);
+
+                    if (deleteMode) {
+                      return (
+                        <div
+                          key={client.id}
+                          className="flex items-center gap-3 cursor-pointer"
+                          onClick={() => toggleClientSelection(client.id)}
+                        >
+                          <div
+                            className={`w-5 h-5 border rounded flex items-center justify-center ${
+                              isSelected ? "bg-blue-600 border-blue-600" : "bg-white border-gray-400"
+                            }`}
+                          >
+                            {isSelected && (
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={3}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            )}
+                          </div>
+                          <ClientEntry
+                            id={client.id}
+                            sm_number={client.sm_number}
+                            spu={client.spu}
+                            name={client.name}
+                            assigned_sdw_name={client.assigned_sdw_name}
+                            archive={true}
+                          />
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <ClientEntry
+                          key={client.id}
+                          id={client.id}
+                          sm_number={client.sm_number}
+                          spu={client.spu}
+                          name={client.name}
+                          assigned_sdw_name={client.assigned_sdw_name}
+                          archive={true}
+                        />
+                      );
+                    }
+                  })
                 )}
               </>
             ) : (
