@@ -355,7 +355,7 @@ useEffect(() => {
                   <p className="font-bold-label text-center">SDW Assigned</p>
                 </div>
 
-                {currentData.length === 0 ? ( // wip
+                {currentData.length === 0 ? ( //wip
                   <p className="font-bold-label mx-auto">No Clients Found</p>
                 ) : (
                   currentData.map((client) => {
