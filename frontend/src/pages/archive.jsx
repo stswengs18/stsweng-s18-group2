@@ -311,7 +311,7 @@ useEffect(() => {
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-5">
               <button
-                className="btn-delete-case font-bold-label ml-auto"
+                className="btn-delete-case font-bold-label"
                 onClick={() => setDeleteMode(true)}
                 disabled={deleteMode}
                 // wip
@@ -320,7 +320,7 @@ useEffect(() => {
               </button>
               {deleteMode && (
               <button
-                className="btn-cancel-delete font-bold-label ml-auto"
+                className="btn-cancel-delete font-bold-label"
                 // wip
               >
                 Cancel
