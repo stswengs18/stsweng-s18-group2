@@ -308,7 +308,7 @@ useEffect(() => {
           </div>
           <div className="flex gap-5 justify-between items-center w-full">
             <button
-              className="btn-delete-case font-bold-label"
+              className="btn-delete-case font-bold-label ml-auto"
               // wip
             >
               Delete
