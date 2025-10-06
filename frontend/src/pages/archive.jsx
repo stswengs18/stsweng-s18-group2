@@ -349,6 +349,12 @@ useEffect(() => {
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
               <>
+                <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                  <p className="font-bold-label ml-[20%]">Name</p>
+                  <p className="font-bold-label text-center">CH Number</p>
+                  <p className="font-bold-label text-center">SDW Assigned</p>
+                </div>
+
                 {currentData.length === 0 ? (
                   <p className="font-bold-label mx-auto">No Clients Found</p>
                 ) : (
