@@ -306,7 +306,14 @@ useEffect(() => {
               )}
             </div>
           </div>
-
+          <div className="flex gap-5 justify-between items-center w-full">
+            <button
+              className="btn-delete-case font-bold-label"
+              // wip
+            >
+              Delete
+            </button>
+          </div>
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
               <>
