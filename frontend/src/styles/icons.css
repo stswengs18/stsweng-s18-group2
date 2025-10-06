@@ -33,7 +33,7 @@
   -webkit-mask-repeat: no-repeat;
 }
 
-/* .info-icon {
+.info-icon {
   width: 5rem;
   height: 5rem;
 
@@ -48,7 +48,7 @@
   -webkit-mask-size: contain;
   -webkit-mask-position: center;
   -webkit-mask-repeat: no-repeat;
-} */
+}
 
 /* CLICKABLE ICONS */
 .icon-button-setup {
