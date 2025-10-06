@@ -355,21 +355,21 @@ useEffect(() => {
                   <p className="font-bold-label text-center">SDW Assigned</p>
                 </div>
 
-                {currentData.length === 0 ? ( //wip
+                {currentData.length === 0 ? (
                   <p className="font-bold-label mx-auto">No Clients Found</p>
                 ) : (
                   currentData.map((client) => {
                     const isSelected = selectedClients.includes(client.id);
 
-                    if (deleteMode) {
-                      return (
-                        <div
-                          key={client.id}
-                          className="flex items-center gap-3 cursor-pointer"
-                          onClick={() => toggleClientSelection(client.id)}
-                        >
+                    return (
+                      <div
+                        key={client.id}
+                        className="flex items-center gap-3"
+                        onClick={() => deleteMode && toggleClientSelection(client.id)}
+                      >
+                        {deleteMode ? (
                           <div
-                            className={`w-5 h-5 border rounded flex items-center justify-center ${
+                            className={`w-5 h-5 border rounded flex items-center justify-center cursor-pointer ${
                               isSelected ? "bg-blue-600 border-blue-600" : "bg-white border-gray-400"
                             }`}
                           >
@@ -389,20 +389,10 @@ useEffect(() => {
                               </svg>
                             )}
                           </div>
-                          <ClientEntry
-                            id={client.id}
-                            sm_number={client.sm_number}
-                            spu={client.spu}
-                            name={client.name}
-                            assigned_sdw_name={client.assigned_sdw_name}
-                            archive={true}
-                          />
-                        </div>
-                      );
-                    } else {
-                      return (
+                        ) : (
+                          <div className="w-5 h-5" />
+                        )}
                         <ClientEntry
-                          key={client.id}
                           id={client.id}
                           sm_number={client.sm_number}
                           spu={client.spu}
@@ -410,8 +400,8 @@ useEffect(() => {
                           assigned_sdw_name={client.assigned_sdw_name}
                           archive={true}
                         />
-                      );
-                    }
+                      </div>
+                    );
                   })
                 )}
               </>
