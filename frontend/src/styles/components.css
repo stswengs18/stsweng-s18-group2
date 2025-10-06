@@ -60,8 +60,8 @@
 }
 
 .btn-delete-case {
-  background-color: var(--color-blue);
-  color: #DC3623;
+  background-color: #DC3623;
+  color: var(--color-white);
   border: 0.1rem solid var(--accent-dark);
   @apply px-4 py-4 rounded-lg w-max;
 }
