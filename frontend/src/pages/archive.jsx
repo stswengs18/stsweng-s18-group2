@@ -309,25 +309,24 @@ useEffect(() => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full">
-            <div className="flex gap-5">
-              <button
-                className="btn-delete-case font-bold-label"
-                onClick={() => setDeleteMode(true)}
-                disabled={deleteMode}
-                // wip
-              >
-                Delete
-              </button>
-              {deleteMode && (
-              <button
-                className="btn-cancel-delete font-bold-label"
-                // wip
-              >
-                Cancel
-              </button>
-              )}
-            </div>
-          </div>
+  <div className="flex items-center gap-3">
+    <button
+      className="btn-delete-case font-bold-label transition-all duration-200"
+      onClick={() => setDeleteMode(true)}
+      disabled={deleteMode}
+    >
+      Delete
+    </button>
+    {deleteMode && (
+      <button
+        className="btn-cancel-delete font-bold-label transition-all duration-200"
+        onClick={() => setDeleteMode(false)}
+      >
+        Cancel
+      </button>
+    )}
+  </div>
+</div>
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
               <>
