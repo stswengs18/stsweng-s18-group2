@@ -312,7 +312,7 @@ useEffect(() => {
             <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] opacity-100">
               {/* wip */}
               <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
-              <p className="font-[700] text-[16px] leading-[140%] text-justify text-white">
+              <p className="font-[700] text-[16px] leading-[140%] text-justify text-[#006599]">
                 Check the boxes <span className="font-[400]">of the cases you want to delete.</span>
               </p>
             </div>

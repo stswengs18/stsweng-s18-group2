@@ -34,10 +34,9 @@
 }
 
 .info-icon {
-  width: 5rem;
-  height: 5rem;
-
-  background-color: var(--color-primary);
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 
   mask-image: url("/info.svg");
   mask-size: contain;
