@@ -19,6 +19,8 @@ function Archive() {
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
 
+  const [deleteMode, setDeleteMode] = useState(false);
+
   const [currentSPU, setCurrentSPU] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -309,10 +311,20 @@ useEffect(() => {
           <div className="flex gap-5 justify-between items-center w-full">
             <button
               className="btn-delete-case font-bold-label ml-auto"
+              onClick={() => setDeleteMode(true)}
+              disabled={deleteMode}
               // wip
             >
               Delete
             </button>
+            {deleteMode && (
+            <button
+              className="btn-cancel-delete font-bold-label ml-auto"
+              // wip
+            >
+              Cancel
+            </button>
+            )}
           </div>
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (

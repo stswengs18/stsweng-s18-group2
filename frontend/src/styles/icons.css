@@ -33,6 +33,23 @@
   -webkit-mask-repeat: no-repeat;
 }
 
+.info-icon { /* wip */
+  width: 5rem;
+  height: 5rem;
+
+  background-color: var(--color-primary);
+
+  mask-image: url("/info.svg");
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-image: url("/info.svg");
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+}
+
 /* CLICKABLE ICONS */
 .icon-button-setup {
   width: 2rem;
