@@ -19,7 +19,7 @@ function Archive() {
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
 
-  const [deleteMode, setDeleteMode] = useState(false);
+  //const [deleteMode, setDeleteMode] = useState(false);
 
   const [currentSPU, setCurrentSPU] = useState("");
   const [sortBy, setSortBy] = useState("");
@@ -317,14 +317,14 @@ useEffect(() => {
             >
               Delete
             </button>
-            {deleteMode && (
+            {/* {deleteMode && (
             <button
               className="btn-cancel-delete font-bold-label ml-auto"
               // wip
             >
               Cancel
             </button>
-            )}
+            )} */}
           </div>
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (

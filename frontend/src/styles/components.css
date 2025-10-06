@@ -76,7 +76,7 @@
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.btn-cancel-delete {
+/* .btn-cancel-delete {
   background-color: #4D4D4D;
   color: var(--color-white);
   border: 0.1rem solid var(--accent-dark);
@@ -91,7 +91,7 @@
   filter: brightness(100%);
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25),
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+} */
 
 .btn-green {
   background-color: var(--color-green);
