@@ -309,7 +309,7 @@ useEffect(() => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full">
-            <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 px-3">
+            <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-5">
               {/* wip */}
               <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
               <p className="font-[700] text-[16px] leading-[140%] text-justify text-[#006599]">
