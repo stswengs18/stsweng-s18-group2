@@ -316,7 +316,7 @@ useEffect(() => {
                 disabled={deleteMode}
                 // wip
               >
-                Delete
+                {deleteMode ? 'Delete Selected' : 'Delete'}
               </button>
               {deleteMode && (
               <button
