@@ -350,6 +350,7 @@ useEffect(() => {
             {viewMode === "cases" ? (
               <>
                 <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                  <div />
                   <p className="font-bold-label ml-[20%]">Name</p>
                   <p className="font-bold-label text-center">CH Number</p>
                   <p className="font-bold-label text-center">SDW Assigned</p>
@@ -362,11 +363,14 @@ useEffect(() => {
                     const isSelected = selectedClients.includes(client.id);
 
                     return (
+                      // Use grid for row, matching header columns
                       <div
                         key={client.id}
-                        className="flex items-center gap-3"
+                        className="grid grid-cols-[40px_2fr_1fr_2fr] items-center gap-3"
+                        // Only allow selection in delete mode
                         onClick={() => deleteMode && toggleClientSelection(client.id)}
                       >
+                        {/* Checkbox cell: shows checkbox in delete mode, empty space otherwise */}
                         {deleteMode ? (
                           <div
                             className={`w-5 h-5 border rounded flex items-center justify-center cursor-pointer ${
@@ -390,8 +394,10 @@ useEffect(() => {
                             )}
                           </div>
                         ) : (
+                          // Empty div to reserve space for checkbox column
                           <div className="w-5 h-5" />
                         )}
+                        {/* The rest of the columns are handled by ClientEntry */}
                         <ClientEntry
                           id={client.id}
                           sm_number={client.sm_number}
