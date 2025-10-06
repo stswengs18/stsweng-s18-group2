@@ -308,6 +308,7 @@ useEffect(() => {
               )}
             </div>
           </div>
+          {viewMode === "cases" ? (
           <div className="flex justify-between items-center w-full">
             {deleteMode && (
             <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-6">
@@ -336,6 +337,7 @@ useEffect(() => {
               )}
             </div>
           </div>
+          ) : null}
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
               <>
