@@ -349,66 +349,20 @@ useEffect(() => {
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
               <>
-                <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
-                  <div />
-                  <p className="font-bold-label ml-[20%]">Name</p>
-                  <p className="font-bold-label text-center">CH Number</p>
-                  <p className="font-bold-label text-center">SDW Assigned</p>
-                </div>
-
                 {currentData.length === 0 ? (
                   <p className="font-bold-label mx-auto">No Clients Found</p>
                 ) : (
-                  currentData.map((client) => {
-                    const isSelected = selectedClients.includes(client.id);
-
-                    return (
-                      // Use grid for row, matching header columns
-                      <div
-                        key={client.id}
-                        className="grid grid-cols-[40px_2fr_1fr_2fr] items-center gap-3"
-                        // Only allow selection in delete mode
-                        onClick={() => deleteMode && toggleClientSelection(client.id)}
-                      >
-                        {/* Checkbox cell: shows checkbox in delete mode, empty space otherwise */}
-                        {deleteMode ? (
-                          <div
-                            className={`w-5 h-5 border rounded flex items-center justify-center cursor-pointer ${
-                              isSelected ? "bg-blue-600 border-blue-600" : "bg-white border-gray-400"
-                            }`}
-                          >
-                            {isSelected && (
-                              <svg
-                                className="w-3 h-3 text-white"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={3}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                            )}
-                          </div>
-                        ) : (
-                          // Empty div to reserve space for checkbox column
-                          <div className="w-5 h-5" />
-                        )}
-                        {/* The rest of the columns are handled by ClientEntry */}
-                        <ClientEntry
-                          id={client.id}
-                          sm_number={client.sm_number}
-                          spu={client.spu}
-                          name={client.name}
-                          assigned_sdw_name={client.assigned_sdw_name}
-                          archive={true}
-                        />
-                      </div>
-                    );
-                  })
+                  currentData.map((client) => (
+                    <ClientEntry
+                      key={client.id}
+                      id={client.id}
+                      sm_number={client.sm_number}
+                      spu={client.spu}
+                      name={client.name}
+                      assigned_sdw_name={client.assigned_sdw_name}
+                      archive={true}
+                    />
+                  ))
                 )}
               </>
             ) : (
