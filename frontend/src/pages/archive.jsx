@@ -309,12 +309,17 @@ useEffect(() => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full">
+            <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] opacity-100">
+              <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
+              <p className="font-[700] text-[16px] leading-[140%] text-justify text-white">
+                Check the boxes <span className="font-[400]">of the cases you want to delete.</span>
+              </p>
+            </div>
             <div className="flex gap-5 ml-auto">
               <button
                 className="btn-delete-case font-bold-label"
                 onClick={() => setDeleteMode(true)}
                 disabled={deleteMode}
-                // wip
               >
                 {deleteMode ? 'Delete Selected' : 'Delete'}
               </button>
