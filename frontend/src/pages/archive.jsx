@@ -318,33 +318,35 @@ useEffect(() => {
             </div>
           </div>
           {viewMode === "cases" ? (
-          <div className="flex justify-between items-center w-full">
-            {deleteMode && (
-            <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-6">
-              <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
-              <p className="font-[700] text-[16px] leading-[140%] text-justify text-[#006599]">
-                Check the boxes <span className="font-[400]">of the cases you want to delete.</span>
-              </p>
-            </div>
-            )}
-            <div className="flex gap-5 ml-auto">
-              <button
-                className="btn-delete-case font-bold-label"
-                onClick={() => setDeleteMode(true)}
-                disabled={deleteMode}
-              >
-                {deleteMode ? 'Delete Selected' : 'Delete'}
-              </button>
-              {deleteMode && (
-              <button
-                className="btn-cancel-delete font-bold-label"
-                onClick={() => setDeleteMode(false)}
-              >
-                Cancel
-              </button>
-              )}
-            </div>
-          </div>
+            user?.role == "head" && (
+              <div className="flex justify-between items-center w-full">
+                {deleteMode && (
+                <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-6">
+                  <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
+                  <p className="font-[700] text-[16px] leading-[140%] text-justify text-[#006599]">
+                    Check the boxes <span className="font-[400]">of the cases you want to delete.</span>
+                  </p>
+                </div>
+                )}
+                <div className="flex gap-5 ml-auto">
+                  <button
+                    className="btn-delete-case font-bold-label"
+                    onClick={() => setDeleteMode(true)}
+                    disabled={deleteMode}
+                  >
+                    {deleteMode ? 'Delete Selected' : 'Delete'}
+                  </button>
+                  {deleteMode && (
+                  <button
+                    className="btn-cancel-delete font-bold-label"
+                    onClick={() => setDeleteMode(false)}
+                  >
+                    Cancel
+                  </button>
+                  )}
+                </div>
+              </div>
+            )
           ) : null}
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
