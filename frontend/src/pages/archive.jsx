@@ -150,6 +150,7 @@ function Archive() {
 useEffect(() => {
   if (viewMode !== "employees") return;
 
+  setDeleteMode(false);
   let filtered = allEmployees.filter((w) => w.is_active === false);
 
   // Filter by SPU id
