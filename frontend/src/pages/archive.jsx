@@ -240,14 +240,17 @@ useEffect(() => {
                 {deleteMode ? (
                   viewMode === "cases" ? (
                     user?.role == "head" && (
-                      // wip
                       <>
-                      <select
-                        className="text-input font-label max-w-[150px]"
-
+                      <button
+                        className="text-input font-label max-w-[150px] relative appearance-none pr-8"
+                        // wip
+                        //onClick=
                       >
                         Select by Date & Time
-                      </select>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          ▼
+                        </span>
+                      </button>
                       <div className="flex gap-5 ml-auto">
                         <button
                           className="btn-delete-case font-bold-label"
