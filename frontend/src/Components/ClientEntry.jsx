@@ -61,7 +61,7 @@ export default function ClientEntry({
   href={`/case/${id}`}
   className={`relative client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label
     ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}
-    ${showCheckbox ? "pl-12" : "pl-5"}
+    ${showCheckbox ? "pl-14" : "pl-5"}
     `}
 >
 
