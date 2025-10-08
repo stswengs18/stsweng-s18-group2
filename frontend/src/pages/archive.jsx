@@ -240,6 +240,14 @@ useEffect(() => {
                 {deleteMode ? (
                   viewMode === "cases" ? (
                     user?.role == "head" && (
+                      // wip
+                      <>
+                      <button
+                        className="text-input font-label max-w-[150px]"
+                        
+                      >
+
+                      </button>
                       <div className="flex gap-5 ml-auto">
                         <button
                           className="btn-delete-case font-bold-label"
@@ -264,6 +272,7 @@ useEffect(() => {
                         </button>
                         )}
                       </div>
+                      </>
                     )
                   ) : null
                 ) : (
