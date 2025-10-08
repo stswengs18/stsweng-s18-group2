@@ -381,7 +381,7 @@ useEffect(() => {
             </div>
           </div>
           {viewMode === "cases" ? (
-            user?.role == "head" && (
+            deleteMode && (
               <div className="flex justify-between items-center w-full">
                 {deleteMode && (
                 <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-6">
@@ -391,7 +391,7 @@ useEffect(() => {
                   </p>
                 </div>
                 )}
-                <div className="flex gap-5 ml-auto">
+                {/* <div className="flex gap-5 ml-auto">
                   <button
                     className="btn-delete-case font-bold-label"
                     onClick={() => {
@@ -414,7 +414,7 @@ useEffect(() => {
                     Cancel
                   </button>
                   )}
-                </div>
+                </div> */}
               </div>
             )
           ) : null}
