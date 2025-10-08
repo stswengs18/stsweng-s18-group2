@@ -38,7 +38,10 @@ export default function ClientEntry({
   name,
   assigned_sdw_name,
   archive,
-  pendingTermination = false
+  pendingTermination = false,
+  showCheckbox = false,
+  onSelectChange,
+  isSelected = false,
 }) {
   const initials = name.charAt(0).toUpperCase();
 
@@ -50,12 +53,28 @@ export default function ClientEntry({
     textColor = "#ffffff";
   }
 
+  const handleRowClick = () => {
+    window.location.href = `/case/${id}`;
+  };
+
   return (
 <a
   href={`/case/${id}`}
   className={`client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label transition-colors 
     ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}`}
+    onClick={handleRowClick}
 >
+
+      {/* checkbox column */}
+      {showCheckbox && (
+        <input
+          type="checkbox"
+          className="w-4 h-4 border border-black rounded-sm bg-white"
+          checked={isSelected}
+          onClick={(e) => e.stopPropagation()} // <-- prevent row click
+          onChange={(e) => onSelectChange?.(id, e.target.checked)}
+        />
+      )}
 
       <div className="flex items-center gap-6">
         <div

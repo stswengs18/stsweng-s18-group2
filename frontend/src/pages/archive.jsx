@@ -18,6 +18,8 @@ function Archive() {
   const [currentData, setCurrentData] = useState([]);
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
+
+  const [showDeleteCheckbox, setShowDeleteCheckbox] = useState(false);
   const [selectedClients, setSelectedClients] = useState([]);
 
   const [deleteMode, setDeleteMode] = useState(false);
@@ -193,11 +195,9 @@ useEffect(() => {
 }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
   // toggle function for selecting clients in delete mode
-  const toggleClientSelection = (clientId) => {
-    setSelectedClients((prev) =>
-      prev.includes(clientId)
-        ? prev.filter((id) => id !== clientId)
-        : [...prev, clientId]
+  const handleSelectChange = (id, checked) => {
+    setSelectedClients(prev =>
+      checked ? [...prev, id] : prev.filter(c => c !== id)
     );
   };
 
@@ -332,7 +332,10 @@ useEffect(() => {
                 <div className="flex gap-5 ml-auto">
                   <button
                     className="btn-delete-case font-bold-label"
-                    onClick={() => setDeleteMode(true)}
+                    onClick={() => {
+                      setDeleteMode(true)
+                      setShowDeleteCheckbox(!showDeleteCheckbox)
+                    }}
                     disabled={deleteMode}
                   >
                     {deleteMode ? 'Delete Selected' : 'Delete'}
@@ -370,6 +373,10 @@ useEffect(() => {
                       name={client.name}
                       assigned_sdw_name={client.assigned_sdw_name}
                       archive={true}
+                      pendingTermination={client.pendingTermination}
+                      showCheckbox={showDeleteCheckbox}
+                      onSelectChange={handleSelectChange}
+                      isSelected={selectedClients.includes(client.id)}
                     />
                   ))
                 )}
