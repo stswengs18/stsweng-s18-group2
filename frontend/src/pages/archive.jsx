@@ -242,14 +242,20 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className="text-input font-label max-w-[150px] relative appearance-none pr-8"
-                        // wip
+                        className="relative w-[250px] border border-gray-300 rounded-md bg-white text-left px-3 py-2 font-label text-black cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                         //onClick=
                       >
-                        Select by Date & Time
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                          ▼
-                        </span>
+                        Select by Time
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700 pointer-events-none"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
                       </button>
                       <div className="flex gap-5 ml-auto">
                         <button
