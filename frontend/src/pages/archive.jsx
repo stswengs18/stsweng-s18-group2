@@ -343,7 +343,10 @@ useEffect(() => {
                   {deleteMode && (
                   <button
                     className="btn-cancel-delete font-bold-label"
-                    onClick={() => setDeleteMode(false)}
+                    onClick={() => {
+                      setDeleteMode(false)
+                      setShowDeleteCheckbox(false)
+                    }}
                   >
                     Cancel
                   </button>

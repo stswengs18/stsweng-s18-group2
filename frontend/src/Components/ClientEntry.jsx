@@ -61,7 +61,9 @@ export default function ClientEntry({
 <a
   href={`/case/${id}`}
   className={`client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label transition-colors 
-    ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}`}
+    ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}
+    ${showCheckbox ? "pl-8" : "pl-5"}
+    `}
     onClick={handleRowClick}
 >
 
@@ -69,10 +71,10 @@ export default function ClientEntry({
       {showCheckbox && (
         <input
           type="checkbox"
-          className="w-4 h-4 border border-black rounded-sm bg-white"
           checked={isSelected}
-          onClick={(e) => e.stopPropagation()} // <-- prevent row click
+          onClick={(e) => e.stopPropagation()}
           onChange={(e) => onSelectChange?.(id, e.target.checked)}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-[16px] h-[15px] border border-black rounded-[3px] bg-white"
         />
       )}
 
