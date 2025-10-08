@@ -346,6 +346,7 @@ useEffect(() => {
                     onClick={() => {
                       setDeleteMode(false)
                       setShowDeleteCheckbox(false)
+                      setSelectedClients([]);
                     }}
                   >
                     Cancel
