@@ -153,6 +153,8 @@ useEffect(() => {
   if (viewMode !== "employees") return;
 
   setDeleteMode(false);
+  setShowDeleteCheckbox(false)
+  setSelectedClients([]);
   let filtered = allEmployees.filter((w) => w.is_active === false);
 
   // Filter by SPU id
@@ -234,6 +236,38 @@ useEffect(() => {
           <div className="flex justify-between gap-10">
             <div className="flex gap-5 justify-between items-center w-full">
               <div className="flex gap-5 w-full">
+                {/* replace componenets under this class in delete mode */}
+                {deleteMode ? (
+                  viewMode === "cases" ? (
+                    user?.role == "head" && (
+                      <div className="flex gap-5 ml-auto">
+                        <button
+                          className="btn-delete-case font-bold-label"
+                          onClick={() => {
+                            setDeleteMode(true)
+                            setShowDeleteCheckbox(true)
+                          }}
+                          disabled={deleteMode}
+                        >
+                          {deleteMode ? 'Delete Selected' : 'Delete'}
+                        </button>
+                        {deleteMode && (
+                        <button
+                          className="btn-cancel-delete font-bold-label"
+                          onClick={() => {
+                            setDeleteMode(false)
+                            setShowDeleteCheckbox(false)
+                            setSelectedClients([]);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        )}
+                      </div>
+                    )
+                  ) : null
+                ) : (
+                <>
                 <select
                   className="text-input font-label max-w-[150px]"
                   value={viewMode}
@@ -244,7 +278,7 @@ useEffect(() => {
                   <option value="employees">Employees</option>
                 </select>
 
-                                {user?.role === "head" && <select
+                                {/* {user?.role === "head" && <select
                                     className="text-input font-label max-w-[30rem]"
                                     value={currentSPU}
                                     id="spu"
@@ -259,7 +293,7 @@ useEffect(() => {
                                             {project.spu_name} {project.spu_code ? `(${project.spu_code})` : project.projectCode ? `(${project.projectCode})` : ''}
                                         </option>
                                     ))}
-                                </select>}
+                                </select>} */}
                 {user?.role === "head" && (
                   <select
                     className="text-input font-label max-w-[30rem]"
@@ -305,6 +339,8 @@ useEffect(() => {
                 >
                   <div className="icon-static-setup order-button"></div>
                 </button>
+                </>
+                )}
               </div>
 
               {user?.role === "sdw" && (
@@ -334,7 +370,7 @@ useEffect(() => {
                     className="btn-delete-case font-bold-label"
                     onClick={() => {
                       setDeleteMode(true)
-                      setShowDeleteCheckbox(!showDeleteCheckbox)
+                      setShowDeleteCheckbox(true)
                     }}
                     disabled={deleteMode}
                   >
