@@ -242,12 +242,12 @@ useEffect(() => {
                     user?.role == "head" && (
                       // wip
                       <>
-                      <button
+                      <select
                         className="text-input font-label max-w-[150px]"
-                        
-                      >
 
-                      </button>
+                      >
+                        Select by Date & Time
+                      </select>
                       <div className="flex gap-5 ml-auto">
                         <button
                           className="btn-delete-case font-bold-label"
