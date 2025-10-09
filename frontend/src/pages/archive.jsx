@@ -239,7 +239,7 @@ useEffect(() => {
                 {/* replace componenets under this class in delete mode */}
                 {deleteMode ? (
                   viewMode === "cases" ? (
-                    user?.role == "head" && (
+                    viewMode === "cases" && user?.role == "head" && (
                       <>
                       <button
                         className="relative w-[250px] border border-gray-300 rounded-md bg-white text-left px-3 py-2 font-label text-white cursor-pointer appearance-none
