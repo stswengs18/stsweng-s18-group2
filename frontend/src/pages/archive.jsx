@@ -239,7 +239,7 @@ useEffect(() => {
                 {/* replace componenets under this class in delete mode */}
                 {deleteMode ? (
                   viewMode === "cases" ? (
-                    viewMode === "cases" && user?.role == "head" && (
+                    user?.role == "head" && (
                       <>
                       <button
                         className="relative w-[250px] border border-gray-300 rounded-md bg-white text-left px-3 py-2 font-label text-white cursor-pointer appearance-none
@@ -358,7 +358,7 @@ useEffect(() => {
                 >
                   <div className="icon-static-setup order-button"></div>
                 </button>
-                {user?.role == "head" && (
+                {/* {user?.role == "head" && (
                   <div className="flex gap-5 ml-auto">
                     <button
                       className="btn-delete-case font-bold-label"
@@ -383,7 +383,7 @@ useEffect(() => {
                     </button>
                     )}
                   </div>
-                )}
+                )} */}
                 </>
                 )}
               </div>
