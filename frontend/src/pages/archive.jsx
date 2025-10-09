@@ -358,32 +358,34 @@ useEffect(() => {
                 >
                   <div className="icon-static-setup order-button"></div>
                 </button>
-                {/* {user?.role == "head" && (
-                  <div className="flex gap-5 ml-auto">
-                    <button
-                      className="btn-delete-case font-bold-label"
-                      onClick={() => {
-                        setDeleteMode(true)
-                        setShowDeleteCheckbox(true)
-                      }}
-                      disabled={deleteMode}
-                    >
-                      {deleteMode ? 'Delete Selected' : 'Delete'}
-                    </button>
-                    {deleteMode && (
-                    <button
-                      className="btn-cancel-delete font-bold-label"
-                      onClick={() => {
-                        setDeleteMode(false)
-                        setShowDeleteCheckbox(false)
-                        setSelectedClients([]);
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    )}
-                  </div>
-                )} */}
+                {viewMode === "cases" ? (
+                  user?.role == "head" && (
+                    <div className="flex gap-5 ml-auto">
+                      <button
+                        className="btn-delete-case font-bold-label"
+                        onClick={() => {
+                          setDeleteMode(true)
+                          setShowDeleteCheckbox(true)
+                        }}
+                        disabled={deleteMode}
+                      >
+                        {deleteMode ? 'Delete Selected' : 'Delete'}
+                      </button>
+                      {deleteMode && (
+                      <button
+                        className="btn-cancel-delete font-bold-label"
+                        onClick={() => {
+                          setDeleteMode(false)
+                          setShowDeleteCheckbox(false)
+                          setSelectedClients([]);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      )}
+                    </div>
+                  )
+                ) : null}
                 </>
                 )}
               </div>
