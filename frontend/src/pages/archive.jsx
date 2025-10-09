@@ -258,7 +258,7 @@ useEffect(() => {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
-                      <div className="flex gap-5 ml-auto">
+                      {/* <div className="flex gap-5 ml-auto">
                         <button
                           className="btn-delete-case font-bold-label"
                           onClick={() => {
@@ -281,7 +281,7 @@ useEffect(() => {
                           Cancel
                         </button>
                         )}
-                      </div>
+                      </div> */}
                       </>
                     )
                   ) : null
