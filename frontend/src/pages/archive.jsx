@@ -242,14 +242,14 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className="relative w-[250px] border border-gray-300 rounded-md bg-white text-left px-3 py-2 font-label text-black cursor-pointer appearance-none
+                        className="relative w-[250px] border border-gray-300 rounded-md bg-white text-left px-3 py-2 font-label text-white cursor-pointer appearance-none
                                   focus:outline-none active:bg-[#E46455] active:text-white transition-colors duration-150"
                         //onClick=
                       >
                         Select by Time
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700 pointer-events-none"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700 pointer-events-none font-bold-label"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
