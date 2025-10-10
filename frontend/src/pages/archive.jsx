@@ -246,7 +246,7 @@ useEffect(() => {
                                   focus:outline-none active:bg-[#E46455] active:text-white transition-colors duration-150"
                         //onClick=
                       >
-                        Select by Time
+                        Select by Date and Time
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="absolute right-1 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 pointer-events-none font-bold-label"
