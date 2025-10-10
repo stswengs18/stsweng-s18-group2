@@ -242,7 +242,7 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className="relative w-[250px] border border-gray-400 rounded-xl bg-white text-left px-3 py-2 font-label text-white cursor-pointer appearance-none
+                        className="relative w-[250px] border border-gray-400 rounded-xl bg-white text-left pl-2 px-3 py-2 font-label text-white cursor-pointer appearance-none
                                   focus:outline-none active:bg-[#E46455] active:text-white transition-colors duration-150"
                         //onClick=
                       >
