@@ -9,10 +9,7 @@ import { fetchAllSpus } from "../fetch-connections/spu-connection";
 import { useNavigate } from "react-router-dom";
 import Loading from "./loading";
 
-// UI components used for Date and Time filter
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+// used for Date and Time filter
 import { Calendar } from "lucide-react";
 
 function Archive() {
@@ -300,12 +297,12 @@ useEffect(() => {
                       {/* wip */}
                       {/* add ui for selecting by date and time */}
                       {timeFilter && (
-                        <Card className="p-5 w-fit border rounded-xl space-y-5">
+                        <div className="border rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
                           {/* time select */}
                           <div className="flex items-center gap-3">
                             <label className="font-semibold w-28">Select Time:</label>
                             <select
-                              className="border rounded-md px-3 py-2 w-52"
+                              className="border rounded-md px-3 py-2 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               value={timeRange}
                               onChange={(e) => setTimeRange(e.target.value)}
                             >
@@ -314,7 +311,12 @@ useEffect(() => {
                               <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
                               <option value="evening">Evening (4 PM - 8 PM)</option>
                             </select>
-                            <Button onClick={handleTimeApply}>Apply</Button>
+                            <button
+                              onClick={handleTimeApply}
+                              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                            >
+                              Apply
+                            </button>
                           </div>
 
                           <hr className="border-gray-300" />
@@ -324,28 +326,33 @@ useEffect(() => {
                             <label className="font-semibold w-28">Select Date:</label>
                             <div className="flex items-center gap-2">
                               <div className="relative">
-                                <Input
+                                <input
                                   type="date"
                                   value={startDate}
                                   onChange={(e) => setStartDate(e.target.value)}
-                                  className="w-40 pr-10"
+                                  className="border rounded-md px-3 py-2 w-40 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
-                                <Calendar className="absolute right-2 top-2.5 w-4 h-4 text-gray-500" />
+                                <Calendar className="absolute right-2 top-2.5 w-4 h-4 text-gray-500 pointer-events-none" />
                               </div>
                               <span>to</span>
                               <div className="relative">
-                                <Input
+                                <input
                                   type="date"
                                   value={endDate}
                                   onChange={(e) => setEndDate(e.target.value)}
-                                  className="w-40 pr-10"
+                                  className="border rounded-md px-3 py-2 w-40 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
-                                <Calendar className="absolute right-2 top-2.5 w-4 h-4 text-gray-500" />
+                                <Calendar className="absolute right-2 top-2.5 w-4 h-4 text-gray-500 pointer-events-none" />
                               </div>
-                              <Button onClick={handleDateApply}>Apply</Button>
+                              <button
+                                onClick={handleDateApply}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                              >
+                                Apply
+                              </button>
                             </div>
                           </div>
-                        </Card>
+                        </div>
                       )}
                       </>
                     )
