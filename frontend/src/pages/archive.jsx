@@ -432,7 +432,7 @@ useEffect(() => {
                   <option value="evening">Evening (4 PM - 8 PM)</option>
                 </select>
                 <button
-                  onClick={handleTimeApply}
+                  //onClick={handleTimeApply}
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                 >
                   Apply
@@ -463,7 +463,7 @@ useEffect(() => {
                     />
                   </div>
                   <button
-                    onClick={handleDateApply}
+                    //onClick={handleDateApply}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                   >
                     Apply
