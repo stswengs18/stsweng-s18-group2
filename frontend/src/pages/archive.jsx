@@ -298,7 +298,7 @@ useEffect(() => {
                       {/* add ui for selecting by date and time */}
                       {timeFilter && (
                         <div className="border rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
-                          {/* time select */}
+                          {/* time select
                           <div className="flex items-center gap-3">
                             <label className="font-semibold w-28">Select Time:</label>
                             <select
@@ -319,10 +319,10 @@ useEffect(() => {
                             </button>
                           </div>
 
-                          <hr className="border-gray-300" />
+                          <hr className="border-gray-300" /> */}
 
                           {/* date select */}
-                          <div className="flex items-center gap-3">
+                          {/* <div className="flex items-center gap-3">
                             <label className="font-semibold w-28">Select Date:</label>
                             <div className="flex items-center gap-2">
                               <div className="relative">
@@ -349,7 +349,7 @@ useEffect(() => {
                                 Apply
                               </button>
                             </div>
-                          </div>
+                          </div> */}
                         </div>
                       )}
                       </>
