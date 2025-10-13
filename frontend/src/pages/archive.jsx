@@ -294,64 +294,7 @@ useEffect(() => {
                         </button>
                         )}
                       </div>
-                      {/* wip */}
-                      {/* add ui for selecting by date and time */}
-                      {timeFilter && (
-                        <div className="border rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
-                          {/* time select
-                          <div className="flex items-center gap-3">
-                            <label className="font-semibold w-28">Select Time:</label>
-                            <select
-                              className="border rounded-md px-3 py-2 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              value={timeRange}
-                              onChange={(e) => setTimeRange(e.target.value)}
-                            >
-                              <option value="">Choose a time range</option>
-                              <option value="morning">Morning (8 AM - 12 PM)</option>
-                              <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
-                              <option value="evening">Evening (4 PM - 8 PM)</option>
-                            </select>
-                            <button
-                              onClick={handleTimeApply}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                            >
-                              Apply
-                            </button>
-                          </div>
-
-                          <hr className="border-gray-300" /> */}
-
-                          {/* date select */}
-                          {/* <div className="flex items-center gap-3">
-                            <label className="font-semibold w-28">Select Date:</label>
-                            <div className="flex items-center gap-2">
-                              <div className="relative">
-                                <input
-                                  type="date"
-                                  value={startDate}
-                                  onChange={(e) => setStartDate(e.target.value)}
-                                  className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                              </div>
-                              <span>to</span>
-                              <div className="relative">
-                                <input
-                                  type="date"
-                                  value={endDate}
-                                  onChange={(e) => setEndDate(e.target.value)}
-                                  className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                              </div>
-                              <button
-                                onClick={handleDateApply}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                              >
-                                Apply
-                              </button>
-                            </div>
-                          </div> */}
-                        </div>
-                      )}
+                      
                       </>
                     )
                   ) : null
@@ -471,6 +414,64 @@ useEffect(() => {
               )}
             </div>
           </div>
+          {/* wip */}
+          {/* add ui for selecting by date and time */}
+          {timeFilter && (
+            <div className="border rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
+              {/* time select */ }
+              <div className="flex items-center gap-3">
+                {/* <label className="font-semibold w-28">Select Time:</label>
+                <select
+                  className="border rounded-md px-3 py-2 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value)}
+                >
+                  <option value="">Choose a time range</option>
+                  <option value="morning">Morning (8 AM - 12 PM)</option>
+                  <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                  <option value="evening">Evening (4 PM - 8 PM)</option>
+                </select>
+                <button
+                  onClick={handleTimeApply}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                >
+                  Apply
+                </button>  */}
+              </div>
+
+              <hr className="border-gray-300" />
+
+              {/* date select */}
+               <div className="flex items-center gap-3">
+                <label className="font-semibold w-28">Select Date:</label>
+                {/* <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <span>to</span>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <button
+                    onClick={handleDateApply}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  >
+                    Apply
+                  </button>
+                </div>  */}
+              </div>
+            </div>
+          )}
           {viewMode === "cases" ? (
             deleteMode && (
               <div className="flex justify-between items-center w-full">
