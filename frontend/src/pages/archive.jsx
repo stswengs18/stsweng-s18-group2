@@ -420,7 +420,7 @@ useEffect(() => {
             <div className="border rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
               {/* time select */ }
               <div className="flex items-center gap-3">
-                {/* <label className="font-semibold w-28">Select Time:</label>
+                <label className="font-semibold w-28">Select Time:</label>
                 <select
                   className="border rounded-md px-3 py-2 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={timeRange}
@@ -436,7 +436,7 @@ useEffect(() => {
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                 >
                   Apply
-                </button>  */}
+                </button> 
               </div>
 
               <hr className="border-gray-300" />
@@ -444,7 +444,7 @@ useEffect(() => {
               {/* date select */}
                <div className="flex items-center gap-3">
                 <label className="font-semibold w-28">Select Date:</label>
-                {/* <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <div className="relative">
                     <input
                       type="date"
@@ -468,7 +468,7 @@ useEffect(() => {
                   >
                     Apply
                   </button>
-                </div>  */}
+                </div> 
               </div>
             </div>
           )}
