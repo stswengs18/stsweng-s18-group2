@@ -251,10 +251,14 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className="relative w-[250px] border border-gray-400 rounded-xl bg-white text-left pl-5 px-3 py-2 font-label text-white cursor-pointer appearance-none
-                                  focus:outline-none active:bg-[#E46455] active:text-white transition-colors duration-150"
+                        className= {`relative w-[250px] border border-gray-400 rounded-xl bg-white text-left pl-5 px-3 py-2 font-label text-white cursor-pointer appearance-none
+                                  focus:outline-none transition-colors duration-150 ${timeFilter ? "bg-[#E46455] text-white" : "bg-white text-black hover:bg-white"}`}
                         onClick={() => {
-                          setTimeFilter(true)
+                          if (timeFilter) {
+                            setTimeFilter(false);
+                          } else {
+                            setTimeFilter(true);
+                          }
                         }
                         }
                       >
@@ -391,6 +395,7 @@ useEffect(() => {
                           setDeleteMode(false)
                           setShowDeleteCheckbox(false)
                           setSelectedClients([]);
+                          setTimeFilter(false);
                         }}
                       >
                         Cancel
@@ -417,7 +422,7 @@ useEffect(() => {
           {/* wip */}
           {/* add ui for selecting by date and time */}
           {timeFilter && (
-            <div className="border border-gray-400 rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
+            <div className="border border-gray-400 rounded-xl p-5 w-fit bg-white space-y-5">
               {/* time select */ }
               <div className="flex items-center gap-3">
                 <label className="font-semibold w-28">Select Time:</label>
