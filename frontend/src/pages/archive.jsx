@@ -251,8 +251,9 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className= {`relative w-[250px] border border-gray-400 rounded-xl bg-white text-left pl-5 px-3 py-2 font-label text-white cursor-pointer appearance-none
-                                  focus:outline-none transition-colors duration-150 ${timeFilter ? "bg-[#E46455] text-white" : "bg-white text-black hover:bg-white"}`}
+                        className={`relative w-[250px] border border-gray-400 rounded-xl text-left pl-5 px-3 py-2 font-label cursor-pointer appearance-none
+                                  focus:outline-none transition-colors duration-150
+                                  ${timeFilter ? "bg-[#E46455] text-white" : "bg-white text-black hover:bg-[#f5f5f5]"}`}
                         onClick={() => {
                           if (timeFilter) {
                             setTimeFilter(false);
@@ -291,6 +292,7 @@ useEffect(() => {
                           onClick={() => {
                             setDeleteMode(false)
                             setShowDeleteCheckbox(false)
+                            setTimeFilter(false);
                             setSelectedClients([]);
                           }}
                         >
@@ -432,9 +434,7 @@ useEffect(() => {
                   onChange={(e) => setTimeRange(e.target.value)}
                 >
                   <option value="">Choose a time range</option>
-                  <option value="morning">Morning (8 AM - 12 PM)</option>
-                  <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
-                  <option value="evening">Evening (4 PM - 8 PM)</option>
+                  {/* add options here */}
                 </select>
                 <button
                   //onClick={handleTimeApply}
