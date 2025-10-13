@@ -253,7 +253,7 @@ useEffect(() => {
                       <button
                         className={`relative w-[250px] border border-gray-400 rounded-xl text-left pl-5 px-3 py-2 font-label cursor-pointer appearance-none
                                   focus:outline-none transition-colors duration-150
-                                  ${timeFilter ? "bg-[#E46455] text-white" : "bg-white text-black hover:bg-[#f5f5f5]"}`}
+                                  ${timeFilter ? "bg-[#E46455] !text-white" : "bg-white text-black hover:bg-[#f5f5f5]"}`}
                         onClick={() => {
                           if (timeFilter) {
                             setTimeFilter(false);
