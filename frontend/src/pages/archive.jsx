@@ -417,7 +417,7 @@ useEffect(() => {
           {/* wip */}
           {/* add ui for selecting by date and time */}
           {timeFilter && (
-            <div className="border rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
+            <div className="border border-gray-400 rounded-xl p-5 w-fit bg-white shadow-sm space-y-5">
               {/* time select */ }
               <div className="flex items-center gap-3">
                 <label className="font-semibold w-28">Select Time:</label>
@@ -433,7 +433,7 @@ useEffect(() => {
                 </select>
                 <button
                   //onClick={handleTimeApply}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  className="text-white px-4 py-2 rounded-lg hover:bg-[#277195] bg-[#3186B2]"
                 >
                   Apply
                 </button> 
@@ -464,7 +464,7 @@ useEffect(() => {
                   </div>
                   <button
                     //onClick={handleDateApply}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="text-white px-4 py-2 rounded-lg hover:bg-[#277195] bg-[#3186B2]"
                   >
                     Apply
                   </button>
