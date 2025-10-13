@@ -9,9 +9,6 @@ import { fetchAllSpus } from "../fetch-connections/spu-connection";
 import { useNavigate } from "react-router-dom";
 import Loading from "./loading";
 
-// used for Date and Time filter
-import { Calendar } from "lucide-react";
-
 function Archive() {
   const navigate = useNavigate();
 
@@ -313,7 +310,7 @@ useEffect(() => {
                             </select>
                             <button
                               onClick={handleTimeApply}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                             >
                               Apply
                             </button>
@@ -330,9 +327,8 @@ useEffect(() => {
                                   type="date"
                                   value={startDate}
                                   onChange={(e) => setStartDate(e.target.value)}
-                                  className="border rounded-md px-3 py-2 w-40 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
-                                <Calendar className="absolute right-2 top-2.5 w-4 h-4 text-gray-500 pointer-events-none" />
                               </div>
                               <span>to</span>
                               <div className="relative">
@@ -340,13 +336,12 @@ useEffect(() => {
                                   type="date"
                                   value={endDate}
                                   onChange={(e) => setEndDate(e.target.value)}
-                                  className="border rounded-md px-3 py-2 w-40 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
-                                <Calendar className="absolute right-2 top-2.5 w-4 h-4 text-gray-500 pointer-events-none" />
                               </div>
                               <button
                                 onClick={handleDateApply}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                               >
                                 Apply
                               </button>
