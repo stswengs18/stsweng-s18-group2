@@ -437,7 +437,7 @@ useEffect(() => {
                   {/* add options here */}
                 </select>
                 <button
-                  className="text-white text-xl px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
+                  className="text-white text-xl font-semibold px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
                 >
                   Apply
                 </button>
@@ -463,7 +463,7 @@ useEffect(() => {
                     className="border rounded-lg px-7 py-4 w-65 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
-                    className="text-white text-xl px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
+                    className="text-white text-xl font-semibold px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
                   >
                     Apply
                   </button>
