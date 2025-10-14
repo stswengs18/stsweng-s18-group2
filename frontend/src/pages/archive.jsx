@@ -429,7 +429,7 @@ useEffect(() => {
               <div className="flex items-center gap-4">
                 <label className="font-bold-label w-36 text-lg">Select Time:</label>
                 <select
-                  className="border rounded-lg px-7 py-4 w-72 text-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border rounded-lg px-7 py-4 w-72 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={timeRange}
                   onChange={(e) => setTimeRange(e.target.value)}
                 >
@@ -453,14 +453,14 @@ useEffect(() => {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="border rounded-lg px-7 py-4 w-57 text-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border rounded-lg px-7 py-4 w-57 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <span className="text-lg">to</span>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="border rounded-lg px-7 py-4 w-57 text-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border rounded-lg px-7 py-4 w-57 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     className="text-white text-base px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
