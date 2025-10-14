@@ -251,7 +251,7 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className={`relative w-[250px] border border-gray-400 rounded-xl text-left pl-5 px-3 py-2 font-label cursor-pointer appearance-none
+                        className={`relative w-[250px] border border-gray-400 rounded-xl text-left pl-5 px-3 py-2 font-bold-label cursor-pointer appearance-none
                                   focus:outline-none transition-colors duration-150
                                   ${timeFilter ? "bg-[#E46455] !text-white" : "bg-white text-black hover:bg-[#f5f5f5]"}`}
                         onClick={() => {
@@ -377,7 +377,7 @@ useEffect(() => {
                 >
                   <div className="icon-static-setup order-button"></div>
                 </button>
-                {viewMode === "cases" ? (
+                {/* {viewMode === "cases" ? (
                   user?.role == "head" && (
                     <div className="flex gap-5 ml-auto">
                       <button
@@ -405,7 +405,7 @@ useEffect(() => {
                       )}
                     </div>
                   )
-                ) : null}
+                ) : null} */}
                 </>
                 )}
               </div>
@@ -424,59 +424,53 @@ useEffect(() => {
           {/* wip */}
           {/* add ui for selecting by date and time */}
           {timeFilter && (
-            <div className="border border-gray-400 rounded-xl p-5 w-fit bg-white space-y-5">
-              {/* time select */ }
-              <div className="flex items-center gap-3">
-                <label className="font-semibold w-28">Select Time:</label>
-                <select
-                  className="border rounded-md px-3 py-2 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={timeRange}
-                  onChange={(e) => setTimeRange(e.target.value)}
-                >
-                  <option value="">Choose a time range</option>
-                  {/* add options here */}
-                </select>
-                <button
-                  //onClick={handleTimeApply}
-                  className="text-white px-4 py-2 rounded-lg hover:bg-[#277195] bg-[#3186B2]"
-                >
-                  Apply
-                </button> 
-              </div>
+  <div className="border border-gray-400 rounded-xl p-6 w-fit bg-white space-y-6">
+    {/* time select */}
+    <div className="flex items-center gap-4">
+      <label className="font-bold-label w-36 text-lg">Select Time:</label>
+      <select
+        className="border rounded-lg px-4 py-3 w-60 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        value={timeRange}
+        onChange={(e) => setTimeRange(e.target.value)}
+      >
+        <option value="">Choose a time range</option>
+        {/* add options here */}
+      </select>
+      <button
+        className="text-white text-base px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
+      >
+        Apply
+      </button>
+    </div>
 
-              <hr className="border-gray-300" />
+    <hr className="border-gray-300" />
 
-              {/* date select */}
-               <div className="flex items-center gap-3">
-                <label className="font-semibold w-28">Select Date:</label>
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <span>to</span>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="border rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <button
-                    //onClick={handleDateApply}
-                    className="text-white px-4 py-2 rounded-lg hover:bg-[#277195] bg-[#3186B2]"
-                  >
-                    Apply
-                  </button>
-                </div> 
-              </div>
-            </div>
-          )}
+    {/* date select */}
+    <div className="flex items-center gap-4">
+      <label className="font-bold-label w-36 text-lg">Select Date:</label>
+      <div className="flex items-center gap-3">
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="border rounded-lg px-4 py-3 w-48 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <span className="text-lg">to</span>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="border rounded-lg px-4 py-3 w-48 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          className="text-white text-base px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  </div>
+)}
           {viewMode === "cases" ? (
             deleteMode && (
               <div className="flex justify-between items-center w-full">
