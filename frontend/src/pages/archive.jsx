@@ -377,7 +377,7 @@ useEffect(() => {
                 >
                   <div className="icon-static-setup order-button"></div>
                 </button>
-                {/* {viewMode === "cases" ? (
+                {viewMode === "cases" ? (
                   user?.role == "head" && (
                     <div className="flex gap-5 ml-auto">
                       <button
@@ -405,7 +405,7 @@ useEffect(() => {
                       )}
                     </div>
                   )
-                ) : null} */}
+                ) : null}
                 </>
                 )}
               </div>
