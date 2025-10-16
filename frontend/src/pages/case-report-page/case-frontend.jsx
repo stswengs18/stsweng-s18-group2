@@ -2310,6 +2310,3 @@ function CaseFrontend({ creating = false }) {
 }
 
 export default CaseFrontend;
-}
-
-export default CaseFrontend;
