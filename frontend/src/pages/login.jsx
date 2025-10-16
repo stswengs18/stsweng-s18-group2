@@ -59,7 +59,7 @@ export default function Login() {
     return (
         <>
             <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white
-                            ${isSmallScreen ? 'w-[calc(100%-2rem)] max-w-[95vw] h-auto min-h-[60vh] max-h-[90vh] p-4' : 'max-w-[75rem] w-full min-h-max p-10'} rounded-lg drop-shadow-card flex
+                            ${isSmallScreen ? 'w-[calc(100%-2rem)] max-w-[95vw] h-auto p-4' : 'max-w-[75rem] w-full h-auto p-10'} rounded-lg drop-shadow-card flex
                             flex-col justify-around items-center gap-5 overflow-y-auto`}>
 
                 <div className="main-logo main-logo-text-nav flex items-center">
