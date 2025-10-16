@@ -93,10 +93,10 @@ app.use(
             collectionName: "sessions",
         }),
         cookie: {
-            maxAge: process.env.COOKIE_MAX_AGE ? parseInt(process.env.COOKIE_MAX_AGE) : null, 
+            maxAge: process.env.COOKIE_MAX_AGE ? parseInt(process.env.COOKIE_MAX_AGE) : 24 * 60 * 60 * 1000, // 24 hours default
             httpOnly: true, 
-            secure: true, // Keep true since you're using HTTPS everywhere
-            sameSite: 'none'
+            secure: process.env.NODE_ENV === 'production', // Only secure in production
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Use 'lax' for localhost
         }
     })
 );
