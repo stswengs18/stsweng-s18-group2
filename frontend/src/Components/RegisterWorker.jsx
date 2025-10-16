@@ -18,6 +18,7 @@ export default function RegisterWorker({
   const [modalConfirm, setModalConfirm] = useState(false);
   const [modalOnConfirm, setModalOnConfirm] = useState(() => { });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   const [formData, setFormData] = useState({
     // sdw_id: '',
@@ -38,6 +39,8 @@ export default function RegisterWorker({
   const [socialDevelopmentWorkers, setSocialDevelopmentWorkers] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
   const [projectLocations, setProjectLocations] = useState([])
+
+  const isSmallScreen = windowWidth <= 600;
 
   //   const projectLocations = [
   //   { name: "AMP", projectCode: "AMP" },
@@ -260,6 +263,18 @@ export default function RegisterWorker({
     setModalOnConfirm(() => { });
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const modalClasses = isSmallScreen 
+    ? "relative bg-white rounded-lg drop-shadow-card w-[calc(100%-4rem)] max-w-[90vw] min-h-[40rem] z-10 overflow-hidden flex flex-col mx-8"
+    : "relative bg-white rounded-lg drop-shadow-card max-w-[60rem] w-full min-h-[40rem] z-10 overflow-hidden flex flex-col";
 
   return (
     <>
@@ -285,7 +300,7 @@ export default function RegisterWorker({
           >
             <div className="absolute inset-0 bg-black/50" onClick={onClose}></div>
 
-            <div className="relative bg-white rounded-lg drop-shadow-card max-w-[60rem] w-full min-h-[40rem] z-10 overflow-hidden flex flex-col">
+            <div className={modalClasses}>
               <div className="w-full p-5 drop-shadow-base bg-gray-100">
                 <h2 className="header-sub text-xl font-bold">Register New Worker</h2>
               </div>
