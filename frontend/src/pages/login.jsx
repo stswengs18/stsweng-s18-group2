@@ -12,6 +12,7 @@ export default function Login() {
 
     const isSmallScreen = windowWidth <= 720;
     const isVerySmallScreen = windowWidth <= 600;
+    const isExtraSmallScreen = windowWidth <= 450;
 
     useEffect(() => {
         const handleResize = () => {
@@ -63,10 +64,10 @@ export default function Login() {
                             flex-col justify-around items-center gap-5 overflow-y-auto`}>
 
                 <div className="main-logo main-logo-text-nav flex items-center">
-                    <div className="main-logo-setup folder-logo !w-[8rem] !h-[12rem]"></div>
+                    <div className={`main-logo-setup folder-logo ${isExtraSmallScreen ? '!w-[6rem] !h-[8rem]' : '!w-[8rem] !h-[12rem]'}`}></div>
                     <div className="flex flex-col">
-                        <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem] break-words">Unbound Manila Foundation Inc.</p>
-                        <p className="main-logo-text-nav !text-[3rem] break-words">Case Management System</p>
+                        <p className={`main-logo-text-nav-sub mb-[-1rem] break-words ${isExtraSmallScreen ? '!text-[1.5rem]' : '!text-[2rem]'}`}>Unbound Manila Foundation Inc.</p>
+                        <p className={`main-logo-text-nav break-words ${isExtraSmallScreen ? '!text-[2rem]' : '!text-[3rem]'}`}>Case Management System</p>
                     </div>
                 </div>
 
