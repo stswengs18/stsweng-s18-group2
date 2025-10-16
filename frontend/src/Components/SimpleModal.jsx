@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // NOTE: imageCenter is an html tag
 export default function SimpleModal({ isOpen, onClose, title, imageCenter,
   bodyText, confirm = false, onConfirm, onCancel }) {
-  // if (!isOpen) return null;
-
+  // if (!isOpen) return null;  //
   
   return (
     <AnimatePresence>
