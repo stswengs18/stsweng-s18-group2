@@ -294,6 +294,7 @@ export default function SpuPage() {
                                                                     name={`${worker.first_name} ${worker.last_name}`}
                                                                     role={worker.role}
                                                                     spu_id={worker.spu_id}
+                                                                    hideSpuColumn={hideSpuColumn}
                                                                 />
                                                             ))}
                                                         </>
