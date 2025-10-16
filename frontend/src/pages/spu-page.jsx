@@ -26,6 +26,8 @@ export default function SpuPage() {
 
     const [collapsedSpus, setCollapsedSpus] = useState({});
     const [addOpen, setAddOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
     const [loadingStage, setLoadingStage] = useState(0);
     const [loadingComplete, setLoadingComplete] = useState(false);
@@ -43,49 +45,49 @@ export default function SpuPage() {
         document.title = "SPU Page";
     }, []);
 
-const loadData = async () => {
-            try {
-                setLoadingStage(0); // red
+    const loadData = async () => {
+        try {
+            setLoadingStage(0); // red
 
-                const sessionData = await fetchSession();
-                const currentUser = sessionData?.user;
-                setUser(currentUser);
+            const sessionData = await fetchSession();
+            const currentUser = sessionData?.user;
+            setUser(currentUser);
 
-                if (!currentUser || currentUser.role !== "head") {
-                    navigate("/unauthorized");
-                    return;
-                }
-
-                setLoadingStage(1); // blue
-
-                const [allSpus, allSdws, allCases] = await Promise.all([
-                    fetchAllSpus(),
-                    fetchAllSDWs(),
-                    fetchAllCases(),
-                ]);
-
-                const activeSpus = (allSpus || []).filter(spu => spu.is_active);
-                setSpus(activeSpus);
-
-                const activeSdws = (allSdws || []).filter(sdw => sdw.is_active);
-                setSdws(activeSdws);
-
-                const activeCases = (allCases || []).filter(c => c.is_active);
-                setCases(activeCases);
-
-                const initialCollapseState = {};
-                activeSpus.forEach(spu => {
-                    initialCollapseState[spu._id] = true;
-                });
-                setCollapsedSpus(initialCollapseState);
-
-                setLoadingStage(2); // green
-                setLoadingComplete(true); // smooth transition
-            } catch (err) {
-                console.error("Error loading SPU data page:", err);
+            if (!currentUser || currentUser.role !== "head") {
                 navigate("/unauthorized");
+                return;
             }
-        };
+
+            setLoadingStage(1); // blue
+
+            const [allSpus, allSdws, allCases] = await Promise.all([
+                fetchAllSpus(),
+                fetchAllSDWs(),
+                fetchAllCases(),
+            ]);
+
+            const activeSpus = (allSpus || []).filter(spu => spu.is_active);
+            setSpus(activeSpus);
+
+            const activeSdws = (allSdws || []).filter(sdw => sdw.is_active);
+            setSdws(activeSdws);
+
+            const activeCases = (allCases || []).filter(c => c.is_active);
+            setCases(activeCases);
+
+            const initialCollapseState = {};
+            activeSpus.forEach(spu => {
+                initialCollapseState[spu._id] = true;
+            });
+            setCollapsedSpus(initialCollapseState);
+
+            setLoadingStage(2); // green
+            setLoadingComplete(true); // smooth transition
+        } catch (err) {
+            console.error("Error loading SPU data page:", err);
+            navigate("/unauthorized");
+        }
+    };
 
     useEffect(() => {
         loadData();
@@ -149,6 +151,18 @@ const loadData = async () => {
     const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
     if (!loadingComplete) return <Loading color={loadingColor} />;
 
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const isMobile = windowWidth <= 650;
+    const isVerySmall = windowWidth <= 400;
+
     return (
         <>
             <SimpleModal
@@ -175,20 +189,44 @@ const loadData = async () => {
                 existingSpus={spus}
             />
 
-            <div className="fixed top-0 left-0 right-0 z-50 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
-                <a href="/" className="main-logo main-logo-text-nav">
-                    <div className="main-logo-setup folder-logo"></div>
-                    <div className="flex flex-col">
-                        <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
-                        <p className="main-logo-text-nav">Case Management System</p>
-                    </div>
-                </a>
+            <div className="fixed top-0 left-0 right-0 z-60 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
+                <div className="flex items-center gap-4">
+                    {isMobile && (
+                        <button
+                            className="side-icon-setup menu-button"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        >
+                        </button>
+                    )}
+
+                    <a href="/" className="main-logo main-logo-text-nav">
+                        <div className="main-logo-setup folder-logo"></div>
+                        <div className="flex flex-col">
+                            {isVerySmall ? (
+                                <>
+                                    <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila</p>
+                                    <p className="main-logo-text-nav">CMS</p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
+                                    <p className="main-logo-text-nav">Case Management System</p>
+                                </>
+                            )}
+                        </div>
+                    </a>
+                </div>
             </div>
 
             <main className="min-h-[calc(100vh-4rem)] w-full flex mt-[9rem]">
-                <SideBar user={user} />
+                <SideBar
+                    user={user}
+                    isMenuOpen={isMenuOpen}
+                    setIsMenuOpen={setIsMenuOpen}
+                    isMobile={isMobile}
+                />
 
-                <div className="flex flex-col w-full gap-10 ml-[15rem] px-8 pb-20">
+                <div className={`flex flex-col w-full gap-10 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8 pb-20`}>
                     <div className="flex justify-between items-center">
                         <h1 className="header-main">SPU Overview</h1>
                         <button
