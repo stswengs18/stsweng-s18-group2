@@ -214,7 +214,7 @@ console.log("CURRENT SPU:", currentSPU);
           setIsMenuOpen={setIsMenuOpen}
           isMobile={isMobile}
         />
-        <div className={`flex flex-col w-full gap-15 max-[700px]:gap-8 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8`}>
+        <div className={`flex flex-col w-full gap-8 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8`}>
 
           <h1 className="header-main">
             {user?.role === "head"
