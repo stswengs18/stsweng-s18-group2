@@ -21,7 +21,6 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
                 onClose={() => setIsProfileOpen(false)}
             />
             
-            {/* Mobile overlay */}
             {isMenuOpen && (
                 <div 
                     className="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-30"

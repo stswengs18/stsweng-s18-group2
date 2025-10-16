@@ -29,12 +29,13 @@ export default function NotFound({ message = "The page you're looking for does n
             <div className="fixed top-0 left-0 right-0 z-50 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
                 <div className="flex items-center gap-4">
                     <button 
-                        className="menu-button hidden"
+                        className="side-icon-setup menu-button hidden"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         style={{ display: 'none' }}
                     >
                         <img src="/menu.svg" alt="Menu" className="w-6 h-6" />
                     </button>
+
                     
                     <a href="/" className="main-logo main-logo-text-nav">
                         <div className="main-logo-setup folder-logo"></div>
