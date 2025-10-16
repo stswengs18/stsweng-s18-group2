@@ -1348,9 +1348,9 @@ function CaseFrontend({ creating = false }) {
                                 </>
                             )}
 
-                            <div className="flex flex-wrap justify-between gap-10">
+                            <div className={`grid gap-10 ${isFormTwoColumn ? 'grid-cols-1' : isFormAdjustedRatio ? 'grid-cols-[30%_70%]' : 'grid-cols-2'}`}>
                                 {/* SPU Project */}
-                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-[30%]' : 'w-full md:w-[48%]'}`}>
+                                <div className="flex flex-col">
                                     {(editingField === "all" || editingField === "core-fields") ? (
                                         <>
                                             <label className='font-bold-label'><span className='text-red-500'>*</span> SPU Project</label>
@@ -1387,7 +1387,7 @@ function CaseFrontend({ creating = false }) {
                                 </div>
 
                                 {/* Social Development Worker */}
-                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-[70%]' : 'w-full md:w-[48%]'}`}>
+                                <div className="flex flex-col">
                                     {(editingField === "all" || editingField === "core-fields") ? (
                                         <>
                                             <label className='font-bold-label'><span className='text-red-500'>*</span> Social Development Worker</label>
@@ -1417,8 +1417,6 @@ function CaseFrontend({ creating = false }) {
                                                         </option>
                                                     ))}
                                             </select>
-
-
                                         </>
                                     ) : (
                                         <p className="font-label">
@@ -1429,7 +1427,6 @@ function CaseFrontend({ creating = false }) {
                                                 (w) => w.id === data.assigned_sdw,
                                             )?.username || "-"}
                                         </p>
-
                                     )}
                                 </div>
                             </div>
@@ -2135,7 +2132,7 @@ function CaseFrontend({ creating = false }) {
                                         try {
                                             const updated = await editAssessment(clientId, {
                                                 assessment: drafts.assessment,
-                                            });
+                                                                                       });
 
                                             setData((prev) => ({
                                                 ...prev,
@@ -2310,6 +2307,9 @@ function CaseFrontend({ creating = false }) {
                 </>)}
         </>
     );
+}
+
+export default CaseFrontend;
 }
 
 export default CaseFrontend;
