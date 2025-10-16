@@ -16,7 +16,7 @@ export default function SimpleModal({ isOpen, onClose, title, imageCenter,
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isSmallScreen = windowWidth <= 700;
+  const isSmallScreen = windowWidth <= 800;
   const modalClasses = isSmallScreen 
     ? "relative bg-white rounded-lg drop-shadow-card w-[calc(100%-4rem)] max-w-[90vw] min-h-[30rem] z-10 overflow-hidden flex flex-col mx-8"
     : "relative bg-white rounded-lg drop-shadow-card max-w-[80rem] w-full min-h-[30rem] z-10 overflow-hidden flex flex-col";
