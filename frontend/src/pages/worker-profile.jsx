@@ -85,6 +85,23 @@ export default function WorkerProfile() {
     const hideSDWColumn = windowWidth <= 380;
 
     useEffect(() => {
+        if (data.first_name || data.last_name) {
+            document.title = `${data.first_name} ${data.last_name} | Worker Profile`;
+        } else {
+            document.title = "Worker Profile";
+        }
+    }, [data.first_name, data.middle_name, data.last_name]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
         const loadSessionAndWorker = async () => {
             setLoadingStage(0); // red
             const sessionData = await fetchSession();
