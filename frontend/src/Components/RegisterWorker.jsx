@@ -275,8 +275,8 @@ export default function RegisterWorker({
   }, []);
 
   const modalClasses = isSmallScreen 
-    ? "relative bg-white rounded-lg drop-shadow-card w-[calc(100%-4rem)] max-w-[90vw] min-h-[40rem] z-10 overflow-hidden flex flex-col mx-8"
-    : "relative bg-white rounded-lg drop-shadow-card max-w-[60rem] w-full min-h-[40rem] z-10 overflow-hidden flex flex-col";
+    ? "relative bg-white rounded-lg drop-shadow-card w-[calc(100%-4rem)] max-w-[90vw] max-h-[90vh] z-10 overflow-hidden flex flex-col mx-8"
+    : "relative bg-white rounded-lg drop-shadow-card max-w-[60rem] w-full max-h-[90vh] z-10 overflow-hidden flex flex-col";
 
   return (
     <>
@@ -295,7 +295,7 @@ export default function RegisterWorker({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 flex items-center justify-center z-80"
+            className="fixed inset-0 flex items-center justify-center z-80 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -303,12 +303,11 @@ export default function RegisterWorker({
             <div className="absolute inset-0 bg-black/50" onClick={onClose}></div>
 
             <div className={modalClasses}>
-              <div className="w-full p-5 drop-shadow-base bg-gray-100">
+              <div className="w-full p-5 drop-shadow-base bg-gray-100 flex-shrink-0">
                 <h2 className="header-sub text-xl font-bold">Register New Worker</h2>
               </div>
 
-              <div className="flex flex-col gap-5 flex-1 p-10">
-
+              <div className="flex flex-col gap-5 flex-1 p-10 overflow-y-auto">
                 <div className={`flex ${isVerySmallScreen ? 'flex-col' : ''} gap-3`}>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="font-bold-label">First Name</p>
@@ -489,7 +488,7 @@ export default function RegisterWorker({
                   </div>}
                 </div>
 
-                <div className="flex justify-end gap-4 mt-8">
+                <div className="flex justify-end gap-4 mt-8 flex-shrink-0">
                   <button className="btn-outline font-bold-label" onClick={onClose}>
                     Cancel
                   </button>
@@ -504,4 +503,5 @@ export default function RegisterWorker({
       </AnimatePresence>
     </>
   );
+}
 }
