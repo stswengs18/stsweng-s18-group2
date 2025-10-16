@@ -1071,18 +1071,6 @@ function CaseFrontend({ creating = false }) {
         }
     }, [loadingComplete]);
 
-    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
-    const isFormTwoColumn = windowWidth <= 760;
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowWidth(window.innerWidth);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
     if (!loadingComplete) {
         return (
             <div className="w-full h-screen flex flex-col items-center justify-center">
@@ -1269,7 +1257,7 @@ function CaseFrontend({ creating = false }) {
 
                             {(editingField === "all" || editingField === "core-fields") ? (
                                 <>
-                                    <div className={`flex gap-5 w-full ${isFormTwoColumn ? 'flex-col' : ''}`}>
+                                    <div className="flex gap-5 w-full">
                                         <div className="flex flex-col gap-5 w-full">
                                             <label className="font-bold-label"><span className='text-red-500'>*</span> First Name</label>
                                             <input
@@ -1347,9 +1335,9 @@ function CaseFrontend({ creating = false }) {
                                 </>
                             )}
 
-                            <div className={`flex gap-10 ${isFormTwoColumn ? 'flex-col' : 'flex-wrap justify-between'}`}>
+                            <div className="flex flex-wrap justify-between gap-10">
                                 {/* SPU Project */}
-                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : 'w-full md:w-[48%]'}`}>
+                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-full md:w-[30%]' : 'w-full md:w-[48%]'}`}>
                                     {(editingField === "all" || editingField === "core-fields") ? (
                                         <>
                                             <label className='font-bold-label'><span className='text-red-500'>*</span> SPU Project</label>
@@ -1386,7 +1374,7 @@ function CaseFrontend({ creating = false }) {
                                 </div>
 
                                 {/* Social Development Worker */}
-                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : 'w-full md:w-[48%]'}`}>
+                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-full md:w-[65%]' : 'w-full md:w-[48%]'}`}>
                                     {(editingField === "all" || editingField === "core-fields") ? (
                                         <>
                                             <label className='font-bold-label'><span className='text-red-500'>*</span> Social Development Worker</label>
