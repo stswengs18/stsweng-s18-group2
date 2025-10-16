@@ -1345,91 +1345,82 @@ function CaseFrontend({ creating = false }) {
                                         ></button>}
                                     </div>
                                     <h2 className="header-sub">{data.sm_number}</h2>
+                                    
+                                    <div className={`grid gap-10 ${isFormTwoColumn ? 'grid-cols-1' : isFormAdjustedRatio ? 'grid-cols-[30%_70%]' : 'grid-cols-2'}`}>
+                                        <p className="font-label">
+                                            <span className="font-bold-label">SPU Project:</span>{" "}
+                                            {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
+                                        </p>
+                                        <p className="font-label">
+                                            <span className="font-bold-label">Social Development Worker:</span>{" "}
+                                            {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)?.username || "-"}
+                                        </p>
+                                    </div>
+                                    
+                                    <p className="font-label">
+                                        <span className="font-bold-label">Classification:</span> {data.classifications || "-"}
+                                    </p>
                                 </>
                             )}
 
-                            <div className={`grid gap-10 ${isFormTwoColumn ? 'grid-cols-1' : isFormAdjustedRatio ? 'grid-cols-[30%_70%]' : 'grid-cols-2'}`}>
-                                {/* SPU Project */}
-                                <div className="flex flex-col">
-                                    {(editingField === "all" || editingField === "core-fields") ? (
-                                        <>
-                                            <label className='font-bold-label'><span className='text-red-500'>*</span> SPU Project</label>
-                                            <select
-                                                className="text-input font-label"
-                                                value={drafts.spu}
-                                                disabled={!["head", "supervisor"].includes(user?.role)}
-                                                onChange={(e) =>
-                                                    setDrafts((prev) => ({
-                                                        ...prev,
-                                                        spu: e.target.value,
-                                                    }))
-                                                }
-                                                data-cy='spu'
-                                            >
-                                                <option value="">Select SPU</option>
-                                                {projectLocation.map((spu) => (
-                                                    <option key={spu._id} value={spu._id}>
-                                                        {spu.spu_name}
+                            {(editingField === "all" || editingField === "core-fields") && (
+                                <div className={`grid gap-10 ${isFormTwoColumn ? 'grid-cols-1' : isFormAdjustedRatio ? 'grid-cols-[30%_70%]' : 'grid-cols-2'}`}>
+                                    {/* SPU Project */}
+                                    <div className="flex flex-col">
+                                        <label className='font-bold-label'><span className='text-red-500'>*</span> SPU Project</label>
+                                        <select
+                                            className="text-input font-label"
+                                            value={drafts.spu}
+                                            disabled={!["head", "supervisor"].includes(user?.role)}
+                                            onChange={(e) =>
+                                                setDrafts((prev) => ({
+                                                    ...prev,
+                                                    spu: e.target.value,
+                                                }))
+                                            }
+                                            data-cy='spu'
+                                        >
+                                            <option value="">Select SPU</option>
+                                            {projectLocation.map((spu) => (
+                                                <option key={spu._id} value={spu._id}>
+                                                    {spu.spu_name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Social Development Worker */}
+                                    <div className="flex flex-col">
+                                        <label className='font-bold-label'><span className='text-red-500'>*</span> Social Development Worker</label>
+                                        <select
+                                            className="text-input font-label"
+                                            disabled={!["head", "supervisor"].includes(user?.role)}
+                                            value={drafts.assigned_sdw}
+                                            onChange={(e) => {
+                                                setDrafts((prev) => ({
+                                                    ...prev,
+                                                    assigned_sdw: e.target.value,
+                                                }));
+                                            }}
+                                            data-cy="assigned-sdw"
+                                        >
+                                            <option value="">Select SDW</option>
+                                            {socialDevelopmentWorkers
+                                                .filter((sdw) => {
+                                                    const selectedSPUName = projectLocation.find(
+                                                        (spu) => spu._id === drafts.spu
+                                                    )?.spu_name;
+                                                    return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
+                                                })
+                                                .map((sdw) => (
+                                                    <option key={sdw.id} value={sdw.id}>
+                                                        {sdw.username}
                                                     </option>
                                                 ))}
-                                            </select>
-                                        </>
-                                    ) : (
-                                        <p className="font-label">
-                                            <span className="font-bold-label">
-                                                SPU Project:
-                                            </span>{" "}
-                                            {projectLocation.find(
-                                                (p) => p._id === data.spu,
-                                            )?.spu_name || "-"}
-                                        </p>
-                                    )}
+                                        </select>
+                                    </div>
                                 </div>
-
-                                {/* Social Development Worker */}
-                                <div className="flex flex-col">
-                                    {(editingField === "all" || editingField === "core-fields") ? (
-                                        <>
-                                            <label className='font-bold-label'><span className='text-red-500'>*</span> Social Development Worker</label>
-                                            <select
-                                                className="text-input font-label"
-                                                disabled={!["head", "supervisor"].includes(user?.role)}
-                                                value={drafts.assigned_sdw}
-                                                onChange={(e) => {
-                                                    setDrafts((prev) => ({
-                                                        ...prev,
-                                                        assigned_sdw: e.target.value,
-                                                    }));
-                                                }}
-                                                data-cy="assigned-sdw"
-                                            >
-                                                <option value="">Select SDW</option>
-                                                {socialDevelopmentWorkers
-                                                    .filter((sdw) => {
-                                                        const selectedSPUName = projectLocation.find(
-                                                            (spu) => spu._id === drafts.spu
-                                                        )?.spu_name;
-                                                        return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
-                                                    })
-                                                    .map((sdw) => (
-                                                        <option key={sdw.id} value={sdw.id}>
-                                                            {sdw.username}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </>
-                                    ) : (
-                                        <p className="font-label">
-                                            <span className="font-bold-label">
-                                                Social Development Worker:
-                                            </span>{" "}
-                                            {socialDevelopmentWorkers.find(
-                                                (w) => w.id === data.assigned_sdw,
-                                            )?.username || "-"}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+                            )}
 
                             <div className='flex flex-col w-full'>
                                 <label className="font-bold-label mb-2">
@@ -1509,8 +1500,6 @@ function CaseFrontend({ creating = false }) {
                                     Submit Changes
                                 </button>
                             )}
-
-
                         </section>
 
                         <section className='flex flex-col gap-8' id="identifying-data" ref={ref1}>
@@ -1748,13 +1737,6 @@ function CaseFrontend({ creating = false }) {
                             {creating && <p className="font-label">Family Composition can be filled out on created cases.</p>}
 
                             {!creating && <>
-                                {data.is_active && user?.role == "sdw" && !isTerminated && <button
-                                    className="btn-primary font-bold-label drop-shadow-base"
-                                    onClick={handleAddFamilyMember}
-                                    data-cy='add-family-member'
-                                >
-                                    Add New Family Member
-                                </button>}
 
                                 <div className="flex justify-between gap-10">
                                     {familyMembers.length === 0 ? (
