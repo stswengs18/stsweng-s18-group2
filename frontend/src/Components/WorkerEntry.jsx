@@ -40,6 +40,8 @@ export default function WorkerEntry({
   archive,
   hideSpuColumn = false
 }) {
+  const initials = name.charAt(0).toUpperCase();
+
   let bgColor = getColorFromId(name);
   let textColor = getTextColorForBackground(bgColor);
 
@@ -58,24 +60,10 @@ export default function WorkerEntry({
           className="rounded-full h-[4.5rem] min-w-[4.5rem] flex justify-center items-center header-sub"
           style={{ backgroundColor: bgColor, color: textColor }}
         >
-          {name.charAt(0).toUpperCase()}
+          {initials}
         </div>
         <div className="flex flex-col gap-2">
           <p>{name}</p>
-        </div>
-      </div>
-      <p className="text-center">{role === "sdw" ? "SDW" : role === "supervisor" ? "Supervisor" : "Head"}</p>
-      {!hideSpuColumn && <p className="text-center ml-[4%]">{spu_id}</p>}
-    </a>
-  );
-}
-          style={{ backgroundColor: bgColor, color: textColor }}
-        >
-          {name.charAt(0).toUpperCase()}
-        </div>
-        <div className="flex flex-col gap-2">
-          <p>{name}</p>
-          {/* <p>{sdw_id}</p> */}
         </div>
       </div>
       <p className="text-center">{role === "sdw" ? "SDW" : role === "supervisor" ? "Supervisor" : "Head"}</p>
