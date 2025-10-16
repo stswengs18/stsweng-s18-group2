@@ -8,29 +8,57 @@
 @import './styles/navigation.css';
 
 html {
-  font-size: 56.25%;
+  font-size: 56.25%; 
 }
 
+/* Tablet breakpoint */
 @media (min-width: 768px) {
   html {
     font-size: 58.75%;
   }
 }
 
+/* Desktop breakpoint */
 @media (min-width: 1024px) {
   html {
-    font-size: 62.5%; /* 1rem = 10px on desktop */
+    font-size: 62.5%; /* 1rem = 10px on desktop*/
   }
 }
+
+/* Large desktop breakpoint */
 @media (min-width: 1440px) {
   html {
-    font-size: 65%;
+    font-size: 65%
   }
 }
+
+/* Extra large screens */
 @media (min-width: 1920px) {
   html {
     font-size: 68.75%;
   }
+}
+
+:root {
+    --color-primary: #E46455;
+    --color-green: #78A181;
+    --color-blue: #2AB0B7;
+
+    --color-white: #ffffff;
+    --color-black: #2B2D31;
+
+    --accent-dark: #93989E;
+    --accent-white: #F2F2F2;
+
+    --text-color: hsl(0, 0%, 5%);
+    --text-color-muted: hsl(0, 0%, 30%);
+
+    --bg-color-dark: hsl(0, 0%, 90%);
+    --bg-color: hsl(0, 0%, 95%);
+    --bg-color-light: hsl(0, 0%, 100%);
+
+    --border-color: hsl(0, 0%, 70%);
+    --border-color-muted: hsl(0, 0%, 90%);
 }
 
 input[type="checkbox"] {
