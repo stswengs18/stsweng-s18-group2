@@ -135,7 +135,7 @@ useEffect(() => {
 }, [allData, currentSPU, sortBy, sortOrder, searchQuery]);
 
 
-console.log("CURRENT SPU:", currentSPU);
+console.log("CURRENT SPU:", user);
 
 
   useEffect(() => {
