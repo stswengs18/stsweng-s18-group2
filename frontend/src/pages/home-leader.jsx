@@ -141,13 +141,16 @@ console.log("CURRENT SPU:", currentData);
   useEffect(() => {
     if (!user) return;
 
+    const spuFromData = currentData.length > 0 ? currentData[0].spu_id : null;
+    const displaySpu = user.spu_name || spuFromData;
+
     const title =
       user.role === "supervisor"
-        ? (user.spu_name || "Coordinating Unit")
+        ? (displaySpu || "Coordinating Unit")
         : "Coordinating Unit";
 
     document.title = title;
-  }, [user]);
+  }, [user, currentData]);
 
   // Determine color for Loading component
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
@@ -219,9 +222,14 @@ console.log("CURRENT SPU:", currentData);
           <h1 className="header-main">
             {user?.role === "head"
               ? "Coordinating Unit"
-              : shortenTitle
-                ? (user?.spu_name || "Coordinating Unit")
-                : `Coordinating Unit${user?.spu_name ? ` - ${user.spu_name}` : ""}`}
+              : (() => {
+                  const spuFromData = currentData.length > 0 ? currentData[0].spu_id : null;
+                  const displaySpu = user?.spu_name || spuFromData;
+                  
+                  return shortenTitle
+                    ? (displaySpu || "Coordinating Unit")
+                    : `Coordinating Unit${displaySpu ? ` - ${displaySpu}` : ""}`;
+                })()}
           </h1>
 
           <div className={`flex ${isSmallLayout ? 'flex-col' : 'justify-between'} gap-10`}>
