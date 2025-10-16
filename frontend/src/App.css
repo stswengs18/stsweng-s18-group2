@@ -56,3 +56,21 @@
     padding: 2rem;
   }
 }
+
+/* Mobile menu styles */
+@media (max-width: 650px) {
+  .menu-button {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
