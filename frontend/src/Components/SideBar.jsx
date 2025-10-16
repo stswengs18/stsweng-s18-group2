@@ -82,6 +82,7 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
                         z-index: 50 !important;
                         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
                         background: white;
+                        padding-top: 8rem;
                     }
                     
                     .side-nav.mobile-open {
