@@ -1072,8 +1072,8 @@ function CaseFrontend({ creating = false }) {
     }, [loadingComplete]);
 
     const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
-    const isFormTwoColumn = windowWidth <= 760;
-    const isFormAdjustedRatio = windowWidth <= 780;
+    const isFormTwoColumn = windowWidth <= 600;  // Changed from 760 to 600
+    const isFormAdjustedRatio = windowWidth <= 900; // Changed from 780 to 900
 
     useEffect(() => {
         const handleResize = () => {
@@ -1350,7 +1350,7 @@ function CaseFrontend({ creating = false }) {
 
                             <div className="flex flex-wrap justify-between gap-10">
                                 {/* SPU Project */}
-                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-full md:w-[30%]' : 'w-full md:w-[48%]'}`}>
+                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-full md:w-[40%]' : 'w-full md:w-[48%]'}`}>
                                     {(editingField === "all" || editingField === "core-fields") ? (
                                         <>
                                             <label className='font-bold-label'><span className='text-red-500'>*</span> SPU Project</label>
@@ -1387,7 +1387,7 @@ function CaseFrontend({ creating = false }) {
                                 </div>
 
                                 {/* Social Development Worker */}
-                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-full md:w-[65%]' : 'w-full md:w-[48%]'}`}>
+                                <div className={`flex flex-col ${isFormTwoColumn ? 'w-full' : isFormAdjustedRatio ? 'w-full md:w-[55%]' : 'w-full md:w-[48%]'}`}>
                                     {(editingField === "all" || editingField === "core-fields") ? (
                                         <>
                                             <label className='font-bold-label'><span className='text-red-500'>*</span> Social Development Worker</label>
