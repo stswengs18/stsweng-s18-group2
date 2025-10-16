@@ -31,7 +31,7 @@ function HomeLeader() {
   const [loadingStage, setLoadingStage] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
 
-  const isMobile = windowWidth <= 650;
+  const isMobile = windowWidth <= 700; // Changed from 650 to 700
   const isVerySmall = windowWidth <= 400;
   const hideSpuColumn = windowWidth <= 800;
   const hideTypeColumn = windowWidth <= 400;
@@ -216,19 +216,6 @@ useEffect(() => {
               : `Coordinating Unit${user?.spu_name ? ` - ${user.spu_name}` : ""}`}
           </h1>
 
-          {isMobile && (
-            <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full font-label">
-              <div className="nav-search"></div>
-              <input
-                type="text"
-                placeholder="Search"
-                className="focus:outline-none flex-1"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          )}
-
           <div className="flex justify-between gap-10">
             <div className="flex gap-5 justify-between items-center w-full">
               <div className="flex gap-5 w-full">
@@ -281,6 +268,19 @@ useEffect(() => {
               )}
             </div>
           </div>
+
+          {isMobile && (
+            <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full font-label">
+              <div className="nav-search"></div>
+              <input
+                type="text"
+                placeholder="Search"
+                className="focus:outline-none flex-1"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="flex flex-col w-full gap-3">
             <div className={`${hideTypeColumn ? 'grid grid-cols-[1fr]' : hideSpuColumn ? 'grid grid-cols-[2fr_1fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
