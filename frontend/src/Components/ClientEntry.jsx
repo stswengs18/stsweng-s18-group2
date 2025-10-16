@@ -79,7 +79,7 @@ export default function ClientEntry({
             <p>CH: {sm_number}</p>
           )}
           {hideSDWColumn && (
-            <p>SDW: {assigned_sdw_name}</p>
+            <p>Assigned: {assigned_sdw_name}</p>
           )}
         </div>
       </div>
