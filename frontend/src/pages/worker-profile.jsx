@@ -79,6 +79,10 @@ export default function WorkerProfile() {
 
     const isTwoColumnLayout = windowWidth <= 850;
     const isOneColumnLayout = windowWidth <= 380;
+    const hideSpuColumn = windowWidth <= 800;
+    const hideTypeColumn = windowWidth <= 400;
+    const hideCHColumn = windowWidth <= 800;
+    const hideSDWColumn = windowWidth <= 380;
 
     useEffect(() => {
         const loadSessionAndWorker = async () => {
@@ -932,10 +936,10 @@ export default function WorkerProfile() {
                                 <>
                                     <h2 className="header-sub">Clients Assigned</h2>
 
-                                    <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                                    <div className={`${hideSDWColumn ? 'grid grid-cols-[1fr]' : hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                                         <p className="font-bold-label ml-[20%]">Name</p>
-                                        <p className="font-bold-label text-center">CH Number</p>
-                                        <p className="font-bold-label text-center">SDW Assigned</p>
+                                        {!hideCHColumn && !hideSDWColumn && <p className="font-bold-label text-center">CH Number</p>}
+                                        {!hideSDWColumn && <p className="font-bold-label text-center">SDW Assigned</p>}
                                     </div>
 
                                     {handledClients.length === 0 ? (
@@ -951,6 +955,8 @@ export default function WorkerProfile() {
                                                 assigned_sdw_name={client.assigned_sdw_name}
                                                 pendingTermination={client.pendingTermination}
                                                 archive={!client.is_active}
+                                                hideCHColumn={hideCHColumn}
+                                                hideSDWColumn={hideSDWColumn}
                                             />
                                         ))
                                     )}
@@ -963,10 +969,10 @@ export default function WorkerProfile() {
                                         {data.role === "head" ? "Workers in SPU" : "Workers Supervised"}
                                     </h2>
 
-                                    <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                                    <div className={`${hideTypeColumn ? 'grid grid-cols-[1fr]' : hideSpuColumn ? 'grid grid-cols-[2fr_1fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                                         <p className="font-bold-label ml-[20%]">Worker</p>
-                                        <p className="font-bold-label text-center">Type</p>
-                                        <p className="font-bold-label text-center">SPU</p>
+                                        {!hideTypeColumn && <p className="font-bold-label text-center">Type</p>}
+                                        {!hideSpuColumn && !hideTypeColumn && <p className="font-bold-label text-center">SPU</p>}
                                     </div>
 
                                     {handledWorkers.length === 0 ? (
@@ -976,13 +982,14 @@ export default function WorkerProfile() {
                                             <WorkerEntry
                                                 key={worker.id}
                                                 id={worker.id}
-                                                // sdw_id={worker.sdw_id}
                                                 name={
                                                     worker.name ||
                                                     `${worker.first_name} ${worker.middle_name || ""} ${worker.last_name}`
                                                 }
                                                 role={worker.role}
                                                 spu_id={worker.spu_id}
+                                                hideSpuColumn={hideSpuColumn}
+                                                hideTypeColumn={hideTypeColumn}
                                             />
                                         ))
                                     )}
