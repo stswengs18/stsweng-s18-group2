@@ -78,6 +78,7 @@ export default function WorkerProfile() {
     const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
     const isTwoColumnLayout = windowWidth <= 850;
+    const isOneColumnLayout = windowWidth <= 380;
 
     useEffect(() => {
         const loadSessionAndWorker = async () => {
@@ -891,11 +892,11 @@ export default function WorkerProfile() {
                                     </div>
 
 
-                                    <div className={`font-label grid gap-x-10 gap-y-6 ${isTwoColumnLayout ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-3'}`}>
+                                    <div className={`font-label grid gap-x-10 gap-y-6 ${isOneColumnLayout ? 'grid-cols-1' : isTwoColumnLayout ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-3'}`}>
                                         <p><span className="font-bold-label">Username:</span> {data.username || "-"}</p>
                                         <p><span className="font-bold-label">Email:</span> {data.email || "-"}</p>
                                         
-                                        {!isTwoColumnLayout && (
+                                        {!isTwoColumnLayout && !isOneColumnLayout && (
                                             <p><span className="font-bold-label">Contact No.:</span> {data.contact_no || "-"}</p>
                                         )}
 
@@ -918,7 +919,7 @@ export default function WorkerProfile() {
                                             </p>
                                         )}
 
-                                        {isTwoColumnLayout && (
+                                        {(isTwoColumnLayout || isOneColumnLayout) && (
                                             <p><span className="font-bold-label">Contact No.:</span> {data.contact_no || "-"}</p>
                                         )}
                                     </div>
