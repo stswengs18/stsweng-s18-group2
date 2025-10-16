@@ -1217,7 +1217,15 @@ function CaseFrontend({ creating = false }) {
                             </div>
                         </div>
 
-                        <section className="grid gap-6" id="core-fields">
+
+
+
+
+
+
+
+
+<section className="grid gap-6" id="core-fields">
   {/* STATUS + DOWNLOAD */}
   {!creating && (
     <div className="grid grid-cols-[1fr_auto] items-center gap-4">
@@ -1269,7 +1277,7 @@ function CaseFrontend({ creating = false }) {
     </div>
   )}
 
-  {/* INPUT FIELDS */}
+  {/* CORE FIELDS */}
   {(editingField === "all" || editingField === "core-fields") ? (
     <>
       {/* Names */}
@@ -1362,16 +1370,16 @@ function CaseFrontend({ creating = false }) {
   )}
 
   {/* SPU + SDW ROW */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {/* SPU */}
-    <div className="grid gap-2">
+  <div className="grid gap-6 grid-cols-1 md:[grid-template-columns:repeat(2,minmax(0,1fr))]">
+    {/* SPU PROJECT */}
+    <div className="grid gap-2 min-w-0">
       {(editingField === "all" || editingField === "core-fields") ? (
         <>
           <label className="font-bold-label">
             <span className="text-red-500">*</span> SPU Project
           </label>
           <select
-            className="text-input font-label"
+            className="text-input font-label w-full max-w-full min-w-0"
             value={drafts.spu}
             disabled={!["head", "supervisor"].includes(user?.role)}
             onChange={(e) =>
@@ -1387,59 +1395,53 @@ function CaseFrontend({ creating = false }) {
           </select>
         </>
       ) : (
-        <p className="font-label">
+        <p className="font-label min-w-0 break-words">
           <span className="font-bold-label">SPU Project:</span>{" "}
           {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
         </p>
       )}
     </div>
 
-
-
-<div className="grid gap-2 min-w-0">
-  {(editingField === "all" || editingField === "core-fields") ? (
-    <>
-      <label className="font-bold-label">
-        <span className="text-red-500">*</span> Social Development Worker
-      </label>
-
-      {/* wrapper allows the control to shrink */}
-      <div className="min-w-0">
-        <select
-          className="text-input font-label w-full max-w-full min-w-0 overflow-hidden"
-          disabled={!["head", "supervisor"].includes(user?.role)}
-          value={drafts.assigned_sdw}
-          onChange={(e) =>
-            setDrafts((p) => ({ ...p, assigned_sdw: e.target.value }))
-          }
-        >
-          <option value="">Select SDW</option>
-          {socialDevelopmentWorkers
-            .filter((sdw) => {
-              const selectedSPUName = projectLocation.find(
-                (spu) => spu._id === drafts.spu
-              )?.spu_name;
-              return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
-            })
-            .map((sdw) => (
-              <option key={sdw.id} value={sdw.id}>
-                {sdw.username}
-              </option>
-            ))}
-        </select>
-      </div>
-    </>
-  ) : (
-    <p className="font-label min-w-0 break-words">
-      <span className="font-bold-label">Social Development Worker:</span>{" "}
-      {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)?.username || "-"}
-    </p>
-  )}
-</div>
-
-
-
-
+    {/* SOCIAL DEVELOPMENT WORKER */}
+    <div className="grid gap-2 min-w-0">
+      {(editingField === "all" || editingField === "core-fields") ? (
+        <>
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> Social Development Worker
+          </label>
+          <div className="min-w-0">
+            <select
+              className="text-input font-label w-full max-w-full min-w-0 overflow-hidden"
+              disabled={!["head", "supervisor"].includes(user?.role)}
+              value={drafts.assigned_sdw}
+              onChange={(e) =>
+                setDrafts((p) => ({ ...p, assigned_sdw: e.target.value }))
+              }
+            >
+              <option value="">Select SDW</option>
+              {socialDevelopmentWorkers
+                .filter((sdw) => {
+                  const selectedSPUName = projectLocation.find(
+                    (spu) => spu._id === drafts.spu
+                  )?.spu_name;
+                  return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
+                })
+                .map((sdw) => (
+                  <option key={sdw.id} value={sdw.id}>
+                    {sdw.username}
+                  </option>
+                ))}
+            </select>
+          </div>
+        </>
+      ) : (
+        <p className="font-label min-w-0 break-words">
+          <span className="font-bold-label">Social Development Worker:</span>{" "}
+          {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)
+            ?.username || "-"}
+        </p>
+      )}
+    </div>
   </div>
 
   {/* CLASSIFICATION */}
@@ -1511,6 +1513,25 @@ function CaseFrontend({ creating = false }) {
     </button>
   )}
 </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                         <section className='flex flex-col gap-8' id="identifying-data" ref={ref1}>
