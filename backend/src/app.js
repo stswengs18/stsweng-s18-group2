@@ -4,15 +4,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-//const path = require('path');
-// const path = require('path');
-
-// branch 1
+const path = require('path');
 
 /**
  *  Configuration/Initialization
  */
-dotenv.config();
+// Load .env from parent directory
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 
