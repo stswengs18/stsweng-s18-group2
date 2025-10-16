@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+
 function getColorFromId(id) {
   let hash = 0;
   const strId = id.toString();
@@ -37,7 +39,8 @@ export default function ClientEntry({
   name,
   assigned_sdw_name,
   archive,
-  pendingTermination = false
+  pendingTermination = false,
+  hideCHColumn = false
 }) {
   const initials = name.charAt(0).toUpperCase();
 
@@ -49,10 +52,15 @@ export default function ClientEntry({
     textColor = "#ffffff";
   }
 
+  const getGridClasses = () => {
+    if (hideCHColumn) return 'grid grid-cols-[2fr_2fr]';
+    return 'grid grid-cols-[2fr_1fr_2fr]';
+  };
+
   return (
 <a
   href={`/case/${id}`}
-  className={`client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label transition-colors 
+  className={`client-entry ${getGridClasses()} items-center p-5 mb-2 rounded-lg font-bold-label transition-colors 
     ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}`}
 >
 
@@ -63,9 +71,14 @@ export default function ClientEntry({
         >
           {initials}
         </div>
-        <p>{name}</p>
+        <div className="flex flex-col gap-2">
+          <p>{name}</p>
+          {hideCHColumn && (
+            <p>CH: {sm_number}</p>
+          )}
+        </div>
       </div>
-      <p className="text-center">{sm_number}</p>
+      {!hideCHColumn && <p className="text-center">{sm_number}</p>}
       <p className="text-center">{assigned_sdw_name}</p>
 
       {pendingTermination && (

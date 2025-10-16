@@ -38,6 +38,7 @@ function HomeSDW() {
   const isSmallLayout = windowWidth <= 700; // Changed from 900 to 700
   const shortenTitle = windowWidth <= 500;
   const moveNewCaseToNewRow = windowWidth <= 400;
+  const hideCHColumn = windowWidth <= 800;
 
   useEffect(() => {
     const handleResize = () => {
@@ -333,9 +334,9 @@ function HomeSDW() {
           )}
 
           <div className="flex flex-col w-full gap-3">
-            <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+            <div className={`${hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
               <p className="font-bold-label ml-[20%]">Name</p>
-              <p className="font-bold-label text-center">CH Number</p>
+              {!hideCHColumn && <p className="font-bold-label text-center">CH Number</p>}
               <p className="font-bold-label text-center">SDW Assigned</p>
             </div>
 
@@ -355,6 +356,7 @@ function HomeSDW() {
                   name={client.name}
                   assigned_sdw_name={client.assigned_sdw_name}
                   pendingTermination={client.pendingTermination ?? false}
+                  hideCHColumn={hideCHColumn}
                 />
               ))
             )}
