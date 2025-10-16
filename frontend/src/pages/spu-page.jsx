@@ -228,7 +228,7 @@ export default function SpuPage() {
                     isMobile={isMobile}
                 />
 
-                <div className={`flex flex-col w-full gap-10 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8 pb-20`}>
+                <div className={`flex flex-col w-full gap-10 max-[700px]:gap-8 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8 pb-20`}>
                     <div className="flex justify-between items-center">
                         <h1 className="header-main">SPU Overview</h1>
                         <button

@@ -135,12 +135,15 @@ useEffect(() => {
 }, [allData, currentSPU, sortBy, sortOrder, searchQuery]);
 
 
+console.log("CURRENT SPU:", currentSPU);
+
+
   useEffect(() => {
     if (!user) return;
 
     const title =
       user.role === "supervisor"
-        ? `Coordinating Unit - ${user.spu_name}`
+        ? (user.spu_name || "Coordinating Unit")
         : "Coordinating Unit";
 
     document.title = title;
@@ -211,7 +214,7 @@ useEffect(() => {
           setIsMenuOpen={setIsMenuOpen}
           isMobile={isMobile}
         />
-        <div className={`flex flex-col w-full gap-15 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8`}>
+        <div className={`flex flex-col w-full gap-15 max-[700px]:gap-8 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8`}>
 
           <h1 className="header-main">
             {user?.role === "head"
