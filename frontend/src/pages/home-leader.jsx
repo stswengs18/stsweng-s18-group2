@@ -300,6 +300,19 @@ useEffect(() => {
             )}
           </div>
 
+          {user?.role == "head" && moveAddAccountToNewRow && (
+            <div className="flex justify-center w-full">
+              <button
+                className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                onClick={() => setIsRegisterOpen(true)}
+                disabled={isRegisterOpen}
+              >
+                <p>+</p>
+                <p>Add Account</p>
+              </button>
+            </div>
+          )}
+
           {isMobile && (
             <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full font-label">
               <div className="nav-search"></div>
@@ -340,19 +353,6 @@ useEffect(() => {
               ))
             )}
           </div>
-
-          {user?.role == "head" && moveAddAccountToNewRow && (
-            <div className="flex justify-center w-full">
-              <button
-                className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
-                onClick={() => setIsRegisterOpen(true)}
-                disabled={isRegisterOpen}
-              >
-                <p>+</p>
-                <p>Add Account</p>
-              </button>
-            </div>
-          )}
         </div>
       </main>
     </>
