@@ -41,8 +41,20 @@ export default function SpuPage() {
         onConfirm: null,
     });
 
+    const isMobile = windowWidth <= 650;
+    const isVerySmall = windowWidth <= 400;
+
     useEffect(() => {
         document.title = "SPU Page";
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const loadData = async () => {
@@ -91,7 +103,7 @@ export default function SpuPage() {
 
     useEffect(() => {
         loadData();
-    }, []);
+    }, [navigate]); // Add navigate as dependency
 
     const toggleSpuCollapse = (spuId) => {
         setCollapsedSpus(prev => ({
@@ -150,18 +162,6 @@ export default function SpuPage() {
 
     const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
     if (!loadingComplete) return <Loading color={loadingColor} />;
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowWidth(window.innerWidth);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const isMobile = windowWidth <= 650;
-    const isVerySmall = windowWidth <= 400;
 
     return (
         <>
