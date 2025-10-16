@@ -217,7 +217,7 @@ useEffect(() => {
             {user?.role === "head"
               ? "Coordinating Unit"
               : shortenTitle
-                ? user?.spu_name || ""
+                ? (user?.spu_name || "Coordinating Unit")
                 : `Coordinating Unit${user?.spu_name ? ` - ${user.spu_name}` : ""}`}
           </h1>
 
