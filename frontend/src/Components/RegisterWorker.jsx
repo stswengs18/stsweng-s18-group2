@@ -41,6 +41,7 @@ export default function RegisterWorker({
   const [projectLocations, setProjectLocations] = useState([])
 
   const isSmallScreen = windowWidth <= 600;
+  const isVerySmallScreen = windowWidth <= 400;
 
   //   const projectLocations = [
   //   { name: "AMP", projectCode: "AMP" },
@@ -307,7 +308,7 @@ export default function RegisterWorker({
 
               <div className="flex flex-col gap-5 flex-1 p-10">
 
-                <div className='flex gap-3'>
+                <div className={`flex ${isVerySmallScreen ? 'flex-col' : ''} gap-3`}>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="font-bold-label">First Name</p>
                     <input
