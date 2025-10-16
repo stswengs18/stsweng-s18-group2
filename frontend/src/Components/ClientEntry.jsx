@@ -40,7 +40,8 @@ export default function ClientEntry({
   assigned_sdw_name,
   archive,
   pendingTermination = false,
-  hideCHColumn = false
+  hideCHColumn = false,
+  hideSDWColumn = false
 }) {
   const initials = name.charAt(0).toUpperCase();
 
@@ -53,6 +54,7 @@ export default function ClientEntry({
   }
 
   const getGridClasses = () => {
+    if (hideSDWColumn) return 'grid grid-cols-[1fr]';
     if (hideCHColumn) return 'grid grid-cols-[2fr_2fr]';
     return 'grid grid-cols-[2fr_1fr_2fr]';
   };
@@ -76,10 +78,13 @@ export default function ClientEntry({
           {hideCHColumn && (
             <p>CH: {sm_number}</p>
           )}
+          {hideSDWColumn && (
+            <p>SDW: {assigned_sdw_name}</p>
+          )}
         </div>
       </div>
-      {!hideCHColumn && <p className="text-center">{sm_number}</p>}
-      <p className="text-center">{assigned_sdw_name}</p>
+      {!hideCHColumn && !hideSDWColumn && <p className="text-center">{sm_number}</p>}
+      {!hideSDWColumn && <p className="text-center">{assigned_sdw_name}</p>}
 
       {pendingTermination && (
         <div className="col-span-3 text-left mt-4">

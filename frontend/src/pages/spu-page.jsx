@@ -45,6 +45,8 @@ export default function SpuPage() {
     const isVerySmall = windowWidth <= 400;
     const hideSpuColumn = windowWidth <= 800;
     const hideTypeColumn = windowWidth <= 400;
+    const hideCHColumn = windowWidth <= 800;
+    const hideSDWColumn = windowWidth <= 380;
 
     useEffect(() => {
         document.title = "SPU Page";
@@ -309,10 +311,10 @@ export default function SpuPage() {
                                                         <p className="font-label">No cases recorded.</p>
                                                     ) : (
                                                         <>
-                                                            <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                                                            <div className={`${hideSDWColumn ? 'grid grid-cols-[1fr]' : hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                                                                 <p className="font-bold-label ml-[20%]">Name</p>
-                                                                <p className="font-bold-label text-center">CH Number</p>
-                                                                <p className="font-bold-label text-center">SDW Assigned</p>
+                                                                {!hideCHColumn && !hideSDWColumn && <p className="font-bold-label text-center">CH Number</p>}
+                                                                {!hideSDWColumn && <p className="font-bold-label text-center">SDW Assigned</p>}
                                                             </div>
                                                             {spuCases.map((client) => (
                                                                 <ClientEntry
@@ -323,6 +325,8 @@ export default function SpuPage() {
                                                                     name={client.name}
                                                                     assigned_sdw_name={client.assigned_sdw_name}
                                                                     pendingTermination={client.pendingTermination ?? false}
+                                                                    hideCHColumn={hideCHColumn}
+                                                                    hideSDWColumn={hideSDWColumn}
                                                                 />
                                                             ))}
                                                         </>
