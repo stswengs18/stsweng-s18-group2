@@ -72,7 +72,7 @@ export default function WorkerEntry({
         <div className="flex flex-col gap-2">
           <p>{name}</p>
           {hideTypeColumn && (
-            <p className="text-sm text-gray-600">
+            <p>
               {role === "sdw" ? "SDW" : role === "supervisor" ? "Supervisor" : "Head"}
             </p>
           )}
