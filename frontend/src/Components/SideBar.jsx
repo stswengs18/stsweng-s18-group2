@@ -24,13 +24,15 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
             {/* Mobile overlay */}
             {isMenuOpen && (
                 <div 
-                    className="mobile-overlay fixed inset-0 bg-black bg-opacity-30 z-20"
+                    className="fixed inset-0 bg-black bg-opacity-30 z-30"
                     onClick={handleOverlayClick}
-                    style={{ display: 'none' }}
+                    style={{ 
+                        display: window.innerWidth <= 650 ? 'block' : 'none'
+                    }}
                 ></div>
             )}
             
-            <div className={`side-nav fixed z-30 ${isMenuOpen ? 'mobile-open' : ''}`}>
+            <div className={`side-nav fixed z-50 ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <SideItem
                     href="/"
                     iconClass="home-button"
@@ -76,8 +78,10 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
                         top: 0;
                         left: 0;
                         height: 100vh;
-                        z-index: 30;
+                        width: 15rem;
+                        z-index: 50 !important;
                         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+                        background: white;
                     }
                     
                     .side-nav.mobile-open {
