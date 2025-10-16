@@ -35,6 +35,7 @@ function HomeLeader() {
   const isVerySmall = windowWidth <= 400;
   const hideSpuColumn = windowWidth <= 800;
   const hideTypeColumn = windowWidth <= 400;
+  const isSmallLayout = windowWidth <= 900;
 
   useEffect(() => {
     const handleResize = () => {
@@ -216,8 +217,8 @@ useEffect(() => {
               : `Coordinating Unit${user?.spu_name ? ` - ${user.spu_name}` : ""}`}
           </h1>
 
-          <div className="flex justify-between gap-10">
-            <div className="flex gap-5 justify-between items-center w-full">
+          <div className={`flex ${isSmallLayout ? 'flex-col' : 'justify-between'} gap-10`}>
+            <div className={`flex gap-5 ${isSmallLayout ? 'justify-between items-center w-full' : 'justify-between items-center w-full'}`}>
               <div className="flex gap-5 w-full">
                 {user?.role == "head" && (
                   <select
@@ -234,6 +235,46 @@ useEffect(() => {
                   </select>
                 )}
 
+                {!isSmallLayout && (
+                  <>
+                    <select
+                      className="text-input font-label max-w-[23rem]"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      <option value="">Find By</option>
+                      <option value="name">Name</option>
+                      <option value="head">Head</option>
+                      <option value="supervisor">Supervisor</option>
+                      <option value="sdw">Social Development Worker</option>
+                    </select>
+
+                    <button
+                      className="btn-outline font-bold-label"
+                      onClick={() =>
+                        setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))
+                      }
+                    >
+                      <div className="icon-static-setup order-button"></div>
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {user?.role == "head" && (
+                <button
+                  className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                  onClick={() => setIsRegisterOpen(true)}
+                  disabled={isRegisterOpen}
+                >
+                  <p>+</p>
+                  <p>Add Account</p>
+                </button>
+              )}
+            </div>
+
+            {isSmallLayout && (
+              <div className="flex gap-5 w-full">
                 <select
                   className="text-input font-label max-w-[23rem]"
                   value={sortBy}
@@ -255,18 +296,7 @@ useEffect(() => {
                   <div className="icon-static-setup order-button"></div>
                 </button>
               </div>
-
-              {user?.role == "head" && (
-                <button
-                  className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
-                  onClick={() => setIsRegisterOpen(true)}
-                  disabled={isRegisterOpen}
-                >
-                  <p>+</p>
-                  <p>Add Account</p>
-                </button>
-              )}
-            </div>
+            )}
           </div>
 
           {isMobile && (
