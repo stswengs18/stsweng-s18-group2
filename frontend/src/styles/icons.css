@@ -94,17 +94,6 @@
 .menu-button {
   mask-image: url("/menu.svg");
   -webkit-mask-image: url("/menu.svg");
-  background-color: var(--color-black);
-}
-
-.menu-button:hover {
-  background-color: var(--color-primary) !important;
-  transform: scale(1.1);
-}
-
-.menu-button:active {
-  background-color: var(--color-primary) !important;
-  transform: scale(0.95);
 }
 
 .home-button {
