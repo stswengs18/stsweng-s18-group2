@@ -35,7 +35,7 @@ function HomeSDW() {
 
   const isMobile = windowWidth <= 700;
   const isVerySmall = windowWidth <= 400;
-  const isSmallLayout = windowWidth <= 900;
+  const isSmallLayout = windowWidth <= 700; // Changed from 900 to 700
   const shortenTitle = windowWidth <= 500;
   const moveNewCaseToNewRow = windowWidth <= 400;
 
