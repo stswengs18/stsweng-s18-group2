@@ -31,7 +31,6 @@ export default function NotFound({ message = "The page you're looking for does n
                     <button 
                         className="side-item menu-button hidden"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        style={{ display: 'none' }}
                     >
                         <img src="/menu.svg" alt="Menu" className="w-6 h-6" />
                     </button>
