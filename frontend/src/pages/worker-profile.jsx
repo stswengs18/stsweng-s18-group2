@@ -694,82 +694,78 @@ export default function WorkerProfile() {
                                     </div>
 
                                     {/* === Row 3 === */}
-                                    <div className={`flex gap-5 w-full mt-5 ${isFormTwoColumn ? 'flex-col' : ''}`}>
-                                        <div className={`flex gap-5 w-full ${isFormTwoColumn ? 'flex-col' : ''}`}>
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label"><span className='text-red-500'>*</span> SPU Project</label>
-                                                <select
-                                                    disabled={!(user?.role === "head" || user?._id === data.manager)}
-                                                    className="text-input font-label"
-                                                    value={drafts.spu_id}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, spu_id: e.target.value }))
-                                                    }
-                                                >
-                                                    <option value="">Select SPU</option>
-                                                    {projectLocation.map((spu) => (
-                                                        <option key={spu._id} value={spu._id}>
-                                                            {spu.spu_name}
+                                    <div className="flex gap-5 w-full mt-5">
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-bold-label"><span className='text-red-500'>*</span> SPU Project</label>
+                                            <select
+                                                disabled={!(user?.role === "head" || user?._id === data.manager)}
+                                                className="text-input font-label"
+                                                value={drafts.spu_id}
+                                                onChange={(e) =>
+                                                    setDrafts((prev) => ({ ...prev, spu_id: e.target.value }))
+                                                }
+                                            >
+                                                <option value="">Select SPU</option>
+                                                {projectLocation.map((spu) => (
+                                                    <option key={spu._id} value={spu._id}>
+                                                        {spu.spu_name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-bold-label">Area of Assignment</label>
+                                            <input
+                                                type="text"
+                                                value={drafts.area}
+                                                placeholder="Area of Assignment"
+                                                onChange={(e) =>
+                                                    setDrafts((prev) => ({ ...prev, area: e.target.value }))
+                                                }
+                                                className="text-input font-label w-full"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col w-full">
+                                            <label className="font-bold-label"><span className='text-red-500'>*</span> Role</label>
+                                            <select
+                                                disabled={user?.role !== "head"}
+                                                className="text-input font-label"
+                                                value={drafts.role}
+                                                onChange={(e) =>
+                                                    setDrafts((prev) => ({ ...prev, role: e.target.value }))
+                                                }
+                                            >
+                                                <option value="">Select Role</option>
+                                                {user?.role == "head" && <option value="head">Head</option>}
+                                                <option value="supervisor">Supervisor</option>
+                                                <option value="sdw">Social Development Worker</option>
+                                            </select>
+                                        </div>
+
+                                        {(drafts.role === "" || drafts.role === "sdw") && (<div className="flex flex-col w-full">
+                                            <label className="font-bold-label">Manager</label>
+                                            <select
+                                                disabled={!(user?.role === "head" || user?._id === data.manager)}
+                                                className="text-input font-label"
+                                                value={drafts.manager}
+                                                onChange={(e) =>
+                                                    setDrafts((prev) => ({ ...prev, manager: e.target.value }))
+                                                }
+                                            >
+                                                <option value="">Select Manager</option>
+                                                {(drafts.role === "sdw" ? supervisors : socialDevelopmentWorkers).map(
+                                                    (person) => (
+                                                        <option key={person._id || person.id} value={person._id || person.id}>
+                                                            {person.username
+                                                                ? person.username
+                                                                : `${person.first_name} ${person.middle_name || ""} ${person.last_name}`}
                                                         </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label">Area of Assignment</label>
-                                                <input
-                                                    type="text"
-                                                    value={drafts.area}
-                                                    placeholder="Area of Assignment"
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, area: e.target.value }))
-                                                    }
-                                                    className="text-input font-label w-full"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className={`flex gap-5 w-full ${isFormTwoColumn ? 'flex-col' : ''}`}>
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label"><span className='text-red-500'>*</span> Role</label>
-                                                <select
-                                                    disabled={user?.role !== "head"}
-                                                    className="text-input font-label"
-                                                    value={drafts.role}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, role: e.target.value }))
-                                                    }
-                                                >
-                                                    <option value="">Select Role</option>
-                                                    {user?.role == "head" && <option value="head">Head</option>}
-                                                    <option value="supervisor">Supervisor</option>
-                                                    <option value="sdw">Social Development Worker</option>
-                                                </select>
-                                            </div>
-
-                                            {(drafts.role === "" || drafts.role === "sdw") && (<div className="flex flex-col w-full">
-                                                <label className="font-bold-label">Manager</label>
-                                                <select
-                                                    disabled={!(user?.role === "head" || user?._id === data.manager)}
-                                                    className="text-input font-label"
-                                                    value={drafts.manager}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, manager: e.target.value }))
-                                                    }
-                                                >
-                                                    <option value="">Select Manager</option>
-                                                    {(drafts.role === "sdw" ? supervisors : socialDevelopmentWorkers).map(
-                                                        (person) => (
-                                                            <option key={person._id || person.id} value={person._id || person.id}>
-                                                                {person.username
-                                                                    ? person.username
-                                                                    : `${person.first_name} ${person.middle_name || ""} ${person.last_name}`}
-                                                            </option>
-                                                        )
-                                                    )}
-                                                </select>
-                                            </div>)}
-                                        </div>
+                                                    )
+                                                )}
+                                            </select>
+                                        </div>)}
                                     </div>
 
                                     <button
