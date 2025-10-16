@@ -604,7 +604,7 @@ export default function WorkerProfile() {
                             {editingField === "core-fields" ? (
                                 <>
                                     <div className={`flex gap-5 w-full ${isFormTwoColumnTop ? 'flex-col' : ''}`}>
-                                        <div className={`flex gap-5 w-full ${isFormTwoColumnTop ? 'flex-col' : ''}`}>
+                                        <div className="flex gap-5 w-full">
                                             <div className="flex flex-col w-full">
                                                 <label className="font-bold-label"><span className='text-red-500'>*</span> First Name</label>
                                                 <input
@@ -618,39 +618,71 @@ export default function WorkerProfile() {
                                                 />
                                             </div>
 
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label">Middle Name</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Middle Name"
-                                                    value={drafts.middle_name}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, middle_name: e.target.value }))
-                                                    }
-                                                    className="text-input font-label w-full"
-                                                />
-                                            </div>
+                                            {!isFormTwoColumnTop && (
+                                                <div className="flex flex-col w-full">
+                                                    <label className="font-bold-label">Middle Name</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Middle Name"
+                                                        value={drafts.middle_name}
+                                                        onChange={(e) =>
+                                                            setDrafts((prev) => ({ ...prev, middle_name: e.target.value }))
+                                                        }
+                                                        className="text-input font-label w-full"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {!isFormTwoColumnTop && (
+                                                <div className="flex flex-col w-full">
+                                                    <label className="font-bold-label"><span className='text-red-500'>*</span> Last Name</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Last Name"
+                                                        value={drafts.last_name}
+                                                        onChange={(e) =>
+                                                            setDrafts((prev) => ({ ...prev, last_name: e.target.value }))
+                                                        }
+                                                        className="text-input font-label w-full"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <div className={`flex gap-5 w-full ${isFormTwoColumnTop ? 'flex-col' : ''}`}>
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label"><span className='text-red-500'>*</span> Last Name</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Last Name"
-                                                    value={drafts.last_name}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, last_name: e.target.value }))
-                                                    }
-                                                    className="text-input font-label w-full"
-                                                />
+                                        {isFormTwoColumnTop && (
+                                            <div className="flex gap-5 w-full">
+                                                <div className="flex flex-col w-full">
+                                                    <label className="font-bold-label">Middle Name</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Middle Name"
+                                                        value={drafts.middle_name}
+                                                        onChange={(e) =>
+                                                            setDrafts((prev) => ({ ...prev, middle_name: e.target.value }))
+                                                        }
+                                                        className="text-input font-label w-full"
+                                                    />
+                                                </div>
+
+                                                <div className="flex flex-col w-full">
+                                                    <label className="font-bold-label"><span className='text-red-500'>*</span> Last Name</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Last Name"
+                                                        value={drafts.last_name}
+                                                        onChange={(e) =>
+                                                            setDrafts((prev) => ({ ...prev, last_name: e.target.value }))
+                                                        }
+                                                        className="text-input font-label w-full"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
 
                                     {/* === Row 2 === */}
                                     <div className={`flex gap-5 w-full mt-5 ${isFormTwoColumnTop ? 'flex-col' : ''}`}>
-                                        <div className={`flex gap-5 w-full ${isFormTwoColumnTop ? 'flex-col' : ''}`}>
+                                        <div className="flex gap-5 w-full">
                                             <div className="flex flex-col w-full">
                                                 <label className="font-bold-label"><span className='text-red-500'>*</span> Username</label>
                                                 <input
@@ -664,34 +696,68 @@ export default function WorkerProfile() {
                                                 />
                                             </div>
 
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label"><span className='text-red-500'>*</span> Email</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Email"
-                                                    value={drafts.email}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, email: e.target.value }))
-                                                    }
-                                                    className="text-input font-label w-full"
-                                                />
-                                            </div>
+                                            {!isFormTwoColumnTop && (
+                                                <>
+                                                    <div className="flex flex-col w-full">
+                                                        <label className="font-bold-label"><span className='text-red-500'>*</span> Email</label>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Email"
+                                                            value={drafts.email}
+                                                            onChange={(e) =>
+                                                                setDrafts((prev) => ({ ...prev, email: e.target.value }))
+                                                            }
+                                                            className="text-input font-label w-full"
+                                                        />
+                                                    </div>
+
+                                                    <div className="flex flex-col w-full">
+                                                        <label className="font-bold-label"><span className='text-red-500'>*</span> Contact Number</label>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Contact Number"
+                                                            value={drafts.contact_no}
+                                                            onChange={(e) =>
+                                                                setDrafts((prev) => ({ ...prev, contact_no: e.target.value }))
+                                                            }
+                                                            className="text-input font-label w-full"
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {isFormTwoColumnTop && (
+                                                <div className="flex flex-col w-full">
+                                                    <label className="font-bold-label"><span className='text-red-500'>*</span> Email</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Email"
+                                                        value={drafts.email}
+                                                        onChange={(e) =>
+                                                            setDrafts((prev) => ({ ...prev, email: e.target.value }))
+                                                        }
+                                                        className="text-input font-label w-full"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <div className={`flex gap-5 w-full ${isFormTwoColumnTop ? 'flex-col' : ''}`}>
-                                            <div className="flex flex-col w-full">
-                                                <label className="font-bold-label"><span className='text-red-500'>*</span> Contact Number</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Contact Number"
-                                                    value={drafts.contact_no}
-                                                    onChange={(e) =>
-                                                        setDrafts((prev) => ({ ...prev, contact_no: e.target.value }))
-                                                    }
-                                                    className="text-input font-label w-full"
-                                                />
+                                        {isFormTwoColumnTop && (
+                                            <div className="flex gap-5 w-full">
+                                                <div className="flex flex-col w-full">
+                                                    <label className="font-bold-label"><span className='text-red-500'>*</span> Contact Number</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Contact Number"
+                                                        value={drafts.contact_no}
+                                                        onChange={(e) =>
+                                                            setDrafts((prev) => ({ ...prev, contact_no: e.target.value }))
+                                                        }
+                                                        className="text-input font-label w-full"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
 
                                     {/* === Row 3 - Responsive 2 columns at 900px === */}
