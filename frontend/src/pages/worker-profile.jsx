@@ -570,7 +570,7 @@ export default function WorkerProfile() {
                         }}
                     />
 
-                    <main className="flex flex-col gap-20 pt-15">
+                    <main className="flex flex-col gap-20 pt-15 p-5">
                         <div className="w-full max-w-[1280px] mx-auto flex justify-between items-center bg-white py-3">
                             <button
                                 className="flex items-center gap-5 py-2 font-bold-label arrow-group"
