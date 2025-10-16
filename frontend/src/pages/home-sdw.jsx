@@ -37,6 +37,7 @@ function HomeSDW() {
   const isVerySmall = windowWidth <= 400;
   const isSmallLayout = windowWidth <= 900;
   const shortenTitle = windowWidth <= 500;
+  const moveNewCaseToNewRow = windowWidth <= 400;
 
   useEffect(() => {
     const handleResize = () => {
@@ -260,7 +261,7 @@ function HomeSDW() {
                 )}
               </div>
 
-              {user?.role === "sdw" && !isSmallLayout && (
+              {user?.role === "sdw" && !isSmallLayout && !moveNewCaseToNewRow && (
                 <button
                   onClick={() => navigate("/create-case")}
                   className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
@@ -293,7 +294,7 @@ function HomeSDW() {
                   <div className="icon-static-setup order-button"></div>
                 </button>
 
-                {user?.role === "sdw" && (
+                {user?.role === "sdw" && !moveNewCaseToNewRow && (
                   <button
                     onClick={() => navigate("/create-case")}
                     className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
@@ -302,6 +303,18 @@ function HomeSDW() {
                     <p>New Case</p>
                   </button>
                 )}
+              </div>
+            )}
+
+            {user?.role === "sdw" && moveNewCaseToNewRow && (
+              <div className="flex justify-center w-full">
+                <button
+                  onClick={() => navigate("/create-case")}
+                  className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                >
+                  <p>+</p>
+                  <p>New Case</p>
+                </button>
               </div>
             )}
           </div>
