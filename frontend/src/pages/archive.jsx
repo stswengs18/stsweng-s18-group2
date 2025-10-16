@@ -32,44 +32,44 @@ function Archive() {
     document.title = `Archive`;
   }, []);
 
-    useEffect(() => {
-        // Fetch all SPUs (including inactive) 
-        const loadSpus = async () => {
-            const spus = await fetchAllSpus();
-            const activeSpus = Array.isArray(spus) ? spus.filter(spu => spu.is_active) : [];
-            setProjectLocation(activeSpus);
-        };
-        loadSpus();
-    }, []);
+  useEffect(() => {
+    // Fetch all SPUs (including inactive) 
+    const loadSpus = async () => {
+      const spus = await fetchAllSpus();
+      const activeSpus = Array.isArray(spus) ? spus.filter(spu => spu.is_active) : [];
+      setProjectLocation(activeSpus);
+    };
+    loadSpus();
+  }, []);
 
-    useEffect(() => {
-        const loadSessionAndCases = async () => {
-            try {
-                setLoadingStage(0); // red
-                const sessionData = await fetchSession();
-                const currentUser = sessionData.user;
-                setUser(currentUser);
+  useEffect(() => {
+    const loadSessionAndCases = async () => {
+      try {
+        setLoadingStage(0); // red
+        const sessionData = await fetchSession();
+        const currentUser = sessionData.user;
+        setUser(currentUser);
 
-                if (!currentUser || !["head", "supervisor"].includes(currentUser.role)) {
-                    navigate("/unauthorized");
-                    return;
-                }
+        if (!currentUser || !["head", "supervisor"].includes(currentUser.role)) {
+          navigate("/unauthorized");
+          return;
+        }
 
-                setLoadingStage(1); // blue
+        setLoadingStage(1); // blue
 
-                const cases = await fetchAllCases();
-                setAllCases(cases);
+        const cases = await fetchAllCases();
+        setAllCases(cases);
 
-                setLoadingStage(2); // green
-                setLoadingComplete(true);
-            } catch (err) {
-                console.error("Error loading archive page:", err);
-                navigate("/unauthorized");
-            }
-            
-        };
-        loadSessionAndCases();
-      }, []);
+        setLoadingStage(2); // green
+        setLoadingComplete(true);
+      } catch (err) {
+        console.error("Error loading archive page:", err);
+        navigate("/unauthorized");
+      }
+
+    };
+    loadSessionAndCases();
+  }, []);
   // ===== Single initial fetch (session, SPUs, cases, employees) =====
   useEffect(() => {
     const loadAll = async () => {
@@ -144,49 +144,49 @@ function Archive() {
   }, [allCases, currentSPU, sortBy, sortOrder, searchQuery, user]);
 
   // ===== EMPLOYEES: client-side filtering/sorting only =====
-useEffect(() => {
-  if (viewMode !== "employees") return;
+  useEffect(() => {
+    if (viewMode !== "employees") return;
 
-  let filtered = allEmployees.filter((w) => w.is_active === false);
+    let filtered = allEmployees.filter((w) => w.is_active === false);
 
-  // Filter by SPU id
-  if (currentSPU) {
-    filtered = filtered.filter((w) => w.spu_id === currentSPU);
-  }
+    // Filter by SPU id
+    if (currentSPU) {
+      filtered = filtered.filter((w) => w.spu_id === currentSPU);
+    }
 
-  // Filter by search
-  if (searchQuery.trim() !== "") {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter((w) => {
-      const name = (w.name || "").toLowerCase();
-      const idStr = w.id?.toString() || "";
-      return name.includes(q) || idStr.includes(q);
+    // Filter by search
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter((w) => {
+        const name = (w.name || "").toLowerCase();
+        const idStr = w.id?.toString() || "";
+        return name.includes(q) || idStr.includes(q);
+      });
+    }
+
+    // ✅ Filter by role if "Find By" has a role type selected
+    if (["head", "supervisor", "sdw"].includes(sortBy)) {
+      filtered = filtered.filter(
+        (w) => (w.role || "").toLowerCase() === sortBy
+      );
+    }
+
+    // Fixed role priority order
+    const roleOrder = { head: 1, supervisor: 2, sdw: 3 };
+
+    filtered.sort((a, b) => {
+      const roleA = roleOrder[a.role?.toLowerCase()] ?? 99;
+      const roleB = roleOrder[b.role?.toLowerCase()] ?? 99;
+
+      if (roleA !== roleB) return roleA - roleB; // lower number first
+      return (a.name || "").localeCompare(b.name || "");
     });
-  }
 
-  // ✅ Filter by role if "Find By" has a role type selected
-  if (["head", "supervisor", "sdw"].includes(sortBy)) {
-    filtered = filtered.filter(
-      (w) => (w.role || "").toLowerCase() === sortBy
-    );
-  }
+    // Reverse if needed
+    if (sortOrder === "desc") filtered.reverse();
 
-  // Fixed role priority order
-  const roleOrder = { head: 1, supervisor: 2, sdw: 3 };
-
-  filtered.sort((a, b) => {
-    const roleA = roleOrder[a.role?.toLowerCase()] ?? 99;
-    const roleB = roleOrder[b.role?.toLowerCase()] ?? 99;
-
-    if (roleA !== roleB) return roleA - roleB; // lower number first
-    return (a.name || "").localeCompare(b.name || "");
-  });
-
-  // Reverse if needed
-  if (sortOrder === "desc") filtered.reverse();
-
-  setArchiveEmp(filtered);
-}, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
+    setArchiveEmp(filtered);
+  }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
 
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
@@ -232,22 +232,6 @@ useEffect(() => {
                   <option value="employees">Employees</option>
                 </select>
 
-                                {user?.role === "head" && <select
-                                    className="text-input font-label max-w-[30rem]"
-                                    value={currentSPU}
-                                    id="spu"
-                                    onChange={(e) => setCurrentSPU(e.target.value)}
-                                >
-                                    <option value="">All SPUs</option>
-                                    {projectLocation.map((project) => (
-                                        <option
-                                            key={project._id || project.spu_name || project.projectCode}
-                                            value={project.spu_name}
-                                        >
-                                            {project.spu_name} {project.spu_code ? `(${project.spu_code})` : project.projectCode ? `(${project.projectCode})` : ''}
-                                        </option>
-                                    ))}
-                                </select>}
                 {user?.role === "head" && (
                   <select
                     className="text-input font-label max-w-[30rem]"
