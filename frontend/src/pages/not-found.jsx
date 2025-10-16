@@ -11,6 +11,7 @@ export default function NotFound({ message = "The page you're looking for does n
     const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
     const isMobile = windowWidth <= 650;
+    const isVerySmall = windowWidth <= 400;
 
     useEffect(() => {
         const handleResize = () => {
@@ -51,8 +52,17 @@ export default function NotFound({ message = "The page you're looking for does n
                     <a href="/" className="main-logo main-logo-text-nav">
                         <div className="main-logo-setup folder-logo"></div>
                         <div className="flex flex-col">
-                            <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
-                            <p className="main-logo-text-nav">Case Management System</p>
+                            {isVerySmall ? (
+                                <>
+                                    <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila</p>
+                                    <p className="main-logo-text-nav">CMS</p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
+                                    <p className="main-logo-text-nav">Case Management System</p>
+                                </>
+                            )}
                         </div>
                     </a>
                 </div>
