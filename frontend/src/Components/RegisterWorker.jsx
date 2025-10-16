@@ -42,6 +42,7 @@ export default function RegisterWorker({
 
   const isSmallScreen = windowWidth <= 600;
   const isVerySmallScreen = windowWidth <= 400;
+  const isExtremelySmallScreen = windowWidth <= 350;
 
   //   const projectLocations = [
   //   { name: "AMP", projectCode: "AMP" },
@@ -346,7 +347,7 @@ export default function RegisterWorker({
                   </div>
                 </div>
 
-                <div className='flex gap-3'>
+                <div className={`flex ${isExtremelySmallScreen ? 'flex-col' : ''} gap-3`}>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="font-bold-label">Username</p>
                     <input
@@ -387,7 +388,7 @@ export default function RegisterWorker({
                   </div>
                 </div>
 
-                <div className='flex gap-3'>
+                <div className={`flex ${isExtremelySmallScreen ? 'flex-col' : ''} gap-3`}>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="font-bold-label">Password</p>
                     <input
@@ -426,7 +427,7 @@ export default function RegisterWorker({
                   />
                 </div>
 
-                <div className='flex gap-3'>
+                <div className={`flex ${isExtremelySmallScreen ? 'flex-col' : ''} gap-3`}>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="font-bold-label">Email</p>
                     <input
@@ -452,7 +453,7 @@ export default function RegisterWorker({
                   </div>
                 </div>
 
-                <div className='flex gap-3'>
+                <div className={`flex ${isExtremelySmallScreen ? 'flex-col' : ''} gap-3`}>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="font-bold-label">SPU</p>
                     <select
