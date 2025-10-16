@@ -296,7 +296,7 @@ function CaseFrontend({ creating = false }) {
             const sessionData = await fetchSession();
             const currentUser = sessionData?.user || null;
             setUser(currentUser);
-
+            
             // Immediately set unauthorized if no user is found
             if (!currentUser) {
                 setUnauthorized(true);
@@ -1037,7 +1037,7 @@ function CaseFrontend({ creating = false }) {
             const assignedSDW = socialDevelopmentWorkers.find(
                 w => w._id === assignedSDWId || w.id === assignedSDWId
             );
-
+                        
             // Allow access if supervisor's SPU matches case's SPU
             console.log("SUPERVISOR CHECK", user.spu_id, data.spu);
             if (user.spu_id === data.spu) {
@@ -1087,14 +1087,14 @@ function CaseFrontend({ creating = false }) {
     if (!loadingComplete) {
         return (
             <div className="w-full h-screen flex flex-col items-center justify-center">
-                <div className="flex items-center gap-10">
-                    <p style={{ color: "var(--color-black)" }} className="header-main">
-                        Loading...
-                    </p>
-                    <div
-                        className="loader-conic"
-                    ></div>
-                </div>
+              <div className="flex items-center gap-10">
+            <p style={{ color: "var(--color-black)" }} className="header-main">
+                Loading...
+            </p>
+            <div
+                className="loader-conic"
+            ></div>
+        </div>
                 {/* --- Timeout warning message --- */}
                 {showTimeoutWarning && (
                     <div className="mt-8 text-center font-label">
@@ -1217,323 +1217,292 @@ function CaseFrontend({ creating = false }) {
                             </div>
                         </div>
 
-                        <section className="grid gap-5" id="core-fields">
-                            {!creating && (
-                                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-start gap-4">
-                                    <div className="grid auto-cols-max grid-flow-col gap-3">
-                                        {data.is_active === true ? (
-                                            <div className="font-bold-label rounded-full bg-[var(--color-green)] p-2 px-8 !text-white">
-                                                Active
-                                            </div>
-                                        ) : (
-                                            <div className="font-bold-label rounded-full bg-[var(--accent-dark)] p-2 px-8 !text-white">
-                                                Inactive
-                                            </div>
-                                        )}
+                        <section className="grid gap-6" id="core-fields">
+  {/* STATUS + DOWNLOAD */}
+  {!creating && (
+    <div className="grid grid-cols-[1fr_auto] items-center gap-4">
+      <div className="grid auto-cols-max grid-flow-col gap-3">
+        {data.is_active ? (
+          <div className="font-bold-label rounded-full bg-[var(--color-green)] p-2 px-8 !text-white">
+            Active
+          </div>
+        ) : (
+          <div className="font-bold-label rounded-full bg-[var(--accent-dark)] p-2 px-8 !text-white">
+            Inactive
+          </div>
+        )}
 
-                                        {data.pendingTermination && (
-                                            <div className="font-bold-label rounded-full bg-red-600 p-2 px-8 !text-white">
-                                                Pending Termination
-                                            </div>
-                                        )}
-                                    </div>
+        {data.pendingTermination && (
+          <div className="font-bold-label rounded-full bg-red-600 p-2 px-8 !text-white">
+            Pending Termination
+          </div>
+        )}
+      </div>
 
-                                    <button
-                                        className="btn-blue font-bold-label drop-shadow-base justify-self-start md:justify-self-end"
-                                        data-cy="download-case"
-                                        onClick={() => generateCaseReport(clientId)}
-                                    >
-                                        Download
-                                    </button>
-                                </div>
-                            )}
+      <button
+        className="btn-blue font-bold-label drop-shadow-base justify-self-end"
+        data-cy="download-case"
+        onClick={() => generateCaseReport(clientId)}
+      >
+        Download
+      </button>
+    </div>
+  )}
 
-                            {(editingField === "all" || editingField === "core-fields") && (
-                                <div className="grid grid-cols-[1fr_auto] items-center">
-                                    <h1 className="header-main">Core Details</h1>
-                                    {!creating && (
-                                        <button
-                                            className={
-                                                editingField === "core-fields"
-                                                    ? "icon-button-setup x-button"
-                                                    : "icon-button-setup dots-button"
-                                            }
-                                            onClick={() => {
-                                                if (editingField) {
-                                                    resetFields();
-                                                } else {
-                                                    setEditingField("core-fields");
-                                                }
-                                            }}
-                                        />
-                                    )}
-                                </div>
-                            )}
+  {/* HEADER ROW */}
+  {(editingField === "all" || editingField === "core-fields") && (
+    <div className="grid grid-cols-[1fr_auto] items-center">
+      <h1 className="header-main">Core Details</h1>
+      {!creating && (
+        <button
+          className={
+            editingField === "core-fields"
+              ? "icon-button-setup x-button"
+              : "icon-button-setup dots-button"
+          }
+          onClick={() => {
+            if (editingField) resetFields();
+            else setEditingField("core-fields");
+          }}
+        />
+      )}
+    </div>
+  )}
 
-                            {(editingField === "all" || editingField === "core-fields") ? (
-                                <>
-                                    {/* Name row */}
-                                    <div className="grid gap-5 grid-cols-1 md:grid-cols-3 w-full">
-                                        <div className="grid gap-2">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> First Name
-                                            </label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.first_name}
-                                                placeholder="First Name"
-                                                onChange={(e) =>
-                                                    setDrafts((prev) => ({ ...prev, first_name: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full"
-                                                data-cy="fname"
-                                            />
-                                        </div>
+  {/* INPUT FIELDS */}
+  {(editingField === "all" || editingField === "core-fields") ? (
+    <>
+      {/* Names */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid gap-2">
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> First Name
+          </label>
+          <input
+            disabled={!creating}
+            type="text"
+            value={drafts.first_name}
+            placeholder="First Name"
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, first_name: e.target.value }))
+            }
+            className="text-input font-label w-full"
+          />
+        </div>
 
-                                        <div className="grid gap-2">
-                                            <label className="font-bold-label">Middle Name</label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.middle_name}
-                                                placeholder="Middle Name"
-                                                onChange={(e) =>
-                                                    setDrafts((prev) => ({ ...prev, middle_name: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full"
-                                                data-cy="mname"
-                                            />
-                                        </div>
+        <div className="grid gap-2">
+          <label className="font-bold-label">Middle Name</label>
+          <input
+            disabled={!creating}
+            type="text"
+            value={drafts.middle_name}
+            placeholder="Middle Name"
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, middle_name: e.target.value }))
+            }
+            className="text-input font-label w-full"
+          />
+        </div>
 
-                                        <div className="grid gap-2">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> Last Name
-                                            </label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.last_name}
-                                                placeholder="Last Name"
-                                                onChange={(e) =>
-                                                    setDrafts((prev) => ({ ...prev, last_name: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full"
-                                                data-cy="lname"
-                                            />
-                                        </div>
-                                    </div>
+        <div className="grid gap-2">
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> Last Name
+          </label>
+          <input
+            disabled={!creating}
+            type="text"
+            value={drafts.last_name}
+            placeholder="Last Name"
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, last_name: e.target.value }))
+            }
+            className="text-input font-label w-full"
+          />
+        </div>
+      </div>
 
-                                    {/* CH Number */}
-                                    <div className="grid gap-2 w-full">
-                                        <label className="font-bold-label">
-                                            <span className="text-red-500">*</span> CH Number
-                                        </label>
-                                        <input
-                                            disabled={!creating}
-                                            type="text"
-                                            value={drafts.sm_number}
-                                            placeholder="CH Number"
-                                            onChange={(e) =>
-                                                setDrafts((prev) => ({ ...prev, sm_number: e.target.value }))
-                                            }
-                                            className="text-input font-label w-full max-w-[30rem]"
-                                            data-cy="sm-number"
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="grid grid-cols-[1fr_auto] items-center">
-                                        <h1 className="header-main">{`${data.first_name} ${data.middle_name} ${data.last_name}`}</h1>
-                                        {data.is_active && !isTerminated && (
-                                            <button
-                                                className={
-                                                    editingField === "core-fields"
-                                                        ? "icon-button-setup x-button"
-                                                        : "icon-button-setup dots-button"
-                                                }
-                                                onClick={() => {
-                                                    if (editingField) {
-                                                        resetFields();
-                                                    } else {
-                                                        setEditingField("core-fields");
-                                                    }
-                                                }}
-                                                data-cy="edit-core-details-section"
-                                            />
-                                        )}
-                                    </div>
-                                    <h2 className="header-sub">{data.sm_number}</h2>
-                                </>
-                            )}
+      {/* CH Number */}
+      <div className="grid gap-2 w-full">
+        <label className="font-bold-label">
+          <span className="text-red-500">*</span> CH Number
+        </label>
+        <input
+          disabled={!creating}
+          type="text"
+          value={drafts.sm_number}
+          placeholder="CH Number"
+          onChange={(e) =>
+            setDrafts((p) => ({ ...p, sm_number: e.target.value }))
+          }
+          className="text-input font-label w-full max-w-[30rem]"
+        />
+      </div>
+    </>
+  ) : (
+    <>
+      <div className="grid grid-cols-[1fr_auto] items-center">
+        <h1 className="header-main">
+          {`${data.first_name} ${data.middle_name} ${data.last_name}`}
+        </h1>
+        {data.is_active && !isTerminated && (
+          <button
+            className={
+              editingField === "core-fields"
+                ? "icon-button-setup x-button"
+                : "icon-button-setup dots-button"
+            }
+            onClick={() =>
+              editingField ? resetFields() : setEditingField("core-fields")
+            }
+          />
+        )}
+      </div>
+      <h2 className="header-sub">{data.sm_number}</h2>
+    </>
+  )}
 
-                            {/* SPU + SDW row */}
-                            <div
-                                className={`grid gap-10 ${isFormTwoColumn
-                                        ? "grid-cols-1"
-                                        : isFormAdjustedRatio
-                                            ? "grid-cols-[30%_70%]"
-                                            : "grid-cols-2"
-                                    }`}
-                            >
-                                {/* SPU Project */}
-                                <div className="grid gap-2">
-                                    {(editingField === "all" || editingField === "core-fields") ? (
-                                        <>
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> SPU Project
-                                            </label>
-                                            <select
-                                                className="text-input font-label"
-                                                value={drafts.spu}
-                                                disabled={!["head", "supervisor"].includes(user?.role)}
-                                                onChange={(e) =>
-                                                    setDrafts((prev) => ({
-                                                        ...prev,
-                                                        spu: e.target.value,
-                                                    }))
-                                                }
-                                                data-cy="spu"
-                                            >
-                                                <option value="">Select SPU</option>
-                                                {projectLocation.map((spu) => (
-                                                    <option key={spu._id} value={spu._id}>
-                                                        {spu.spu_name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </>
-                                    ) : (
-                                        <p className="font-label">
-                                            <span className="font-bold-label">SPU Project:</span>{" "}
-                                            {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
-                                        </p>
-                                    )}
-                                </div>
+  {/* SPU + SDW ROW */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* SPU */}
+    <div className="grid gap-2">
+      {(editingField === "all" || editingField === "core-fields") ? (
+        <>
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> SPU Project
+          </label>
+          <select
+            className="text-input font-label"
+            value={drafts.spu}
+            disabled={!["head", "supervisor"].includes(user?.role)}
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, spu: e.target.value }))
+            }
+          >
+            <option value="">Select SPU</option>
+            {projectLocation.map((spu) => (
+              <option key={spu._id} value={spu._id}>
+                {spu.spu_name}
+              </option>
+            ))}
+          </select>
+        </>
+      ) : (
+        <p className="font-label">
+          <span className="font-bold-label">SPU Project:</span>{" "}
+          {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
+        </p>
+      )}
+    </div>
 
-                                {/* Social Development Worker */}
-                                <div className="grid gap-2">
-                                    {(editingField === "all" || editingField === "core-fields") ? (
-                                        <>
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> Social Development Worker
-                                            </label>
-                                            <select
-                                                className="text-input font-label"
-                                                disabled={!["head", "supervisor"].includes(user?.role)}
-                                                value={drafts.assigned_sdw}
-                                                onChange={(e) => {
-                                                    setDrafts((prev) => ({
-                                                        ...prev,
-                                                        assigned_sdw: e.target.value,
-                                                    }));
-                                                }}
-                                                data-cy="assigned-sdw"
-                                            >
-                                                <option value="">Select SDW</option>
-                                                {socialDevelopmentWorkers
-                                                    .filter((sdw) => {
-                                                        const selectedSPUName = projectLocation.find(
-                                                            (spu) => spu._id === drafts.spu
-                                                        )?.spu_name;
-                                                        return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
-                                                    })
-                                                    .map((sdw) => (
-                                                        <option key={sdw.id} value={sdw.id}>
-                                                            {sdw.username}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </>
-                                    ) : (
-                                        <p className="font-label">
-                                            <span className="font-bold-label">Social Development Worker:</span>{" "}
-                                            {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)
-                                                ?.username || "-"}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+    {/* SDW */}
+    <div className="grid gap-2">
+      {(editingField === "all" || editingField === "core-fields") ? (
+        <>
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> Social Development Worker
+          </label>
+          <select
+            className="text-input font-label"
+            disabled={!["head", "supervisor"].includes(user?.role)}
+            value={drafts.assigned_sdw}
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, assigned_sdw: e.target.value }))
+            }
+          >
+            <option value="">Select SDW</option>
+            {socialDevelopmentWorkers
+              .filter((sdw) => {
+                const selectedSPUName = projectLocation.find(
+                  (spu) => spu._id === drafts.spu
+                )?.spu_name;
+                return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
+              })
+              .map((sdw) => (
+                <option key={sdw.id} value={sdw.id}>
+                  {sdw.username}
+                </option>
+              ))}
+          </select>
+        </>
+      ) : (
+        <p className="font-label">
+          <span className="font-bold-label">Social Development Worker:</span>{" "}
+          {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)
+            ?.username || "-"}
+        </p>
+      )}
+    </div>
+  </div>
 
-                            {/* Classification */}
-                            <div className="grid gap-2 w-full">
-                                <label className="font-bold-label mb-2">
-                                    {(editingField === "all" || editingField === "core-fields") && (
-                                        <span className="text-red-500">*</span>
-                                    )}{" "}
-                                    Classification
-                                    {!(editingField === "all" || editingField === "core-fields") && (
-                                        <>: {data.classifications}</>
-                                    )}
-                                </label>
+  {/* CLASSIFICATION */}
+  <div className="grid gap-2 w-full">
+    <label className="font-bold-label">
+      {(editingField === "all" || editingField === "core-fields") && (
+        <span className="text-red-500">*</span>
+      )}{" "}
+      Classification
+      {!(editingField === "all" || editingField === "core-fields") && (
+        <>: {data.classifications}</>
+      )}
+    </label>
 
-                                {(editingField === "all" || editingField === "core-fields") && (
-                                    <div className="grid w-full max-w-[50rem]">
-                                        <select
-                                            className="text-input font-label"
-                                            value={drafts.classifications}
-                                            onChange={(e) =>
-                                                setDrafts((prev) => ({
-                                                    ...prev,
-                                                    classifications: e.target.value,
-                                                }))
-                                            }
-                                        >
-                                            <option value="">Select Classification</option>
-                                            {classificationList.map((item) => (
-                                                <option key={item} value={item}>
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                )}
-                            </div>
+    {(editingField === "all" || editingField === "core-fields") && (
+      <select
+        className="text-input font-label max-w-[50rem]"
+        value={drafts.classifications}
+        onChange={(e) =>
+          setDrafts((p) => ({ ...p, classifications: e.target.value }))
+        }
+      >
+        <option value="">Select Classification</option>
+        {classificationList.map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
+      </select>
+    )}
+  </div>
 
-                            {editingField === "core-fields" && (
-                                <button
-                                    className="btn-transparent-rounded my-3 justify-self-end"
-                                    onClick={async () => {
-                                        if (forceSubmitAfterConfirm) {
-                                            await handleSubmitCoreUpdate();
-                                            setForceSubmitAfterConfirm(false);
-                                            return;
-                                        }
+  {/* SUBMIT BUTTON */}
+  {editingField === "core-fields" && (
+    <button
+      className="btn-transparent-rounded my-3 justify-self-end"
+      onClick={async () => {
+        if (forceSubmitAfterConfirm) {
+          await handleSubmitCoreUpdate();
+          setForceSubmitAfterConfirm(false);
+          return;
+        }
+        const valid = await checkCore();
+        if (!valid) return;
 
-                                        const valid = await checkCore();
-                                        if (!valid) return;
+        if (valid === "pending-super-confirm") {
+          setModalTitle("SDW Outside Supervision");
+          setModalBody(
+            "You are about to assign the case to an SDW that is not under your supervision. You will no longer be able to modify the case. Are you sure you want to proceed?"
+          );
+          setModalImageCenter(<div className="warning-icon mx-auto" />);
+          setModalConfirm(true);
 
-                                        if (valid === "pending-super-confirm") {
-                                            setModalTitle("SDW Outside Supervision");
-                                            setModalBody(
-                                                "You are about to assign the case to an SDW that is not under your supervision. You will no longer be able to modify the case. Are you sure you want to proceed?"
-                                            );
-                                            setModalImageCenter(<div className="warning-icon mx-auto" />);
-                                            setModalConfirm(true);
+          setModalOnConfirm(() => async () => {
+            setForceSubmitAfterConfirm(true);
+            setShowModal(false);
+            await handleSubmitCoreUpdate();
+          });
 
-                                            setModalOnConfirm(() => async () => {
-                                                setForceSubmitAfterConfirm(true);
-                                                setShowModal(false);
-                                                await handleSubmitCoreUpdate();
-                                            });
+          setModalOnClose(() => () => setForceSubmitAfterConfirm(false));
+          setShowModal(true);
+          return;
+        }
 
-                                            setModalOnClose(() => () => {
-                                                setForceSubmitAfterConfirm(false);
-                                            });
-
-                                            setShowModal(true);
-                                            return;
-                                        }
-
-                                        await handleSubmitCoreUpdate();
-                                    }}
-                                    data-cy="submit-core-details-section"
-                                >
-                                    Submit Changes
-                                </button>
-                            )}
-                        </section>
+        await handleSubmitCoreUpdate();
+      }}
+    >
+      Submit Changes
+    </button>
+  )}
+</section>
 
 
                         <section className='flex flex-col gap-8' id="identifying-data" ref={ref1}>
@@ -2148,7 +2117,7 @@ function CaseFrontend({ creating = false }) {
                                         try {
                                             const updated = await editAssessment(clientId, {
                                                 assessment: drafts.assessment,
-                                            });
+                                                                                       });
 
                                             setData((prev) => ({
                                                 ...prev,
