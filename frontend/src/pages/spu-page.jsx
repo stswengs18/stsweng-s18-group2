@@ -44,6 +44,7 @@ export default function SpuPage() {
     const isMobile = windowWidth <= 650;
     const isVerySmall = windowWidth <= 400;
     const hideSpuColumn = windowWidth <= 800;
+    const hideTypeColumn = windowWidth <= 400;
 
     useEffect(() => {
         document.title = "SPU Page";
@@ -282,10 +283,10 @@ export default function SpuPage() {
                                                         <p className="font-label">No workers assigned.</p>
                                                     ) : (
                                                         <>
-                                                            <div className={`${hideSpuColumn ? 'grid grid-cols-[2fr_1fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
+                                                            <div className={`${hideTypeColumn ? 'grid grid-cols-[1fr]' : hideSpuColumn ? 'grid grid-cols-[2fr_1fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                                                                 <p className="font-bold-label ml-[20%]">Worker</p>
-                                                                <p className="font-bold-label text-center">Type</p>
-                                                                {!hideSpuColumn && <p className="font-bold-label text-center">SPU</p>}
+                                                                {!hideTypeColumn && <p className="font-bold-label text-center">Type</p>}
+                                                                {!hideSpuColumn && !hideTypeColumn && <p className="font-bold-label text-center">SPU</p>}
                                                             </div>
                                                             {spuWorkers.map((worker) => (
                                                                 <WorkerEntry
@@ -295,6 +296,7 @@ export default function SpuPage() {
                                                                     role={worker.role}
                                                                     spu_id={worker.spu_id}
                                                                     hideSpuColumn={hideSpuColumn}
+                                                                    hideTypeColumn={hideTypeColumn}
                                                                 />
                                                             ))}
                                                         </>
