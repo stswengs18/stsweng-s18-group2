@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SideBar from "../Components/SideBar";
 import { useState, useEffect } from "react";
 import { fetchSession } from "../fetch-connections/account-connection";
+import SideItem from "../Components/SideItem";
 
 export default function NotFound({ message = "The page you're looking for does not exist." }) {
     const navigate = useNavigate();
