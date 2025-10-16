@@ -39,6 +39,15 @@ function Archive() {
   const hideTypeColumn = windowWidth <= 400;
 
   useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     document.title = `Archive`;
   }, []);
 
