@@ -67,7 +67,7 @@ export default function NotFound({ message = "The page you're looking for does n
                 />
 
                 <div className={`flex flex-col w-full gap-15 ${isMobile ? 'ml-0' : 'ml-[15rem]'} justify-center items-center transform -translate-y-1/5 main-content`}>
-                    <h1 className="main-logo-text-nav !text-[4rem]">404 - Page Not Found</h1>
+                    <h1 className="main-logo-text-nav !text-[4rem] text-center">404 - Page Not Found</h1>
                     <p className="font-label">{message}</p>
                     <button
                         onClick={() => navigate("/")}
