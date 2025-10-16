@@ -37,6 +37,7 @@ function HomeLeader() {
   const hideTypeColumn = windowWidth <= 400;
   const isSmallLayout = windowWidth <= 900;
   const moveAddAccountToNewRow = windowWidth <= 400;
+  const shortenTitle = windowWidth <= 500;
 
   useEffect(() => {
     const handleResize = () => {
@@ -215,7 +216,9 @@ useEffect(() => {
           <h1 className="header-main">
             {user?.role === "head"
               ? "Coordinating Unit"
-              : `Coordinating Unit${user?.spu_name ? ` - ${user.spu_name}` : ""}`}
+              : shortenTitle
+                ? user?.spu_name || ""
+                : `Coordinating Unit${user?.spu_name ? ` - ${user.spu_name}` : ""}`}
           </h1>
 
           <div className={`flex ${isSmallLayout ? 'flex-col' : 'justify-between'} gap-10`}>
