@@ -7,8 +7,19 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
     const navigate = useNavigate();
 
+    const isSmallScreen = windowWidth <= 720;
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const original = document.body.style.backgroundColor;
@@ -46,9 +57,9 @@ export default function Login() {
 
     return (
         <>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white
-                            max-w-[75rem] w-full min-h-max rounded-lg drop-shadow-card flex
-                            flex-col justify-around items-center pb-10 gap-5">
+            <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white
+                            ${isSmallScreen ? 'w-[calc(100%-4rem)] max-w-[90vw] mx-8' : 'max-w-[75rem] w-full'} min-h-max rounded-lg drop-shadow-card flex
+                            flex-col justify-around items-center pb-10 gap-5`}>
 
                 <div className="main-logo main-logo-text-nav flex items-center">
                     <div className="main-logo-setup folder-logo !w-[8rem] !h-[12rem]"></div>
