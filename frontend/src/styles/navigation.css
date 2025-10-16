@@ -3,6 +3,7 @@
     font-family: 'ADLaM Display', cursive;
     font-size: 2rem;
     color: var(--color-primary);
+    text-align: center;
 }
 
 .main-logo-text-nav-sub {
