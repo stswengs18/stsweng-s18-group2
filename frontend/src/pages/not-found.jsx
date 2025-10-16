@@ -29,7 +29,7 @@ export default function NotFound({ message = "The page you're looking for does n
             <div className="fixed top-0 left-0 right-0 z-50 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
                 <div className="flex items-center gap-4">
                     <button 
-                        className="side-item menu-button hidden"
+                        className="side-item menu-button"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         style={{ display: 'none' }}
                     >

@@ -94,7 +94,7 @@
 .menu-button {
   mask-image: url("/menu.svg");
   -webkit-mask-image: url("/menu.svg");
-  background-color: var(--color-black) !important;
+  background-color: var(--color-black);
 }
 
 .menu-button:hover {
