@@ -11,28 +11,40 @@ html {
   font-size: 56.25%; 
 }
 
-/* Tablet breakpoint */
+/* Extra small mobile */
+html {
+  font-size: 54%;
+}
+
+/* Small mobile */
+@media (min-width: 480px) {
+  html {
+    font-size: 56.25%;
+  }
+}
+
+/* Tablet */
 @media (min-width: 768px) {
   html {
     font-size: 58.75%;
   }
 }
 
-/* Desktop breakpoint */
+/* Default Desktop */
 @media (min-width: 1024px) {
   html {
     font-size: 62.5%; /* 1rem = 10px on desktop*/
   }
 }
 
-/* Large desktop breakpoint */
+/* Large desktop */
 @media (min-width: 1440px) {
   html {
     font-size: 65%
   }
 }
 
-/* Extra large screens */
+/* Extra large */
 @media (min-width: 1920px) {
   html {
     font-size: 68.75%;
