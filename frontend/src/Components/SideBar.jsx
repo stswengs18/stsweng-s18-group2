@@ -5,7 +5,7 @@ import { useState } from "react";
 import SideItem from "./SideItem";
 import ProfileModal from "./ProfileModal";
 
-export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
+export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen, isMobile = false }) {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     const handleOverlayClick = () => {
@@ -13,6 +13,10 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
             setIsMenuOpen(false);
         }
     };
+
+    const sidebarClasses = isMobile 
+        ? `side-nav fixed z-50 ${isMenuOpen ? 'mobile-open' : 'mobile-closed'}` 
+        : 'side-nav fixed z-20';
 
     return (
         <>
@@ -22,17 +26,14 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
             />
             
             {/* Mobile overlay */}
-            {isMenuOpen && (
+            {isMobile && isMenuOpen && (
                 <div 
-                    className="fixed inset-0 bg-black bg-opacity-30 z-30"
+                    className="fixed inset-0 bg-black bg-opacity-20 z-30"
                     onClick={handleOverlayClick}
-                    style={{ 
-                        display: window.innerWidth <= 650 ? 'block' : 'none'
-                    }}
                 ></div>
             )}
             
-            <div className={`side-nav fixed z-50 ${isMenuOpen ? 'mobile-open' : ''}`}>
+            <div className={sidebarClasses}>
                 <SideItem
                     href="/"
                     iconClass="home-button"
@@ -70,29 +71,30 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen }) {
             </div>
 
             <style jsx>{`
-                @media (max-width: 650px) {
-                    .side-nav {
-                        transform: translateX(-100%);
-                        transition: transform 0.3s ease;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        height: 100vh;
-                        width: 15rem;
-                        z-index: 50 !important;
-                        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-                        background: white;
-                        padding-top: 8rem;
-                    }
-                    
-                    .side-nav.mobile-open {
-                        transform: translateX(0);
-                    }
-                    
-                    .mobile-overlay {
-                        display: block !important;
-                        z-index: 20;
-                    }
+                .mobile-closed {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s ease;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100vh;
+                    width: 15rem;
+                    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+                    background: white;
+                    padding-top: 8rem;
+                }
+                
+                .mobile-open {
+                    transform: translateX(0);
+                    transition: transform 0.3s ease;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100vh;
+                    width: 15rem;
+                    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+                    background: white;
+                    padding-top: 8rem;
                 }
             `}</style>
         </>

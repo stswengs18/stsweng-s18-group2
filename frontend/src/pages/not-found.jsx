@@ -8,6 +8,18 @@ export default function NotFound({ message = "The page you're looking for does n
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+    const isMobile = windowWidth <= 650;
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const loadSession = async () => {
@@ -28,12 +40,13 @@ export default function NotFound({ message = "The page you're looking for does n
         <>
             <div className="fixed top-0 left-0 right-0 z-60 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
                 <div className="flex items-center gap-4">
-                    <button 
-                        className="side-icon-setup menu-button hidden"
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        style={{ display: 'none' }}
-                    >
-                    </button>
+                    {isMobile && (
+                        <button 
+                            className="side-icon-setup menu-button"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        >
+                        </button>
+                    )}
                     
                     <a href="/" className="main-logo main-logo-text-nav">
                         <div className="main-logo-setup folder-logo"></div>
@@ -49,10 +62,11 @@ export default function NotFound({ message = "The page you're looking for does n
                 <SideBar 
                     user={user} 
                     isMenuOpen={isMenuOpen} 
-                    setIsMenuOpen={setIsMenuOpen} 
+                    setIsMenuOpen={setIsMenuOpen}
+                    isMobile={isMobile}
                 />
 
-                <div className="flex flex-col w-full gap-15 ml-[15rem] justify-center items-center transform -translate-y-1/5 main-content">
+                <div className={`flex flex-col w-full gap-15 ${isMobile ? 'ml-0' : 'ml-[15rem]'} justify-center items-center transform -translate-y-1/5 main-content`}>
                     <h1 className="main-logo-text-nav !text-[4rem]">404 - Page Not Found</h1>
                     <p className="font-label">{message}</p>
                     <button
