@@ -64,18 +64,9 @@ export default function Login() {
 
                 <div className="main-logo main-logo-text-nav flex items-center">
                     <div className="main-logo-setup folder-logo !w-[8rem] !h-[12rem]"></div>
-                    <div className="flex flex-col">
-                        {isVerySmallScreen ? (
-                            <>
-                                <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem]">Unbound</p>
-                                <p className="main-logo-text-nav !text-[3rem]">CMS</p>
-                            </>
-                        ) : (
-                            <>
-                                <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem]">Unbound Manila Foundation Inc.</p>
-                                <p className="main-logo-text-nav !text-[3rem]">Case Management System</p>
-                            </>
-                        )}
+                    <div className="flex flex-col text-center">
+                        <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem] break-words">Unbound Manila Foundation Inc.</p>
+                        <p className="main-logo-text-nav !text-[3rem] break-words">Case Management System</p>
                     </div>
                 </div>
 
@@ -131,6 +122,15 @@ export default function Login() {
                             className="btn-primary font-bold-label drop-shadow-base !text-[2.5rem] !py-5 !px-30 m-4"
                             data-cy='login-button'
                         >
+                            Login
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </>
+    );
+}
                             Login
                         </button>
                     </div>
