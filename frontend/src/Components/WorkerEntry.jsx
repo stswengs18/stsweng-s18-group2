@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+
 function getColorFromId(id) {
   let hash = 0;
   const strId = id.toString();
@@ -38,7 +40,18 @@ export default function WorkerEntry({
   spu_id,
   archive
 }) {
-  const initials = name.charAt(0).toUpperCase();
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const hideSpuColumn = windowWidth <= 800;
 
   let bgColor = getColorFromId(name);
   let textColor = getTextColorForBackground(bgColor);
@@ -51,15 +64,14 @@ export default function WorkerEntry({
   return (
     <a
       href={`/profile/${id}`}
-      // href={`/workers/${id}`}
-      className="client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 bg-white rounded-lg font-bold-label"
+      className={`client-entry ${hideSpuColumn ? 'grid grid-cols-[2fr_1fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center p-5 mb-2 bg-white rounded-lg font-bold-label`}
     >
       <div className="flex items-center gap-6">
         <div
           className="rounded-full h-[4.5rem] min-w-[4.5rem] flex justify-center items-center header-sub"
           style={{ backgroundColor: bgColor, color: textColor }}
         >
-          {initials}
+          {name.charAt(0).toUpperCase()}
         </div>
         <div className="flex flex-col gap-2">
           <p>{name}</p>
@@ -67,7 +79,7 @@ export default function WorkerEntry({
         </div>
       </div>
       <p className="text-center">{role === "sdw" ? "SDW" : role === "supervisor" ? "Supervisor" : "Head"}</p>
-      <p className="text-center ml-[4%]">{spu_id}</p>
+      {!hideSpuColumn && <p className="text-center ml-[4%]">{spu_id}</p>}
     </a>
   );
 }
