@@ -60,7 +60,7 @@
 /* Mobile menu styles */
 @media (max-width: 650px) {
   .menu-button {
-    display: flex !important;
+    display: block !important;
     align-items: center;
     justify-content: center;
     background: none;
