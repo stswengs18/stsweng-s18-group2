@@ -78,9 +78,16 @@ corsOptions = {
 
 app.use(cors(corsOptions));
 app.set('trust proxy', 1);
+
+// Check if MONGODB_URI exists before creating session store
+if (!process.env.MONGODB_URI) {
+    console.error('MONGODB_URI environment variable is not set!');
+    process.exit(1);
+}
+
 app.use(
     session({
-        secret: process.env.SECRET_KEY || "secret-key", 
+        secret: process.env.SESSION_SECRET || process.env.SECRET_KEY || "secret-key", 
         resave: false,        
         saveUninitialized: false,
         store: MongoStore.create({
