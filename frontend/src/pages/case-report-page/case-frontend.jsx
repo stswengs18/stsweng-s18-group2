@@ -1071,6 +1071,19 @@ function CaseFrontend({ creating = false }) {
         }
     }, [loadingComplete]);
 
+    const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+    const isFormTwoColumn = windowWidth <= 760;
+    const isFormAdjustedRatio = windowWidth <= 780;
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     if (!loadingComplete) {
         return (
             <div className="w-full h-screen flex flex-col items-center justify-center">
