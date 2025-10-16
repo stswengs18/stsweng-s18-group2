@@ -11,6 +11,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     const isSmallScreen = windowWidth <= 720;
+    const isVerySmallScreen = windowWidth <= 600;
 
     useEffect(() => {
         const handleResize = () => {
@@ -64,8 +65,17 @@ export default function Login() {
                 <div className="main-logo main-logo-text-nav flex items-center">
                     <div className="main-logo-setup folder-logo !w-[8rem] !h-[12rem]"></div>
                     <div className="flex flex-col">
-                        <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem]">Unbound Manila Foundation Inc.</p>
-                        <p className="main-logo-text-nav !text-[3rem]">Case Management System</p>
+                        {isVerySmallScreen ? (
+                            <>
+                                <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem]">Unbound</p>
+                                <p className="main-logo-text-nav !text-[3rem]">CMS</p>
+                            </>
+                        ) : (
+                            <>
+                                <p className="main-logo-text-nav-sub !text-[2rem] mb-[-1rem]">Unbound Manila Foundation Inc.</p>
+                                <p className="main-logo-text-nav !text-[3rem]">Case Management System</p>
+                            </>
+                        )}
                     </div>
                 </div>
 
