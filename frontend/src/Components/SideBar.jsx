@@ -28,8 +28,17 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen, isMob
             {/* Mobile overlay */}
             {isMobile && isMenuOpen && (
                 <div 
-                    className="fixed inset-0 bg-black bg-opacity-20 z-30"
+                    className="fixed inset-0 z-30"
                     onClick={handleOverlayClick}
+                    style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 30
+                    }}
                 ></div>
             )}
             
