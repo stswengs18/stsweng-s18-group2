@@ -4,15 +4,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-//const path = require('path');
-// const path = require('path');
-
-// branch 1
+const path = require('path');
 
 /**
  *  Configuration/Initialization
  */
-dotenv.config();
+// Load .env from parent directory
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 
@@ -78,9 +76,16 @@ corsOptions = {
 
 app.use(cors(corsOptions));
 app.set('trust proxy', 1);
+
+// Check if MONGODB_URI exists before creating session store
+if (!process.env.MONGODB_URI) {
+    console.error('MONGODB_URI environment variable is not set!');
+    process.exit(1);
+}
+
 app.use(
     session({
-        secret: process.env.SECRET_KEY || "secret-key", 
+        secret: process.env.SESSION_SECRET || process.env.SECRET_KEY || "secret-key", 
         resave: false,        
         saveUninitialized: false,
         store: MongoStore.create({
@@ -88,10 +93,10 @@ app.use(
             collectionName: "sessions",
         }),
         cookie: {
-            maxAge: process.env.COOKIE_MAX_AGE ? parseInt(process.env.COOKIE_MAX_AGE) : null, 
+            maxAge: process.env.COOKIE_MAX_AGE ? parseInt(process.env.COOKIE_MAX_AGE) : 24 * 60 * 60 * 1000, // 24 hours default
             httpOnly: true, 
-            secure: true, // Keep true since you're using HTTPS everywhere
-            sameSite: 'none'
+            secure: process.env.NODE_ENV === 'production', // Only secure in production
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Use 'lax' for localhost
         }
     })
 );

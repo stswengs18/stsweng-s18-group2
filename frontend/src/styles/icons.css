@@ -109,6 +109,11 @@
   -webkit-mask-image: url("/trash.svg");
 }
 
+.menu-button {
+  mask-image: url("/menu.svg");
+  -webkit-mask-image: url("/menu.svg");
+}
+
 .home-button {
   mask-image: url("/home.svg");
   -webkit-mask-image: url("/home.svg");
@@ -258,6 +263,31 @@
 }
 
 .arrow-group:active .arrow-left-button {
+  transform: scale(0.9);
+  background-color: var(--color-primary);
+}
+
+.side-icon-setup {
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--color-black);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  transition: all 0.4s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.side-icon-setup:hover {
+  transform: scale(1.2);
+  background-color: var(--color-primary);
+}
+
+.side-icon-setup:active {
   transform: scale(0.9);
   background-color: var(--color-primary);
 }
