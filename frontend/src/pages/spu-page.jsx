@@ -41,7 +41,7 @@ export default function SpuPage() {
         onConfirm: null,
     });
 
-    const isMobile = windowWidth <= 650;
+    const isMobile = windowWidth <= 700; // Changed from 650 to 700 to match home-leader
     const isVerySmall = windowWidth <= 400;
     const hideSpuColumn = windowWidth <= 800;
     const hideTypeColumn = windowWidth <= 400;
