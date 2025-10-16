@@ -36,6 +36,7 @@ function HomeLeader() {
   const hideSpuColumn = windowWidth <= 800;
   const hideTypeColumn = windowWidth <= 400;
   const isSmallLayout = windowWidth <= 900;
+  const moveAddAccountToNewRow = windowWidth <= 400;
 
   useEffect(() => {
     const handleResize = () => {
@@ -261,7 +262,7 @@ useEffect(() => {
                 )}
               </div>
 
-              {user?.role == "head" && (
+              {user?.role == "head" && !moveAddAccountToNewRow && (
                 <button
                   className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
                   onClick={() => setIsRegisterOpen(true)}
@@ -339,6 +340,19 @@ useEffect(() => {
               ))
             )}
           </div>
+
+          {user?.role == "head" && moveAddAccountToNewRow && (
+            <div className="flex justify-center w-full">
+              <button
+                className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                onClick={() => setIsRegisterOpen(true)}
+                disabled={isRegisterOpen}
+              >
+                <p>+</p>
+                <p>Add Account</p>
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </>
