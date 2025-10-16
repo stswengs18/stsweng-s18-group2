@@ -1271,15 +1271,18 @@ function CaseFrontend({ creating = false }) {
               : "icon-button-setup dots-button"
           }
           onClick={() => {
-            if (editingField) resetFields();
-            else setEditingField("core-fields");
+            if (editingField) {
+              resetFields();
+            } else {
+              setEditingField("core-fields");
+            }
           }}
         />
       )}
     </div>
   )}
 
-  {/* CORE FIELDS */}
+  {/* EDIT / CREATE MODE */}
   {(editingField === "all" || editingField === "core-fields") ? (
     <>
       {/* Names */}
@@ -1353,7 +1356,13 @@ function CaseFrontend({ creating = false }) {
       </div>
 
       {/* SPU + SDW + CLASSIFICATION */}
-      <div className="grid gap-6 [grid-template-columns:repeat(2,minmax(0,1fr))]">
+      <div
+        className={`grid gap-6 ${
+          windowWidth < 600
+            ? "[grid-template-columns:repeat(1,minmax(0,1fr))]"
+            : "[grid-template-columns:repeat(2,minmax(0,1fr))]"
+        }`}
+      >
         {/* SPU */}
         <div className="grid gap-2 min-w-0">
           <label className="font-bold-label">
@@ -1363,7 +1372,9 @@ function CaseFrontend({ creating = false }) {
             className="text-input font-label w-full max-w-full min-w-0"
             value={drafts.spu}
             disabled={!["head", "supervisor"].includes(user?.role)}
-            onChange={(e) => setDrafts((p) => ({ ...p, spu: e.target.value }))}
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, spu: e.target.value }))
+            }
             data-cy="spu"
           >
             <option value="">Select SPU</option>
@@ -1405,10 +1416,14 @@ function CaseFrontend({ creating = false }) {
           </select>
         </div>
 
-        {/* CLASSIFICATION — spans full row when < 1000px */}
+        {/* CLASSIFICATION — full row <1000; own row <600 */}
         <div
           className={`grid gap-2 min-w-0 ${
-            windowWidth < 1000 ? "col-span-2" : ""
+            windowWidth < 1000 && windowWidth >= 600
+              ? "col-span-2"
+              : windowWidth < 600
+              ? "col-span-1"
+              : ""
           }`}
         >
           <label className="font-bold-label">
@@ -1432,50 +1447,54 @@ function CaseFrontend({ creating = false }) {
       </div>
 
       {/* SUBMIT */}
-      <button
-        className="btn-transparent-rounded my-3 justify-self-end"
-        onClick={async () => {
-          if (forceSubmitAfterConfirm) {
-            await handleSubmitCoreUpdate();
-            setForceSubmitAfterConfirm(false);
-            return;
-          }
-          const valid = await checkCore();
-          if (!valid) return;
-
-          if (valid === "pending-super-confirm") {
-            setModalTitle("SDW Outside Supervision");
-            setModalBody(
-              "You are about to assign the case to an SDW that is not under your supervision. You will no longer be able to modify the case. Are you sure you want to proceed?"
-            );
-            setModalImageCenter(<div className="warning-icon mx-auto" />);
-            setModalConfirm(true);
-
-            setModalOnConfirm(() => async () => {
-              setForceSubmitAfterConfirm(true);
-              setShowModal(false);
+      {editingField === "core-fields" && (
+        <button
+          className="btn-transparent-rounded my-3 justify-self-end"
+          onClick={async () => {
+            if (forceSubmitAfterConfirm) {
               await handleSubmitCoreUpdate();
-            });
+              setForceSubmitAfterConfirm(false);
+              return;
+            }
 
-            setModalOnClose(() => () => setForceSubmitAfterConfirm(false));
-            setShowModal(true);
-            return;
-          }
+            const valid = await checkCore();
+            if (!valid) return;
 
-          await handleSubmitCoreUpdate();
-        }}
-        data-cy="submit-core-details-section"
-      >
-        Submit Changes
-      </button>
+            if (valid === "pending-super-confirm") {
+              setModalTitle("SDW Outside Supervision");
+              setModalBody(
+                "You are about to assign the case to an SDW that is not under your supervision. You will no longer be able to modify the case. Are you sure you want to proceed?"
+              );
+              setModalImageCenter(<div className="warning-icon mx-auto" />);
+              setModalConfirm(true);
+
+              setModalOnConfirm(() => async () => {
+                setForceSubmitAfterConfirm(true);
+                setShowModal(false);
+                await handleSubmitCoreUpdate();
+              });
+
+              setModalOnClose(() => () => {
+                setForceSubmitAfterConfirm(false);
+              });
+
+              setShowModal(true);
+              return;
+            }
+
+            await handleSubmitCoreUpdate();
+          }}
+          data-cy="submit-core-details-section"
+        >
+          Submit Changes
+        </button>
+      )}
     </>
   ) : (
     /* VIEW MODE */
     <>
       <div className="grid grid-cols-[1fr_auto] items-center">
-        <h1 className="header-main">
-          {`${data.first_name} ${data.middle_name} ${data.last_name}`}
-        </h1>
+        <h1 className="header-main">{`${data.first_name} ${data.middle_name} ${data.last_name}`}</h1>
         {data.is_active && !isTerminated && (
           <button
             className={
@@ -1483,17 +1502,28 @@ function CaseFrontend({ creating = false }) {
                 ? "icon-button-setup x-button"
                 : "icon-button-setup dots-button"
             }
-            onClick={() =>
-              editingField ? resetFields() : setEditingField("core-fields")
-            }
+            onClick={() => {
+              if (editingField) {
+                resetFields();
+              } else {
+                setEditingField("core-fields");
+              }
+            }}
             data-cy="edit-core-details-section"
           />
         )}
       </div>
+
       <h2 className="header-sub">{data.sm_number}</h2>
 
-      {/* VIEW GRID: two columns, classification spans on < 1000px too */}
-      <div className="grid gap-4 [grid-template-columns:repeat(2,minmax(0,1fr))]">
+      {/* VIEW GRID: same JS rules for layout */}
+      <div
+        className={`grid gap-4 ${
+          windowWidth < 600
+            ? "[grid-template-columns:repeat(1,minmax(0,1fr))]"
+            : "[grid-template-columns:repeat(2,minmax(0,1fr))]"
+        }`}
+      >
         <p className="font-label min-w-0 break-words">
           <span className="font-bold-label">SPU Project:</span>{" "}
           {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
@@ -1507,7 +1537,11 @@ function CaseFrontend({ creating = false }) {
 
         <p
           className={`font-label min-w-0 break-words ${
-            windowWidth < 1000 ? "col-span-2" : ""
+            windowWidth < 1000 && windowWidth >= 600
+              ? "col-span-2"
+              : windowWidth < 600
+              ? "col-span-1"
+              : ""
           }`}
         >
           <span className="font-bold-label">Classification:</span>{" "}
@@ -1517,6 +1551,7 @@ function CaseFrontend({ creating = false }) {
     </>
   )}
 </section>
+
 
 
 
