@@ -27,13 +27,6 @@ export default function NotFound({ message = "The page you're looking for does n
     return (
         <>
             <div className="fixed top-0 left-0 right-0 z-50 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
-                <SideItem
-                    href="/"
-                    iconClass="menu-button"
-                    label=""
-                    isActive={false}
-                />
-                
                 <a href="/" className="main-logo main-logo-text-nav">
                     <div className="main-logo-setup folder-logo"></div>
                     <div className="flex flex-col">
