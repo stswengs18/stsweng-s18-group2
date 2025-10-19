@@ -92,7 +92,6 @@ function CaseFrontend({ creating = false }) {
         assigned_sdw: "",
         spu: "",
         classifications: "",
-
         pendingTermination: false
     });
 
@@ -256,6 +255,7 @@ function CaseFrontend({ creating = false }) {
             assessment: data.assessment || "",
             recommendation: data.recommendation || "",
             evaluation: data.evaluation || "",
+            
         });
         setEditingField(null);
     };
@@ -1795,6 +1795,10 @@ function CaseFrontend({ creating = false }) {
                                     {/* <p><span className="font-bold-label">Relationship to Client:</span> {data.relationship_to_client || "-"}</p> */}
                                     <p><span className="font-bold-label">Present Address:</span> {data.present_address || "-"}</p>
                                     <p><span className="font-bold-label">Place of Birth:</span> {data.pob || "-"}</p>
+                                    <p>
+                                    <span className="font-bold-label">Case Created At:</span>{" "}
+                                    {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "-"}
+                                    </p>
                                 </div>
                             )}
                         </section>

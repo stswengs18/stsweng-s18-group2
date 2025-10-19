@@ -259,8 +259,18 @@ export default function SpuPage() {
                                             <p className="font-label">
                                                 {spuWorkers.length} worker(s), {spuCases.length} case(s)
                                             </p>
+                                            {spu.createdAt && (
+                                                <p className="font-label text-sm text-gray-600 mt-1">
+                                                    Created: {new Date(spu.createdAt).toLocaleDateString('en-PH', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </p>
+                                            )}
                                         </div>
-
                                         <motion.button
                                             onClick={() => toggleSpuCollapse(spu._id)}
                                             className="icon-button-setup chevron-button"
