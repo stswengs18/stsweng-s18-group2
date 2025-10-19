@@ -33,6 +33,24 @@
   -webkit-mask-repeat: no-repeat;
 }
 
+.info-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+
+  mask-image: url("/info.svg");
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-image: url("/info.svg");
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+
+  background-color: #006599;
+}
+
 /* CLICKABLE ICONS */
 .icon-button-setup {
   width: 2rem;
