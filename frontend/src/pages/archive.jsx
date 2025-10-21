@@ -3,11 +3,17 @@ import SideItem from "../Components/SideItem";
 import ClientEntry from "../Components/ClientEntry";
 import WorkerEntry from "../Components/WorkerEntry";
 import SideBar from "../Components/SideBar";
+import DeleteSelectedModal from "../Components/DeleteSelectedModal";
 import { fetchAllCases } from "../fetch-connections/case-connection";
+import { deleteClients } from "../fetch-connections/case-connection";
 import { fetchHeadView, fetchSession, fetchSupervisorView } from "../fetch-connections/account-connection";
 import { fetchAllSpus } from "../fetch-connections/spu-connection";
 import { useNavigate } from "react-router-dom";
 import Loading from "./loading";
+
+import DeleteConfirmModal from "../Components/DeleteConfirmModal";
+import NoSelectionModal from "../Components/NoSelectionModal";
+
 
 function Archive() {
   const navigate = useNavigate();
@@ -21,6 +27,10 @@ function Archive() {
 
   const [showDeleteCheckbox, setShowDeleteCheckbox] = useState(false);
   const [selectedClients, setSelectedClients] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
+  
+  const [modalType, setModalType] = useState(null); // 'confirm' | 'none'
 
   const [deleteMode, setDeleteMode] = useState(false);
 
@@ -206,10 +216,58 @@ useEffect(() => {
 }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
   // toggle function for selecting clients in delete mode
-  const handleSelectChange = (id, checked) => {
-    setSelectedClients(prev =>
-      checked ? [...prev, id] : prev.filter(c => c !== id)
-    );
+  const handleSelectChange = (id, isChecked) => {
+    setSelectedClients(prev => {
+      if (isChecked) {
+        // add to selected
+        return [...prev, id];
+      } else {
+        // remove from selected
+        return prev.filter(clientId => clientId !== id);
+      }
+    });
+  };
+  
+  // Open delete flow: show confirm modal if any selected, otherwise show "no selection" modal
+  const openDeleteFlow = () => {
+    if (selectedClients.length > 0) {
+      setModalType("confirm");
+      setShowModal(true);
+    } else {
+      setModalType("none");
+      setShowModal(true);
+    }
+  };
+
+  
+  const handleDeleteConfirm = async () => {
+  try {
+    if (!selectedClients.length) return;
+
+    // Call backend API
+    const result = await deleteClients(selectedClients);
+    console.log('Deleted clients:', result);
+
+    // Update local state (filter them out)
+    setAllCases(prev => prev.filter(c => !selectedClients.includes(c.id)));
+
+    // Reset UI
+    setSelectedClients([]);
+    setDeleteMode(false);
+    setShowDeleteCheckbox(false);
+    setShowModal(false);
+    setModalType(null);
+
+  } catch (err) {
+    console.error('Delete failed:', err);
+    // Optionally show toast / modal error
+  }
+};
+  
+  
+  const handleModalClose = () => {
+    setShowModal(false);
+    setModalType(null);
   };
 
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
@@ -245,7 +303,6 @@ useEffect(() => {
           <div className="flex justify-between gap-10">
             <div className="flex gap-5 justify-between items-center w-full">
               <div className="flex gap-5 w-full">
-                {/* replace componenets under this class in delete mode */}
                 {deleteMode ? (
                   viewMode === "cases" ? (
                     user?.role == "head" && (
@@ -279,12 +336,18 @@ useEffect(() => {
                         <button
                           className="btn-delete-case font-bold-label"
                           onClick={() => {
-                            setDeleteMode(true)
-                            setShowDeleteCheckbox(true)
+                             if (!deleteMode) {
+                                // First click: enter delete mode
+                                setDeleteMode(true);
+                                setShowDeleteCheckbox(true);
+                            } else {
+                                // Already in delete mode with selections: trigger delete flow
+                                openDeleteFlow();
+                            }                       
                           }}
-                          disabled={deleteMode}
+                          // disabled={deleteMode}
                         >
-                          {deleteMode ? 'Delete Selected' : 'Delete'}
+                          {deleteMode ? 'Delete Selected true' : 'Delete'}
                         </button>
                         {deleteMode && (
                         <button
@@ -383,10 +446,17 @@ useEffect(() => {
                       <button
                         className="btn-delete-case font-bold-label"
                         onClick={() => {
-                          setDeleteMode(true)
-                          setShowDeleteCheckbox(true)
+                          if (!deleteMode) {
+                                // First click: enter delete mode
+                                setDeleteMode(true);
+                                setShowDeleteCheckbox(true);
+                            } else {
+                                // Already in delete mode with selections: trigger delete flow
+                                openDeleteFlow();
+                            }
+                            
                         }}
-                        disabled={deleteMode}
+                        // disabled={deleteMode}
                       >
                         {deleteMode ? 'Delete Selected' : 'Delete'}
                       </button>
@@ -506,6 +576,20 @@ useEffect(() => {
                   </button>
                   )}
                 </div> */}
+                {/* Delete flow modals */}
+                <DeleteSelectedModal
+                  isOpen={showModal && modalType === "confirm"}
+                  onClose={handleModalClose}
+                  onConfirm={handleDeleteConfirm}
+                  selectedClientIds={selectedClients}
+                  allCases={allCases}
+                  setSelectedClients={setSelectedClients}
+                />
+
+                <NoSelectionModal
+                  isOpen={showModal && modalType === "none"}
+                  onClose={handleModalClose}
+                />
               </div>
             )
           ) : null}
