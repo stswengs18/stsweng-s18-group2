@@ -29,7 +29,18 @@ const getActiveCasesCount = async (req, res) => {
     }
 };
 
+const getClosedCasesCount = async (req, res) => {
+    try {
+        const closedCasesCount = await Sponsored_Member.countDocuments({ is_active: false });
+        res.status(200).json({ closedCases: closedCasesCount });
+    } catch (error) {
+        console.error("Error fetching closed cases count:", error);
+        res.status(500).json({ message: "Error fetching closed cases count", error: error.message });
+    }
+};
+
 module.exports = {
     renderHomePage,
-    getActiveCasesCount
+    getActiveCasesCount,
+    getClosedCasesCount
 };
