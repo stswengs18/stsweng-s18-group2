@@ -1,3 +1,5 @@
+const Sponsored_Member = require('../model/sponsored_member');
+
 /**
  *   DASHBOARD CONTROLLER
  *        > handles viewing of dashboard
@@ -16,3 +18,18 @@
 const renderHomePage = async (req, res) => {
      // code here
 }
+
+const getActiveCasesCount = async (req, res) => {
+    try {
+        const activeCasesCount = await Sponsored_Member.countDocuments({ is_active: true });
+        res.status(200).json({ activeCases: activeCasesCount });
+    } catch (error) {
+        console.error("Error fetching active cases count:", error);
+        res.status(500).json({ message: "Error fetching active cases count", error: error.message });
+    }
+};
+
+module.exports = {
+    renderHomePage,
+    getActiveCasesCount
+};
