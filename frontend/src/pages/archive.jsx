@@ -347,7 +347,7 @@ useEffect(() => {
                           }}
                           // disabled={deleteMode}
                         >
-                          {deleteMode ? 'Delete Selected true' : 'Delete'}
+                          {deleteMode ? 'Delete Selected' : 'Delete'}
                         </button>
                         {deleteMode && (
                         <button
