@@ -1,0 +1,13 @@
+db["sponsored members"].updateMany(
+  { createdAt: { $exists: false } },
+  [
+    { $set: { createdAt: { $toDate: "$_id" } } }
+  ]
+)
+
+db.employees.updateMany(
+  { createdAt: { $exists: false } },
+  [
+    { $set: { createdAt: { $toDate: "$_id" } } }
+  ]
+)
