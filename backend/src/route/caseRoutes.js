@@ -9,6 +9,7 @@ router.get('/allCases', caseController.getAllCases);
 router.get('/', caseController.getAllCases); // Alternative endpoint for getAllCases
 router.get('/active-cases-count', dashboardController.getActiveCasesCount);
 router.get('/closed-cases-count', dashboardController.getClosedCasesCount);
+router.get('/intervention-correspondence-count', dashboardController.getInterventionCorrespondenceCount);
 
 // Parameterized GET routes
 router.get('/case-by-sm-number/:sm_number', caseController.getCaseBySMNumber);

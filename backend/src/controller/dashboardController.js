@@ -1,4 +1,5 @@
 const Sponsored_Member = require('../model/sponsored_member');
+const Intervention_Correspondence = require('../model/intervention_correspondence');
 
 /**
  *   DASHBOARD CONTROLLER
@@ -39,8 +40,19 @@ const getClosedCasesCount = async (req, res) => {
     }
 };
 
+const getInterventionCorrespondenceCount = async (req, res) => {
+    try {
+        const count = await Intervention_Correspondence.countDocuments({});
+        res.status(200).json({ interventionCorrespondenceCount: count });
+    } catch (error) {
+        console.error("Error fetching intervention correspondence count:", error);
+        res.status(500).json({ message: "Error fetching intervention correspondence count", error: error.message });
+    }
+};
+
 module.exports = {
     renderHomePage,
     getActiveCasesCount,
-    getClosedCasesCount
+    getClosedCasesCount,
+    getInterventionCorrespondenceCount
 };
