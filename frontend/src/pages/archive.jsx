@@ -18,6 +18,9 @@ function Archive() {
   const [currentData, setCurrentData] = useState([]);
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
+  const [selectedClients, setSelectedClients] = useState([]);
+
+  const [deleteMode, setDeleteMode] = useState(false);
 
   const [currentSPU, setCurrentSPU] = useState("");
   const [sortBy, setSortBy] = useState("");
@@ -207,6 +210,14 @@ function Archive() {
     setArchiveEmp(filtered);
   }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
+  // toggle function for selecting clients in delete mode
+  const toggleClientSelection = (clientId) => {
+    setSelectedClients((prev) =>
+      prev.includes(clientId)
+        ? prev.filter((id) => id !== clientId)
+        : [...prev, clientId]
+    );
+  };
 
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
   if (!loadingComplete) return <Loading color={loadingColor} />;
@@ -459,3 +470,5 @@ function Archive() {
 }
 
 export default Archive;
+
+//comment
