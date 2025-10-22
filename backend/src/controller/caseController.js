@@ -987,6 +987,76 @@ const addIntervention = async (req, res) => {
      // code here
 }
 
+/**  
+ *   Deletes a case but starts a transaction first.
+ *   Just to be sure, either everything gets deleted or nothing is.
+ */
+const deleteOneCase = async (req, res) => {
+     try {
+          const caseSelected = await Sponsored_Member.findById(req.params.caseID);
+
+          if (!caseSelected) {
+               return res.status(400).json({ message: `Cannot proceed action, missing IDs.` });
+          }
+
+          // Start a transaction for atomicity
+          const session = await mongoose.startSession();
+          session.startTransaction();
+
+          try {
+               // 1. Delete all family relationships
+               await Family_Relationship.deleteMany({ sponsor_id: caseSelected }, { session });
+
+               // 2. Delete associated case closures
+               await Case_Closure.deleteMany({ sm: caseSelected }, { session });
+
+               // 3. Delete associated interventions
+               await Promise.all([
+                    // Delete correspondence interventions
+                    Intervention_Correspondence.deleteMany({ sm: caseSelected }, { session }),
+                    // Delete counseling interventions
+                    Intervention_Counseling.deleteMany({ sm: caseSelected }, { session }),
+                    // Delete financial interventions
+                    Intervention_Financial.deleteMany({ sm: caseSelected }, { session }),
+                    // Delete home visit interventions
+                    Intervention_HomeVisit.deleteMany({ sm: caseSelected }, { session })
+               ]);
+
+               // 4. Delete associated progress reports
+               await Progress_Report.deleteMany({ sm: caseSelected }, { session });
+
+               // 5. Finally delete the sponsored member case
+               const deletedCase = await Sponsored_Member.findByIdAndDelete(caseSelected, { session });
+
+               if (!deletedCase) {
+                    throw new Error('Case not found');
+               }
+
+               // Commit the transaction
+               await session.commitTransaction();
+               session.endSession();
+
+               res.status(200).json({
+                    message: 'Case and all related records deleted successfully',
+                    deletedCase
+               });
+                
+               return getCaseById(req, res);
+
+          } catch (error) {
+               // If anything fails, abort the transaction
+               await session.abortTransaction();
+               session.endSession();
+               throw error;
+          }
+
+     } catch (error) {
+          console.error("Error deleting case:", error);
+          res.status(500).json({ message: "Internal Server Error" });
+     }
+}
+
+
 // ================================================== //
 
 /**
@@ -1022,4 +1092,5 @@ module.exports = {
      editCaseIdentifyingData,
      getAllSDWs,
      getAllCasesbySDW,
+     deleteOneCase,
 }
