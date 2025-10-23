@@ -1,4 +1,5 @@
 const Sponsored_Member = require('../model/sponsored_member');
+const Case_Closure = require('../model/case_closure');
 const Intervention_Correspondence = require('../model/intervention_correspondence');
 
 /**
@@ -32,7 +33,7 @@ const getActiveCasesCount = async (req, res) => {
 
 const getClosedCasesCount = async (req, res) => {
     try {
-        const closedCasesCount = await Sponsored_Member.countDocuments({ is_active: false });
+        const closedCasesCount = await Case_Closure.countDocuments({ });
         res.status(200).json({ closedCases: closedCasesCount });
     } catch (error) {
         console.error("Error fetching closed cases count:", error);
