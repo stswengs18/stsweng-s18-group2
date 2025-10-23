@@ -1,6 +1,9 @@
 const Sponsored_Member = require('../model/sponsored_member');
 const Case_Closure = require('../model/case_closure');
 const Intervention_Correspondence = require('../model/intervention_correspondence');
+const Intervention_Counseling = require('../model/intervention_counseling');
+const Intervention_Financial = require('../model/intervention_financial');
+const Intervention_Homevisit = require('../model/intervention_homevisit');
 
 /**
  *   DASHBOARD CONTROLLER
@@ -51,9 +54,42 @@ const getInterventionCorrespondenceCount = async (req, res) => {
     }
 };
 
+const getInterventionCounselingCount = async (req, res) => {
+    try {
+        const count = await Intervention_Counseling.countDocuments({});
+        res.status(200).json({ interventionCounselingCount: count });
+    } catch (error) {
+        console.error("Error fetching intervention counseling count:", error);
+        res.status(500).json({ message: "Error fetching intervention counseling count", error: error.message });
+    }
+};
+
+const getInterventionFinancialCount = async (req, res) => {
+    try {
+        const count = await Intervention_Financial.countDocuments({});
+        res.status(200).json({ interventionFinancialCount: count });
+    } catch (error) {
+        console.error("Error fetching intervention financial count:", error);
+        res.status(500).json({ message: "Error fetching intervention financial count", error: error.message });
+    }
+};
+
+const getInterventionHomeVisitCount = async (req, res) => {
+    try {
+        const count = await Intervention_Homevisit.countDocuments({});
+        res.status(200).json({ interventionHomeVisitCount: count });
+    } catch (error) {
+        console.error("Error fetching intervention home visit count:", error);
+        res.status(500).json({ message: "Error fetching intervention home visit count", error: error.message });
+    }
+};
+
 module.exports = {
     renderHomePage,
     getActiveCasesCount,
     getClosedCasesCount,
-    getInterventionCorrespondenceCount
+    getInterventionCorrespondenceCount,
+    getInterventionCounselingCount,
+    getInterventionFinancialCount,
+    getInterventionHomeVisitCount
 };
