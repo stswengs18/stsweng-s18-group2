@@ -3,7 +3,8 @@ import React from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import SectionCard from "./components/SectionCard";
-import DoughnutChart from "./components/DoughnutChart"; // Import the new chart component
+import DoughnutChart from "./components/DoughnutChart";
+import KeyDemographicCard from "./components/KeyDemographicCard"; // Import the new component
 import { Info, LoaderCircle } from "lucide-react";
 
 import {
@@ -43,27 +44,31 @@ export default function LocationStatistics() {
     );
   }
   
-  const icons = [ActiveCasesIcon, CasesClosedIcon, NewCasesAddedIcon, NewInterventionsIcon, AvgCaseDurationIcon, AvgInterventionsReportsIcon];
+  const statCardIcons = [ActiveCasesIcon, CasesClosedIcon, NewCasesAddedIcon, NewInterventionsIcon, AvgCaseDurationIcon, AvgInterventionsReportsIcon];
+  
   const spuStatisticsCards = data.spuStatisticsCards.map((card, index) => ({
       ...card,
-      iconComponent: icons[index]
+      iconComponent: statCardIcons[index]
   }));
 
   return (
     <div className="bg-slate-50 min-h-screen">
       <Header />
-      <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8 space-y-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">SPU Statistics</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {spuStatisticsCards.map((card, index) => (
-            <StatCard
-              key={index}
-              title={card.title}
-              value={card.value}
-              subtext={card.subtext}
-              iconComponent={card.iconComponent}
-            />
-          ))}
+      <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8 space-y-8">
+        
+        <div>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">SPU Statistics</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {spuStatisticsCards.map((card, index) => (
+                <StatCard
+                  key={index}
+                  title={card.title}
+                  value={card.value}
+                  subtext={card.subtext}
+                  iconComponent={card.iconComponent}
+                />
+              ))}
+            </div>
         </div>
 
         <SectionCard
@@ -77,7 +82,6 @@ export default function LocationStatistics() {
           <div className="space-y-4 pt-2">
             {data.interventionsByTypeData.types.map((type, index) => {
               const maxValue = Math.max(...data.interventionsByTypeData.types.map((t) => t.value));
-              // --- THIS LINE IS NOW FIXED ---
               const percentage = maxValue > 0 ? (type.value / maxValue) * 100 : 0;
               return (
                 <div key={index} className="flex items-center space-x-4">
@@ -92,7 +96,6 @@ export default function LocationStatistics() {
           </div>
         </SectionCard>
 
-        {/* --- SECTION: Active Cases Distribution --- */}
         <SectionCard>
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -100,29 +103,14 @@ export default function LocationStatistics() {
               <p className="text-sm text-gray-500">{data.caseDistributionData.subtitle}</p>
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Doughnut Chart */}
             <div className="relative h-64 w-64 mx-auto">
-              <DoughnutChart 
-                data={data.caseDistributionData.chartData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  cutout: '70%',
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: true },
-                  }
-                }}
-              />
+              <DoughnutChart data={data.caseDistributionData.chartData} />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-3xl font-bold text-gray-800">{data.caseDistributionData.totalCases}</span>
                 <span className="text-sm text-gray-500">Total Cases</span>
               </div>
             </div>
-
-            {/* Custom Legend */}
             <div className="grid grid-cols-2 gap-x-8 gap-y-4">
               {data.caseDistributionData.legendData.map((item) => (
                 <div key={item.label} className="flex items-center">
@@ -136,6 +124,58 @@ export default function LocationStatistics() {
                 </div>
               ))}
             </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard title="Case Demographics">
+          <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="font-semibold text-gray-700">{data.genderDistributionData.title}</h4>
+              <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
+                  <Info size={18} />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              <div className="relative h-48 w-48 mx-auto">
+                <DoughnutChart data={data.genderDistributionData.chartData} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-2xl font-bold text-gray-800">{data.genderDistributionData.totalCases}</span>
+                  <span className="text-xs text-gray-500">Total Cases</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {data.genderDistributionData.legendData.map((item) => (
+                  <div key={item.label} className="flex items-center">
+                    <span className={`h-2.5 w-2.5 rounded-full mr-2.5 ${item.color}`}></span>
+                    <span className="text-sm text-gray-600">{item.label}</span>
+                    <span className="ml-auto text-sm font-semibold text-gray-800">
+                      {item.value} ({item.percentage}%)
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </SectionCard>
+        
+        {/* --- NEW SECTION --- */}
+        <SectionCard
+          title="Key Demographics"
+          headerAction={
+            <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
+                <Info size={18} />
+            </button>
+          }
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            {data.keyDemographicsData.map((item, index) => (
+              <KeyDemographicCard
+                key={index}
+                title={item.title}
+                subtitle={item.subtitle}
+                value={item.value}
+              />
+            ))}
           </div>
         </SectionCard>
 
