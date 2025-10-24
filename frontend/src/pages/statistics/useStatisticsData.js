@@ -67,6 +67,7 @@ function transformRawData(rawData) {
                 color: interventionColors[index % interventionColors.length],
             })),
         },
+
         caseDistributionData: {
             title: "Active Cases Distribution by SPU",
             subtitle: "Current distribution across SPUs",
@@ -112,7 +113,18 @@ function transformRawData(rawData) {
             { title: "Interventions", subtitle: "average per case", value: rawData.demographics.interventions },
             { title: "Case Duration", subtitle: "average time length", value: `${rawData.demographics.durationMonths} months` },
             { title: "Progress Reports", subtitle: "average per case", value: rawData.demographics.progressReports },
-        ]
+        ],
+        workerDistributionData: {
+            title: "Employee Distribution by Roles",
+            subtitle: "Current distribution across all departments",
+            chartData: [
+                { label: "Social Workers", value: 12, color: "bg-teal-600" },
+                { label: "Supervisors", value: 3, color: "bg-gray-600" },
+                { label: "Heads", value: 8, color: "bg-green-600" },
+            ],
+            totalEmployees: 12 + 3 + 8 + 5,
+        },
+
     };
 }
 

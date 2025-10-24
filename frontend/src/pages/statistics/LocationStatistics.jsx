@@ -21,10 +21,10 @@ export default function LocationStatistics() {
       <div className="bg-slate-50 min-h-screen">
         <Header />
         <div className="flex h-[calc(100vh-80px)] items-center justify-center">
-            <div className="flex flex-col items-center space-y-2 text-gray-500">
-                <LoaderCircle className="animate-spin h-8 w-8" />
-                <span>Loading Statistics...</span>
-            </div>
+          <div className="flex flex-col items-center space-y-2 text-gray-500">
+            <LoaderCircle className="animate-spin h-8 w-8" />
+            <span>Loading Statistics...</span>
+          </div>
         </div>
       </div>
     );
@@ -32,43 +32,43 @@ export default function LocationStatistics() {
 
   if (error) {
     return (
-        <div className="bg-slate-50 min-h-screen">
-            <Header />
-            <div className="flex h-[calc(100vh-80px)] items-center justify-center">
-                <div className="text-center text-red-600 bg-red-50 p-6 rounded-lg border border-red-200">
-                    <h2 className="text-lg font-semibold">Failed to load data</h2>
-                    <p>{error}</p>
-                </div>
-            </div>
+      <div className="bg-slate-50 min-h-screen">
+        <Header />
+        <div className="flex h-[calc(100vh-80px)] items-center justify-center">
+          <div className="text-center text-red-600 bg-red-50 p-6 rounded-lg border border-red-200">
+            <h2 className="text-lg font-semibold">Failed to load data</h2>
+            <p>{error}</p>
+          </div>
         </div>
+      </div>
     );
   }
-  
+
   const statCardIcons = [ActiveCasesIcon, CasesClosedIcon, NewCasesAddedIcon, NewInterventionsIcon, AvgCaseDurationIcon, AvgInterventionsReportsIcon];
-  
+
   const spuStatisticsCards = data.spuStatisticsCards.map((card, index) => ({
-      ...card,
-      iconComponent: statCardIcons[index]
+    ...card,
+    iconComponent: statCardIcons[index]
   }));
 
   return (
     <div className="bg-slate-50 min-h-screen">
       <Header />
       <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8 space-y-8">
-        
+
         <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">SPU Statistics</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {spuStatisticsCards.map((card, index) => (
-                <StatCard
-                  key={index}
-                  title={card.title}
-                  value={card.value}
-                  subtext={card.subtext}
-                  iconComponent={card.iconComponent}
-                />
-              ))}
-            </div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">SPU Statistics</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {spuStatisticsCards.map((card, index) => (
+              <StatCard
+                key={index}
+                title={card.title}
+                value={card.value}
+                subtext={card.subtext}
+                iconComponent={card.iconComponent}
+              />
+            ))}
+          </div>
         </div>
 
         <SectionCard
@@ -132,7 +132,7 @@ export default function LocationStatistics() {
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-semibold text-gray-700">{data.genderDistributionData.title}</h4>
               <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
-                  <Info size={18} />
+                <Info size={18} />
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -157,13 +157,13 @@ export default function LocationStatistics() {
             </div>
           </div>
         </SectionCard>
-        
+
         {/* --- NEW SECTION --- */}
         <SectionCard
           title="Key Demographics"
           headerAction={
             <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
-                <Info size={18} />
+              <Info size={18} />
             </button>
           }
         >
@@ -178,6 +178,104 @@ export default function LocationStatistics() {
             ))}
           </div>
         </SectionCard>
+
+        <SectionCard
+          title="Worker Metrics"
+          headerAction={
+            <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
+              <Info size={18} />
+            </button>
+          }
+        >
+          <div className="flex justify-center py-8 w-[100%]">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-15 px-4">
+
+              {/* Worker to Case Ratio */}
+              <div
+                className="relative rounded-2xl bg-white p-6
+      shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199]
+      ring-1 ring-gray-200"
+              >
+                <p className="font-bold-label">
+                  Worker to Case Ratio
+                </p>
+                <p className="main-logo-text-nav text-center">
+                  1 : 26
+                </p>
+                <p className="body-sm text-center">
+                  Each worker handles 26 cases
+                </p>
+              </div>
+
+              {/* Worker to Supervisor Ratio */}
+              <div
+                className="relative rounded-2xl bg-white p-6 
+      shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199]
+      ring-1 ring-gray-200"
+              >
+                <p className="font-bold-label">
+                  Worker to Supervisor Ratio
+                </p>
+                <p className="main-logo-text-nav text-center">
+                  4 : 1
+                </p>
+                <p className="body-sm text-center">
+                  4 workers per supervisor
+                </p>
+              </div>
+
+              {/* New Employees Added */}
+              <div
+                className="relative md:col-span-2 rounded-2xl bg-white p-6
+      shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199]
+      ring-1 ring-gray-200"
+              >
+                <div className="flex items-center justify-around">
+                  <p className="font-bold-label">
+                    New Employees Added:
+                  </p>
+                  <div className="text-right">
+                    <p className="main-logo-text-nav text-center">
+                      4
+                    </p>
+                    <p className="body-sm text-center">This period</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="font-bold-label mb-5">
+                  Employee Distribution by Roles
+          </p>
+<div className="space-y-4 pt-2">
+  {data.workerDistributionData.chartData.map((role, index) => {
+    const total = data.workerDistributionData.totalEmployees;
+    const percentage = total > 0 ? (role.value / total) * 100 : 0;
+    return (
+      <div key={index} className="flex items-center space-x-4">
+        <span className="text-sm text-gray-600 w-32 shrink-0">
+          {role.label}
+        </span>
+        <div className="flex-grow bg-gray-200 rounded-full h-2">
+          <div
+            className={`h-2 rounded-full ${role.color}`}
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+        <span className="text-sm font-semibold text-gray-800 w-8 text-right shrink-0">
+          {role.value}
+        </span>
+      </div>
+    );
+  })}
+</div>
+
+
+
+
+        </SectionCard>
+
 
       </main>
     </div>
