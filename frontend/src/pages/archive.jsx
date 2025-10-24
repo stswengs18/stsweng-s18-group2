@@ -37,11 +37,11 @@ function Archive() {
   const [timeFilter, setTimeFilter] = useState(false);
 
   // for date and time filter
-  // default to today's date
   const today = new Date().toISOString().split("T")[0];
+  const [filteredCases, setFilteredCases] = useState(allCases);
   const [timeRange, setTimeRange] = useState("");
-  const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState(today);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const [currentSPU, setCurrentSPU] = useState("");
   const [sortBy, setSortBy] = useState("");
@@ -156,6 +156,50 @@ function Archive() {
       });
     }
 
+    let startHour = 0;
+    let endHour = 23;
+
+    // date filter
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999); // Include entire end day
+
+      filtered = filtered.filter((c) => {
+        const created = new Date(c.createdAt);
+        return created >= start && created <= end;
+      });
+    }
+
+  // time filter
+  if (timeRange) {
+    let startHour = 0;
+    let endHour = 23;
+
+    switch (timeRange) {
+      case "morning":
+        startHour = 6; endHour = 11; break;
+      case "afternoon":
+        startHour = 12; endHour = 17; break;
+      case "evening":
+        startHour = 18; endHour = 23; break;
+      case "night":
+        startHour = 0; endHour = 5; break;
+      default:
+        break;
+    }
+
+    filtered = filtered.filter((c) => {
+      const hour = new Date(c.createdAt).getHours();
+      if (startHour <= endHour) {
+        return hour >= startHour && hour <= endHour;
+      } else {
+        // Night range (00–05)
+        return hour >= startHour || hour <= endHour;
+      }
+    });
+  }
+
     if (sortBy === "name") {
       filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     } else if (sortBy === "sm_number") {
@@ -165,7 +209,7 @@ function Archive() {
     if (sortOrder === "desc") filtered.reverse();
 
     setCurrentData(filtered);
-  }, [allCases, currentSPU, sortBy, sortOrder, searchQuery, user]);
+  }, [allCases, currentSPU, sortBy, sortOrder, searchQuery, user, startDate, endDate, timeRange,]);
 
   // ===== EMPLOYEES: client-side filtering/sorting only =====
 useEffect(() => {
@@ -239,7 +283,58 @@ useEffect(() => {
     }
   };
 
-  
+  // handle time filter apply
+  const handleTimeApply = () => {
+    let startHour = 0;
+    let endHour = 23;
+
+    switch (timeRange) {
+      case "morning":
+        startHour = 6; endHour = 11; break;
+      case "afternoon":
+        startHour = 12; endHour = 17; break;
+      case "evening":
+        startHour = 18; endHour = 23; break;
+      case "night":
+        startHour = 0; endHour = 5; break;
+      default:
+        break;
+    }
+
+    const filtered = currentData.filter((c) => {
+      if (!c.createdAt) return false; // skip if no timestamp
+      const hour = new Date(c.createdAt).getHours();
+      if (startHour <= endHour) {
+        return hour >= startHour && hour <= endHour;
+      } else {
+        // For night (00–05)
+        return hour >= startHour || hour <= endHour;
+      }
+    });
+
+    setFilteredCases(filtered);
+  };
+
+
+  // handle date filter apply
+  const handleDateApply = () => {
+    if (!startDate || !endDate) return;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    const filtered = currentData.filter((c) => {
+      if (!c.createdAt) return false;
+      const created = new Date(c.createdAt);
+      return created >= start && created <= end;
+    });
+
+    setFilteredCases(filtered);
+  };
+
+
+  // confirm delete handler
   const handleDeleteConfirm = async () => {
   try {
     if (!selectedClients.length) return;
@@ -272,6 +367,9 @@ useEffect(() => {
 
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
   if (!loadingComplete) return <Loading color={loadingColor} />;
+
+  // for debugging filteredCases
+  console.log("Client data received:", filteredCases.length > 0 ? filteredCases : currentData);
 
   return (
     <>
@@ -504,13 +602,11 @@ useEffect(() => {
                   onChange={(e) => setTimeRange(e.target.value)}
                 >
                   <option value="">Choose a time range</option>
-                  {/* add options here */}
+                  <option value="morning">06:00-11:59</option>
+                  <option value="afternoon">12:00-17:59</option>
+                  <option value="evening">18:00-23:59</option>
+                  <option value="night">00:00-05:59</option>
                 </select>
-                <button
-                  className="text-white text-xl font-semibold px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
-                >
-                  Apply
-                </button>
               </div>
 
               <hr className="border-gray-300" />
@@ -529,14 +625,10 @@ useEffect(() => {
                   <input
                     type="date"
                     value={endDate}
+                    min={startDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     className="border rounded-lg px-7 py-4 w-65 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <button
-                    className="text-white text-xl font-semibold px-5 py-3 rounded-lg hover:bg-[#277195] bg-[#3186B2] transition"
-                  >
-                    Apply
-                  </button>
                 </div>
               </div>
             </div>
@@ -605,7 +697,7 @@ useEffect(() => {
                 {currentData.length === 0 ? (
                   <p className="font-bold-label mx-auto">No Clients Found</p>
                 ) : (
-                  currentData.map((client) => (
+                   currentData.map((client) => (
                     <ClientEntry
                       key={client.id}
                       id={client.id}
