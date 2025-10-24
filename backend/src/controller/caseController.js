@@ -1009,13 +1009,26 @@ const deleteOneCase = async (req, res) => {
           session.startTransaction();
 
           try {
-               // 1. Delete all family relationships
+               // 1. Delete all family members using the existing deleteFamilyMember helper (suppressing responses with a dummy res)
+               const members = await Family_Relationship.findMany({ sponsor_id: caseSelected }, { session });
+               
+               const dummyRes = { status: () => dummyRes, json: () => {}, end: () => {} };
+
+               for (const member of members) {
+                    const famId = member.family_id && member.family_id._id ? member.family_id._id.toString() : member.family_id.toString();
+                    const loopReq = { params: { famID: famId, caseID: caseSelected._id.toString() } };
+                    // deleteFamilyMember is defined in this file; call it to remove relationship and possibly member
+                    await deleteFamilyMember(loopReq, dummyRes);
+               }
+
+               // 2. Delete all family relationships
+
                await Family_Relationship.deleteMany({ sponsor_id: caseSelected }, { session });
 
-               // 2. Delete associated case closures
+               // 3. Delete associated case closures
                await Case_Closure.deleteMany({ sm: caseSelected }, { session });
 
-               // 3. Delete associated interventions
+               // 4. Delete associated interventions
                await Promise.all([
                     // Delete correspondence interventions
                     Intervention_Correspondence.deleteMany({ sm: caseSelected }, { session }),
@@ -1027,10 +1040,10 @@ const deleteOneCase = async (req, res) => {
                     Intervention_HomeVisit.deleteMany({ sm: caseSelected }, { session })
                ]);
 
-               // 4. Delete associated progress reports
+               // 5. Delete associated progress reports
                await Progress_Report.deleteMany({ sm: caseSelected }, { session });
 
-               // 5. Finally delete the sponsored member case
+               // 6. Finally delete the sponsored member case
                const deletedCase = await Sponsored_Member.findByIdAndDelete(caseSelected, { session });
 
                if (!deletedCase) {
