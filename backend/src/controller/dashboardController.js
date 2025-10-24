@@ -4,6 +4,7 @@ const Intervention_Correspondence = require('../model/intervention_correspondenc
 const Intervention_Counseling = require('../model/intervention_counseling');
 const Intervention_Financial = require('../model/intervention_financial');
 const Intervention_Homevisit = require('../model/intervention_homevisit');
+const Spu = require('../model/spu');
 
 /**
  *   DASHBOARD CONTROLLER
@@ -84,6 +85,22 @@ const getInterventionHomeVisitCount = async (req, res) => {
     }
 };
 
+const getActiveCasesPerSpu = async (req, res) => {
+    try {
+        const spus = await Spu.find({ is_active: true });
+        const activeCasesPerSpu = await Promise.all(
+            spus.map(async (spu) => {
+                const count = await Sponsored_Member.countDocuments({ spu: spu._id, is_active: true });
+                return { spu_name: spu.spu_name, count };
+            })
+        );
+        res.status(200).json(activeCasesPerSpu);
+    } catch (error) {
+        console.error("Error fetching active cases per SPU:", error);
+        res.status(500).json({ message: "Error fetching active cases per SPU", error: error.message });
+    }
+};
+
 module.exports = {
     renderHomePage,
     getActiveCasesCount,
@@ -91,5 +108,6 @@ module.exports = {
     getInterventionCorrespondenceCount,
     getInterventionCounselingCount,
     getInterventionFinancialCount,
-    getInterventionHomeVisitCount
+    getInterventionHomeVisitCount,
+    getActiveCasesPerSpu
 };

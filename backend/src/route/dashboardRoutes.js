@@ -8,5 +8,6 @@ router.get('/intervention-correspondence-count', dashboardController.getInterven
 router.get('/intervention-counseling-count', dashboardController.getInterventionCounselingCount);
 router.get('/intervention-financial-count', dashboardController.getInterventionFinancialCount);
 router.get('/intervention-home-visit-count', dashboardController.getInterventionHomeVisitCount);
+router.get('/active-cases-per-spu', dashboardController.getActiveCasesPerSpu);
 
 module.exports = router;
