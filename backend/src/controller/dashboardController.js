@@ -175,27 +175,7 @@ const getEmployeeCountsByRole = async (req, res) => {
     }
 };
 
-const getAverageInterventionsPerCase = async (req, res) => {
-    try {
-        const cases = await Sponsored_Member.find({});
-        let totalInterventions = 0;
-        let totalCases = cases.length;
 
-        if (totalCases === 0) {
-            return res.status(200).json({ averageInterventionsPerCase: 0 });
-        }
-
-        cases.forEach(caseItem => {
-            totalInterventions += caseItem.interventions.length;
-        });
-
-        const average = totalInterventions / totalCases;
-        res.status(200).json({ averageInterventionsPerCase: average });
-    } catch (error) {
-        console.error("Error fetching average interventions per case:", error);
-        res.status(500).json({ message: "Error fetching average interventions per case", error: error.message });
-    }
-};
 
 //case demographic routes
 // 1. Gender Distribution
