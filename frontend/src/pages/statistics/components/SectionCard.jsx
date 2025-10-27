@@ -8,7 +8,7 @@ export default function SectionCard({ title, children, headerAction }) {
       {/* Header section that now includes an optional action item */}
       {title && (
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
+          <h3 className="header-sm">{title}</h3>
           {/* Render the action item (e.g., an icon) if it's provided */}
           {headerAction && <div>{headerAction}</div>}
         </div>

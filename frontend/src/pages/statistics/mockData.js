@@ -10,7 +10,7 @@ export const mockStatistics = {
   avgInterventionsPerCase: 2840,
 
   interventionTypes: [
-    { type: "Type 1", count: 28 },
+    { type: "Type 1 LONG NAME", count: 28 },
     { type: "Type 2", count: 23 },
     { type: "Type 3", count: 15 },
     { type: "Type 4", count: 8 },
@@ -57,6 +57,32 @@ export const mockStatistics = {
     },
   },
 
-  casesOverTime: [10, 12, 14, 16, 18, 21, 22, 24, 25],
-  employeesOverTime: [5, 6, 7, 7, 8, 9, 10, 11, 12],
+  casesOverTime: [
+    { date: "2024-01-01", value: 10 },
+    { date: "2024-01-02", value: 12 },
+    { date: "2024-01-03", value: 14 },
+    { date: "2024-01-04", value: 16 },
+    { date: "2024-01-05", value: 18 },
+    { date: "2024-01-06", value: 21 },
+    { date: "2024-01-07", value: 22 },
+    { date: "2024-01-08", value: 24 },
+    { date: "2024-01-09", value: 25 },
+  ],
+  employeesOverTime: [
+    { date: "2024-01-01", value: 5 },
+    { date: "2024-01-02", value: 6 },
+    { date: "2024-01-03", value: 7 },
+    { date: "2024-01-04", value: 7 },
+    { date: "2024-01-05", value: 8 },
+    { date: "2024-01-06", value: 9 },
+    { date: "2024-01-07", value: 10 },
+    { date: "2024-01-08", value: 11 },
+    { date: "2024-01-09", value: 12 },
+  ],
+  interventionDistribution: [
+    { type: "Type A", value: 32, color: "#0891b2" },
+    { type: "Type B", value: 28, color: "#4ade80" },
+    { type: "Type C", value: 15, color: "#f87171" },
+    { type: "Type D", value: 8,  color: "#fffb00ff" },
+  ],
 };

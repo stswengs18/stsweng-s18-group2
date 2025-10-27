@@ -119,12 +119,19 @@ function transformRawData(rawData) {
             subtitle: "Current distribution across all departments",
             chartData: [
                 { label: "Social Workers", value: 12, color: "bg-teal-600" },
-                { label: "Supervisors", value: 3, color: "bg-gray-600" },
+                { label: "Supervisors", value: 3, color: "bg-yellow-600" },
                 { label: "Heads", value: 8, color: "bg-green-600" },
             ],
             totalEmployees: 12 + 3 + 8 + 5,
         },
-
+        caseOverTime: rawData.casesOverTime,
+        workerOverTime: rawData.employeesOverTime,
+        interventionDistribution: [
+            { type: "Type A", value: 32, color: "#0891b2" },
+            { type: "Type B", value: 28, color: "#4ade80" },
+            { type: "Type C", value: 15, color: "#f87171" },
+            { type: "Type D", value: 8,  color: "#6b7280" },
+        ],
     };
 }
 
