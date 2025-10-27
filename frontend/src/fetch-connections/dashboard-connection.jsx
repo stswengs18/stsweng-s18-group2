@@ -105,5 +105,88 @@ export const fetchActiveCasesPerSpu = async () => {
     }
 };
 
+//case demographic
+// Gender Distribution
+export const fetchGenderDistribution = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/gender-distribution`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch gender distribution');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching gender distribution:", error);
+    throw error;
+  }
+};
 
+// Average Age of Clients
+export const fetchAverageAge = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/average-age`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch average age');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching average age:", error);
+    throw error;
+  }
+};
+
+// Average Family Size (by last name)
+export const fetchAverageFamilySize = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/average-family-size`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch average family size');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching average family size:", error);
+    throw error;
+  }
+};
+
+// Average Family Income (earners only)
+export const fetchAverageFamilyIncome = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/average-family-income`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch average family income');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching average family income:", error);
+    throw error;
+  }
+};
+
+// Average Number of Interventions per Case
+export const fetchAverageInterventionsPerCase = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/average-interventions`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch average interventions per case');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching average interventions per case:", error);
+    throw error;
+  }
+};
+
+// Average Case Duration (in days)
+export const fetchAverageCaseDuration = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/average-case-duration`, {
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Failed to fetch average case duration');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching average case duration:", error);
+    throw error;
+  }
+};
     
