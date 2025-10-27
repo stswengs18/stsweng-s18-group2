@@ -356,6 +356,11 @@ module.exports = {
     getInterventionFinancialCount,
     getInterventionHomeVisitCount,
     getActiveCasesPerSpu,
+    getWorkerToCaseRatio,
+    getWorkerToSupervisorRatio,
+    getNewEmployeesLast30Days,
+    getEmployeeCountsByRole,
+    getAverageInterventionsPerCase,
     //case demographics
     getGenderDistribution,
     getAverageAge,
