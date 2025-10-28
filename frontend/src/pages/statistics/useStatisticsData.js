@@ -400,11 +400,10 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
       { title: "Average Age", subtitle: "of clients", value: `${avgAge} years` },
       { title: "Family Members", subtitle: "average per case", value: `${avgFamilyMembers} members` },
       { title: "Family Income", subtitle: "excluding non-earners", value: `₱${Number(avgIncome).toLocaleString()}` },
-      { title: "Case Duration", subtitle: "average time length", value: `${avgCaseDurationMonths} months` },
     ],
     ratioData: {
-      workerToCase: await fetchWorkerToCaseRatio(),
-      workerToSupervisor: await fetchWorkerToSupervisorRatio(),
+      workerToCase: await fetchWorkerToCaseRatio(spuId),
+      workerToSupervisor: await fetchWorkerToSupervisorRatio(spuId),
     },
     workerDistributionData: {
       title: "Employee Distribution by Roles",

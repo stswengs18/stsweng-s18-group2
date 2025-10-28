@@ -253,7 +253,7 @@ export default function LocationStatistics() {
               </div>
             </SectionCard>}
 
-            {data?.caseDistributionData && <SectionCard>
+            {!currentSPU && data?.caseDistributionData && <SectionCard>
               <div>
                 <h2 className="header-sm mb-4">{data.caseDistributionData.title}</h2>
                 <p className="font-label mb-4">{data.caseDistributionData.subtitle}</p>
@@ -316,7 +316,7 @@ export default function LocationStatistics() {
               }
             >
               <div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="flex flex-col gap-4 pt-2">
                   {data.keyDemographicsData.map((item, index) => (
                     <KeyDemographicCard
                       key={index}
