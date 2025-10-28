@@ -10,10 +10,7 @@ import {
   fetchInterventionFinancialCount,
   fetchInterventionHomeVisitCount,
   fetchProgressReportCount,
-  fetchFamilyDetails,
-  fetchWorkerToCaseRatio,
-  fetchWorkerToSupervisorRatio,
-  fetchEmployeeCountsByRole
+  fetchFamilyDetails
 } from '../../fetch-connections/dashboard-connection';
 
 const USE_MOCK_DATA = true;
@@ -279,37 +276,6 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
   // Arbitrary case duration for now
   const avgCaseDurationMonths = 12;
 
-
-  // --- Worker metrics (snapshot ratios + windowed new hires by role) ---
-  const [w2c, w2s, roleCountsWin] = await Promise.all([
-    // snapshot ratios (honor spuId)
-    fetchWorkerToCaseRatio(spuId),
-    fetchWorkerToSupervisorRatio(spuId),
-    // windowed new hires by role (honor spuId + timePeriod days)
-    fetchEmployeeCountsByRole(spuId, timePeriod)
-  ]);
-
-  // Format ratios as "1 : N"
-  const workersNow = Number(w2c?.workers ?? 0);
-  const casesNow   = Number(w2c?.cases ?? 0);
-  const perWorker  = workersNow > 0 ? Math.round(casesNow / workersNow) : 0;
-  const workerToCaseRatio = `1 : ${perWorker}`;
-
-  const workersNow2    = Number(w2s?.workers ?? 0);
-  const supervisorsNow = Number(w2s?.supervisors ?? 0);
-  const perSupervisor  = supervisorsNow > 0 ? Math.round(workersNow2 / supervisorsNow) : 0;
-  const workerToSupervisorRatio = `1 : ${perSupervisor}`;
-
-  // roleDistribution: map backend keys to display labels
-  const rolesWin = roleCountsWin?.roles || {};
-  const chartData = [
-    { label: "Social Workers", value: Number(rolesWin.sdw ?? 0), color: "bg-teal-600" },
-    { label: "Supervisors", value: Number(rolesWin.supervisor ?? 0), color: "bg-yellow-600" },
-    { label: "Heads", value: Number(rolesWin.head ?? 0), color: "bg-green-600" },
-  ];
-  const totalEmployees = chartData.reduce((sum, item) => sum + item.value, 0);
-
-
   return {
     spuStatisticsCards: [
       { title: "Active Cases", value: rawData.activeCases.toLocaleString(), subtext: spuId ? "Within this SPU" : "Across all SPUs" },
@@ -387,16 +353,15 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
       { title: "Family Income", subtitle: "excluding non-earners", value: `₱${Number(avgIncome).toLocaleString()}` },
       { title: "Case Duration", subtitle: "average time length", value: `${avgCaseDurationMonths} months` },
     ],
-
-    workerMetrics: {
-      workerToCaseRatio,
-      workerToSupervisorRatio,
-    },
     workerDistributionData: {
       title: "Employee Distribution by Roles",
       subtitle: "Current distribution across all departments",
-      chartData,
-      totalEmployees,
+      chartData: [
+        { label: "Social Workers", value: 12, color: "bg-teal-600" },
+        { label: "Supervisors", value: 3, color: "bg-yellow-600" },
+        { label: "Heads", value: 8, color: "bg-green-600" },
+      ],
+      totalEmployees: 12 + 3 + 8 + 5,
     },
     caseOverTime: rawData.casesOverTime,
     workerOverTime: rawData.employeesOverTime,

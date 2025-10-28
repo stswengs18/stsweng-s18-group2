@@ -198,118 +198,74 @@ const getActiveCasesPerSpu = async (req, res) => {
 };
 
 const getWorkerToCaseRatio = async (req, res) => {
-  try {
-    const { spuId } = req.query;
-
-    const employeeFilter = { role: "sdw", is_active: true };
-    const caseFilter = { is_active: true };
-
-    if (spuId) {
-      employeeFilter.spu_id = spuId;
-      caseFilter.spu = spuId;
+    try {
+        const workerCount = await Employee.countDocuments({ role: "sdw" });
+        const caseCount = await Sponsored_Member.countDocuments({ is_active: true });
+        res.status(200).json({
+            workers: workerCount,
+            cases: caseCount,
+        });
+    } catch (error) {
+        console.error("Error fetching worker to case ratio:", error);
+        res.status(500).json({ message: "Error fetching worker to case ratio", error: error.message });
     }
-
-    const [workerCount, caseCount] = await Promise.all([
-      Employee.countDocuments(employeeFilter),
-      Sponsored_Member.countDocuments(caseFilter)
-    ]);
-
-    res.status(200).json({
-      spuId: spuId || "all",
-      workers: workerCount,
-      cases: caseCount,
-      ratio: workerCount > 0 ? (caseCount / workerCount).toFixed(2) : "N/A"
-    });
-  } catch (error) {
-    console.error("Error fetching worker-to-case ratio:", error);
-    res.status(500).json({ message: "Error fetching worker-to-case ratio", error: error.message });
-  }
 };
 
 const getWorkerToSupervisorRatio = async (req, res) => {
-  try {
-    const { spuId } = req.query;
-
-    const workerFilter = { role: "sdw", is_active: true };
-    const supervisorFilter = { role: "supervisor", is_active: true };
-
-    if (spuId) {
-      workerFilter.spu_id = spuId;
-      supervisorFilter.spu_id = spuId;
+    try {
+        const workerCount = await Employee.countDocuments({ role: "sdw" });
+        const supervisorCount = await Employee.countDocuments({ role: "supervisor" }); // Assuming "supervisor" is the role
+        res.status(200).json({
+            workers: workerCount,
+            supervisors: supervisorCount,
+        });
+    } catch (error) {
+        console.error("Error fetching worker to supervisor ratio:", error);
+        res.status(500).json({ message: "Error fetching worker to supervisor ratio", error: error.message });
     }
-
-    const [workerCount, supervisorCount] = await Promise.all([
-      Employee.countDocuments(workerFilter),
-      Employee.countDocuments(supervisorFilter)
-    ]);
-
-    res.status(200).json({
-      spuId: spuId || "all",
-      workers: workerCount,
-      supervisors: supervisorCount,
-      ratio: supervisorCount > 0 ? (workerCount / supervisorCount).toFixed(2) : "N/A"
-    });
-  } catch (error) {
-    console.error("Error fetching worker-to-supervisor ratio:", error);
-    res.status(500).json({ message: "Error fetching worker-to-supervisor ratio", error: error.message });
-  }
 };
+
+const getNewEmployeesLast30Days = async (req, res) => {
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const newEmployeesCount = await Employee.countDocuments({
+            _id: { $gte: thirtyDaysAgo.toISOString() } // ObjectId contains timestamp
+        });
+
+        res.status(200).json({ newEmployeesLast30Days: newEmployeesCount });
+    } catch (error) {
+        console.error("Error fetching new employees for the last 30 days:", error);
+        res.status(500).json({ message: "Error fetching new employees for the last 30 days", error: error.message });
+    }
+};
+
+
 
 const getEmployeeCountsByRole = async (req, res) => {
-  try {
-    const { spuId } = req.query;
-    const rawDays = req.query.days;
-    const now = new Date();
+    try {
+        const roleCounts = await Employee.aggregate([
+            {
+                $group: {
+                    _id: "$role",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+        
+        const formattedCounts = roleCounts.reduce((acc, item) => {
+            acc[item._id] = item.count;
+            return acc;
+        }, {});
 
-    // Same window handling pattern as your other endpoints
-    const daysNum = rawDays === undefined ? 0 : Number(rawDays);
-    const hasWindow = Number.isFinite(daysNum) && daysNum > 0;
-
-    // Base match: limit by SPU if provided
-    const matchFilter = {};
-    if (spuId) matchFilter.spu_id = spuId;
-
-    // If a time window is requested, count only NEW employees in that window
-    // (i.e., hired/created within the last N days)
-    if (hasWindow) {
-      const cutoff = new Date(now.getTime() - daysNum * 24 * 60 * 60 * 1000);
-      matchFilter.createdAt = { $gte: cutoff, $lte: now };
+        res.status(200).json(formattedCounts);
+    } catch (error) {
+        console.error("Error fetching employee counts by role:", error);
+        res.status(500).json({ message: "Error fetching employee counts by role", error: error.message });
     }
-
-    const roleCounts = await Employee.aggregate([
-      { $match: matchFilter },
-      {
-        $group: {
-          _id: "$role",
-          count: { $sum: 1 }
-        }
-      }
-    ]);
-
-    const roles = roleCounts.reduce((acc, item) => {
-      acc[item._id] = item.count;
-      return acc;
-    }, {});
-
-    const total = Object.values(roles).reduce((a, b) => a + b, 0);
-
-    res.status(200).json({
-      spuId: spuId || "all",
-      window: hasWindow
-        ? {
-            days: daysNum,
-            from: new Date(now.getTime() - daysNum * 24 * 60 * 60 * 1000).toISOString(),
-            to: now.toISOString(),
-          }
-        : null, // no window => all-time counts
-      total,     // total new employees in window (or all-time if no window)
-      roles      // { sdw: X, supervisor: Y, head: Z, ... }
-    });
-  } catch (error) {
-    console.error("Error fetching employee counts by role:", error);
-    res.status(500).json({ message: "Error fetching employee counts by role", error: error.message });
-  }
 };
+
 
 
 //case demographic routes
@@ -580,30 +536,26 @@ const getFamilyDetails = async (req, res) => {
     }
 
     // 3) Aggregate via Family Relationship → Family Member
-    // Only count members where status is "Living"
+    //    NOTE: collection name for model "Family Member" in $lookup is the lowercased/pluralized one.
+    //    With the given model name, Mongoose will use "family members".
     const groups = await Family_Relationship.aggregate([
       { $match: { sponsor_id: { $in: caseObjectIds } } },
       {
         $lookup: {
-          from: 'family members',
+          from: 'family members',      // <- matches your model name "Family Member"
           localField: 'family_id',
           foreignField: '_id',
           as: 'member'
         }
       },
       { $unwind: '$member' },
-      { $match: { 'member.status': 'Living' } }, // Only living members
       {
         $group: {
           _id: '$sponsor_id',
           membersCount: { $sum: 1 },
           totalIncome: {
             $sum: {
-              $cond: [
-                { $and: [ { $gt: ['$member.income', 0] }, { $eq: ['$member.status', 'Living'] } ] },
-                '$member.income',
-                0
-              ]
+              $cond: [{ $gt: ['$member.income', 0] }, '$member.income', 0]
             }
           }
         }
@@ -657,6 +609,7 @@ module.exports = {
     getActiveCasesPerSpu,
     getWorkerToCaseRatio,
     getWorkerToSupervisorRatio,
+    getNewEmployeesLast30Days,
     getEmployeeCountsByRole,
     getAverageInterventionsPerCase,
     //case demographics
@@ -668,5 +621,5 @@ module.exports = {
     getAverageCaseDuration,
     getPeriodCases,
     getProgressReportCount,
-    getFamilyDetails,
+    getFamilyDetails
 };
