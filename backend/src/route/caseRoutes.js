@@ -27,9 +27,9 @@ router.put('/edit-family-composition/:caseID/:famID', caseController.editFamilyM
 router.put('/add-family-member/:caseID', caseController.addFamilyMember);
 router.put('/delete-family-member/:caseID/:famID', caseController.deleteFamilyMember);
 
-// DELETE route for cases (TBA)
+// DELETE route for cases
 router.delete('/delete-one/:caseID', caseController.deleteOneCase);
-// router.delete('/delete-multiple/:caseID', caseController.deleteManyCases);
+router.delete('/delete-multiple/:caseIDs', caseController.deleteManyCases);
 
 // Generic ID route must be last
 router.get('/:id', caseController.getCaseById);

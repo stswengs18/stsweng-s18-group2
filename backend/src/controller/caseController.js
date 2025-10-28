@@ -1074,6 +1074,65 @@ const deleteOneCase = async (req, res) => {
      }
 }
 
+/** 
+ * Deletes multiple cases by id array in the request body.
+ * Utilizes the existing deleteOneCase for each id and continues on error.
+ * Expects: { ids: ['id1', 'id2', ...] } in req.body
+ */
+const deleteManyCases = async (req, res) => {
+     try {
+          const ids = Array.isArray(req.body?.ids) ? req.body.ids : [];
+          if (!ids.length) {
+               return res.status(400).json({ message: 'No case IDs provided' });
+          }
+
+          const results = [];
+
+          // dummyRes captures status/json called by deleteOneCase without sending real responses
+          const makeDummyRes = () => {
+               const d = {
+                    _status: 200,
+                    _json: null,
+                    status(code) { this._status = code; return this; },
+                    json(payload) { this._json = payload; return this; },
+                    end() { return this; }
+               };
+               return d;
+          };
+
+          for (const id of ids) {
+               // validate id quickly
+               if (!mongoose.Types.ObjectId.isValid(id)) {
+                    results.push({ id, success: false, error: 'Invalid ObjectId' });
+                    continue;
+               }
+
+               const dummyReq = { params: { caseID: id } };
+               const dummyRes = makeDummyRes();
+
+               try {
+                    // call existing deleteOneCase (it will use dummyRes and won't send real responses)
+                    await deleteOneCase(dummyReq, dummyRes);
+
+                    // treat status 2xx as success
+                    if (dummyRes._status >= 200 && dummyRes._status < 300) {
+                         results.push({ id, success: true, detail: dummyRes._json || null });
+                    } else {
+                         results.push({ id, success: false, status: dummyRes._status, detail: dummyRes._json || null });
+                    }
+               } catch (err) {
+                    // ensure we continue even if deleteOneCase throws
+                    results.push({ id, success: false, error: err.message || 'Deletion failed' });
+               }
+          }
+
+          return res.status(200).json({ results });
+     } catch (error) {
+          console.error('Error in deleteManyCases:', error);
+          return res.status(500).json({ message: 'Internal Server Error' });
+     }
+}
+
 
 // ================================================== //
 
@@ -1111,4 +1170,5 @@ module.exports = {
      getAllSDWs,
      getAllCasesbySDW,
      deleteOneCase,
+     deleteManyCases,
 }
