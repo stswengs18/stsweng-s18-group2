@@ -299,32 +299,48 @@ export const fetchEmployeeCountsByRole = async (spuId = "", days = 0) => {
   }
 };
 
-export const fetchCasesOverTime = async (spuId = "", days = 0) => {
+export const fetchCasesOverTime = async (spuId = "", days = 7) => {
   try {
     let url = `${apiUrl}/dashboard/cases-over-time`;
     const params = [];
     if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
-    if (days && Number(days) > 0) params.push(`days=${days}`);
     if (params.length) url += `?${params.join("&")}`;
+
     const response = await fetch(url, { credentials: 'include' });
     if (!response.ok) throw new Error('Failed to fetch cases over time');
-    return await response.json();
+
+    const data = await response.json();
+
+    // ✅ Filter to most recent N days (keep last N elements)
+    if (Array.isArray(data) && days > 0) {
+      return data.slice(-days);
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching cases over time:", error);
     throw error;
   }
 };
 
-export const fetchWorkersOverTime = async (spuId = "", days = 0) => {
+export const fetchWorkersOverTime = async (spuId = "", days = 7) => {
   try {
     let url = `${apiUrl}/dashboard/workers-over-time`;
     const params = [];
     if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
-    if (days && Number(days) > 0) params.push(`days=${days}`);
     if (params.length) url += `?${params.join("&")}`;
+
     const response = await fetch(url, { credentials: 'include' });
     if (!response.ok) throw new Error('Failed to fetch workers over time');
-    return await response.json();
+
+    const data = await response.json();
+
+    // ✅ Filter to most recent N days (keep last N elements)
+    if (Array.isArray(data) && days > 0) {
+      return data.slice(-days);
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching workers over time:", error);
     throw error;

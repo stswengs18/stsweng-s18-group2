@@ -700,21 +700,54 @@ function fillMissingDates(startDate, endDate, data) {
 }
 
 
+const clampToMostRecentWindow = async (Model, baseFilter, days) => {
+  const now = new Date();
+
+  // Earliest available date (so we don’t start before the dataset exists)
+  const first = await Model.find(baseFilter).sort({ createdAt: 1 }).limit(1).lean();
+  const earliest = first.length ? new Date(first[0].createdAt) : now;
+
+  // Requested start (if days > 0), otherwise earliest
+  const requestedStart = (Number.isFinite(days) && days > 0)
+    ? new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+    : earliest;
+
+  // Final start = max(earliest, requestedStart)
+  const start = requestedStart > earliest ? requestedStart : earliest;
+
+  return { start, end: now };
+};
+
+
 const getCasesOverTime = async (req, res) => {
   try {
     const { spuId, days } = req.query;
-    const now = new Date();
-    const daysNum = Number(days) || 7; // default 7 days if not specified
-    const startDate = new Date(now.getTime() - daysNum * 24 * 60 * 60 * 1000);
+    const daysNum = Number(days ?? 0);
 
-    const filter = { is_active: true };
+    const baseFilter = { is_active: true };
     if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
-      filter.spu = new mongoose.Types.ObjectId(spuId);
+      baseFilter.spu = new mongoose.Types.ObjectId(spuId);
     }
-    filter.createdAt = { $gte: startDate, $lte: now };
 
-    const rawData = await Sponsored_Member.aggregate([
-      { $match: filter },
+    // Get the most recent X days by finding the latest createdAt and subtracting daysNum
+    let start, end;
+    end = new Date();
+    if (daysNum > 0) {
+      // Find the latest createdAt in the filtered set
+      const latestEntry = await Sponsored_Member.find(baseFilter).sort({ createdAt: -1 }).limit(1).lean();
+      const latestDate = latestEntry.length ? new Date(latestEntry[0].createdAt) : end;
+      start = new Date(latestDate.getTime() - daysNum * 24 * 60 * 60 * 1000);
+      end = latestDate;
+    } else {
+      // Use earliest entry if no days param
+      const firstEntry = await Sponsored_Member.find(baseFilter).sort({ createdAt: 1 }).limit(1).lean();
+      start = firstEntry.length ? new Date(firstEntry[0].createdAt) : end;
+    }
+
+    const rangeFilter = { ...baseFilter, createdAt: { $gte: start, $lte: end } };
+
+    const raw = await Sponsored_Member.aggregate([
+      { $match: rangeFilter },
       {
         $group: {
           _id: { date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } },
@@ -724,52 +757,57 @@ const getCasesOverTime = async (req, res) => {
       { $sort: { "_id.date": 1 } },
     ]);
 
-    const filledData = fillMissingDates(startDate, now, rawData);
-
-    res.status(200).json({ casesOverTime: filledData });
-  } catch (error) {
-    console.error("Error fetching cases over time:", error);
-    res.status(500).json({ message: "Error fetching cases over time", error: error.message });
+    const filled = fillMissingDates(start, end, raw);
+    res.status(200).json(filled);
+  } catch (err) {
+    console.error("Error fetching cases over time:", err);
+    res.status(500).json({ message: "Error fetching cases over time", error: err.message });
   }
 };
 
 const getWorkersOverTime = async (req, res) => {
   try {
     const { spuId, days } = req.query;
-    const now = new Date();
-    const daysNum = Number(days) || 7; // default 7 days
-    const startDate = new Date(now.getTime() - daysNum * 24 * 60 * 60 * 1000);
+    const daysNum = Number(days ?? 0);
 
-    const filter = {};
+    const baseFilter = {};
     if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
-      filter.spu = new mongoose.Types.ObjectId(spuId);
+      baseFilter.spu = new mongoose.Types.ObjectId(spuId);
     }
-    filter.createdAt = { $gte: startDate, $lte: now };
 
-    const rawData = await Employee.aggregate([
-      { $match: filter },
+    let start, end;
+    end = new Date();
+    if (daysNum > 0) {
+      const latestEntry = await Employee.find(baseFilter).sort({ createdAt: -1 }).limit(1).lean();
+      const latestDate = latestEntry.length ? new Date(latestEntry[0].createdAt) : end;
+      start = new Date(latestDate.getTime() - daysNum * 24 * 60 * 60 * 1000);
+      end = latestDate;
+    } else {
+      const firstEntry = await Employee.find(baseFilter).sort({ createdAt: 1 }).limit(1).lean();
+      start = firstEntry.length ? new Date(firstEntry[0].createdAt) : end;
+    }
+
+    const rangeFilter = { ...baseFilter, createdAt: { $gte: start, $lte: end } };
+
+    const raw = await Employee.aggregate([
+      { $match: rangeFilter },
       {
         $group: {
-          _id: {
-            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          },
+          _id: { date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } },
           count: { $sum: 1 },
         },
       },
       { $sort: { "_id.date": 1 } },
     ]);
 
-    const filledData = fillMissingDates(startDate, now, rawData);
-
-    res.status(200).json({ workersOverTime: filledData });
-  } catch (error) {
-    console.error("Error fetching workers over time:", error);
-    res.status(500).json({
-      message: "Error fetching workers over time",
-      error: error.message,
-    });
+    const filled = fillMissingDates(start, end, raw);
+    res.status(200).json(filled);
+  } catch (err) {
+    console.error("Error fetching workers over time:", err);
+    res.status(500).json({ message: "Error fetching workers over time", error: err.message });
   }
 };
+
 
 
 module.exports = {
@@ -794,5 +832,7 @@ module.exports = {
     getAverageCaseDuration,
     getPeriodCases,
     getProgressReportCount,
-    getFamilyDetails
+    getFamilyDetails,
+    getCasesOverTime,
+    getWorkersOverTime
 };

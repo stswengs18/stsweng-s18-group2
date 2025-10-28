@@ -15,7 +15,7 @@ import {
   fetchWorkerToSupervisorRatio,
   fetchEmployeeCountsByRole,
   fetchCasesOverTime,
-  fetchWorkersOverTime,
+  fetchWorkersOverTime
 } from '../../fetch-connections/dashboard-connection';
 
 const USE_MOCK_DATA = true;
@@ -299,10 +299,6 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
   const totalEmployees = Object.values(roleDist).reduce((a, b) => a + b, 0);
 
 
-  // Fetch cases over time and workers over time using the new fetch functions
-  const casesOverTimeResult = await fetchCasesOverTime(spuId, timePeriod);
-  const workersOverTimeResult = await fetchWorkersOverTime(spuId, timePeriod);
-
   return {
     spuStatisticsCards: [
       { title: "Active Cases", value: rawData.activeCases.toLocaleString(), subtext: spuId ? "Within this SPU" : "Across all SPUs" },
@@ -391,8 +387,8 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
       totalEmployees,
       newEmployees,
     },
-    caseOverTime: casesOverTimeResult?.casesOverTime || [],
-    workerOverTime: workersOverTimeResult?.workersOverTime || [],
+    caseOverTime: await fetchCasesOverTime(spuId, timePeriod),
+    workerOverTime: await fetchWorkersOverTime(spuId, timePeriod),
     periodData
   };
 }
