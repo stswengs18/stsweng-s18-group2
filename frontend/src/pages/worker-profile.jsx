@@ -53,6 +53,7 @@ export default function WorkerProfile() {
         role: "",
         manager: "",
         is_active: true,
+        createdAt: null,
     });
 
     const [drafts, setDrafts] = useState({
@@ -138,7 +139,8 @@ export default function WorkerProfile() {
                     spu_id: empData.spu_id?._id || empData.spu_id || "",
                     role: empData.role || "",
                     manager: empData.manager || "",
-                    is_active: empData.is_active ?? true
+                    is_active: empData.is_active ?? true,
+                    createdAt: empData.createdAt ? new Date(empData.createdAt) : null
                 });
                 setDrafts({
                     first_name: empData.first_name || "",
@@ -983,7 +985,18 @@ export default function WorkerProfile() {
                                                     : "-"}
                                             </p>
                                         )}
-
+                                        {data.createdAt && (
+                                        <p>
+                                        <span className="font-bold-label">Account Created:</span>{" "}
+                                                {data.createdAt.toLocaleDateString('en-PH', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </p>
+                                        )}
                                         {(isTwoColumnLayout || isOneColumnLayout) && (
                                             <p><span className="font-bold-label">Contact No.:</span> {data.contact_no || "-"}</p>
                                         )}
