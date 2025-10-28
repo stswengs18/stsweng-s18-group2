@@ -197,76 +197,158 @@ const getActiveCasesPerSpu = async (req, res) => {
     }
 };
 
+function normalizeRatio(a, b) {
+  if (a === 0 && b === 0) return { worker: 0, case: 0, ratio: "0 : 0" };
+  if (a === 0) return { worker: 0, case: b, ratio: "0 : 1" };
+  if (b === 0) return { worker: a, case: 0, ratio: "1 : 0" };
+
+  if (a <= b) {
+    const val = Number((b / a).toFixed(2));
+    return { worker: 1, case: val, ratio: `1 : ${val}` };
+  }
+  const val = Number((a / b).toFixed(2));
+  return { worker: val, case: 1, ratio: `${val} : 1` };
+}
+
+// --- Worker to Case Ratio ---
 const getWorkerToCaseRatio = async (req, res) => {
-    try {
-        const workerCount = await Employee.countDocuments({ role: "sdw" });
-        const caseCount = await Sponsored_Member.countDocuments({ is_active: true });
-        res.status(200).json({
-            workers: workerCount,
-            cases: caseCount,
-        });
-    } catch (error) {
-        console.error("Error fetching worker to case ratio:", error);
-        res.status(500).json({ message: "Error fetching worker to case ratio", error: error.message });
+  try {
+    const { spuId } = req.query;
+
+    const empFilter = { role: "sdw" };
+    const caseFilter = { is_active: true };
+
+    if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
+      const oid = new mongoose.Types.ObjectId(spuId);
+      empFilter.spu = oid;
+      caseFilter.spu = oid;
     }
+
+    const [workerCount, caseCount] = await Promise.all([
+      Employee.countDocuments(empFilter),
+      Sponsored_Member.countDocuments(caseFilter),
+    ]);
+
+    // Avoid divide-by-zero
+    const workerRatio = workerCount > 0 ? 1 : 0;
+    const caseRatio = workerCount > 0 ? Number((caseCount / workerCount).toFixed(2)) : 0;
+
+    return res.status(200).json({
+      workerRatio,
+      caseRatio,
+      workers: workerCount,
+      cases: caseCount,
+      scopedToSpu: !!spuId,
+    });
+  } catch (error) {
+    console.error("Error fetching worker to case ratio:", error);
+    res.status(500).json({ message: "Error fetching worker to case ratio", error: error.message });
+  }
 };
 
+
+// --- Worker to Supervisor Ratio ---
 const getWorkerToSupervisorRatio = async (req, res) => {
-    try {
-        const workerCount = await Employee.countDocuments({ role: "sdw" });
-        const supervisorCount = await Employee.countDocuments({ role: "supervisor" }); // Assuming "supervisor" is the role
-        res.status(200).json({
-            workers: workerCount,
-            supervisors: supervisorCount,
-        });
-    } catch (error) {
-        console.error("Error fetching worker to supervisor ratio:", error);
-        res.status(500).json({ message: "Error fetching worker to supervisor ratio", error: error.message });
+  try {
+    const { spuId } = req.query;
+
+    const workerFilter = { role: "sdw" };
+    const supervisorFilter = { role: "supervisor" };
+
+    if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
+      const oid = new mongoose.Types.ObjectId(spuId);
+      workerFilter.spu = oid;
+      supervisorFilter.spu = oid;
     }
+
+    const [workerCount, supervisorCount] = await Promise.all([
+      Employee.countDocuments(workerFilter),
+      Employee.countDocuments(supervisorFilter),
+    ]);
+
+    const workerRatio = 1;
+    const supervisorRatio = supervisorCount > 0 ? Number((workerCount / supervisorCount).toFixed(2)) : 0;
+
+    return res.status(200).json({
+      workerRatio,
+      supervisorRatio,
+      workers: workerCount,
+      supervisors: supervisorCount,
+      scopedToSpu: !!spuId,
+    });
+  } catch (error) {
+    console.error("Error fetching worker to supervisor ratio:", error);
+    res.status(500).json({ message: "Error fetching worker to supervisor ratio", error: error.message });
+  }
 };
-
-const getNewEmployeesLast30Days = async (req, res) => {
-    try {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-        const newEmployeesCount = await Employee.countDocuments({
-            _id: { $gte: thirtyDaysAgo.toISOString() } // ObjectId contains timestamp
-        });
-
-        res.status(200).json({ newEmployeesLast30Days: newEmployeesCount });
-    } catch (error) {
-        console.error("Error fetching new employees for the last 30 days:", error);
-        res.status(500).json({ message: "Error fetching new employees for the last 30 days", error: error.message });
-    }
-};
-
-
 
 const getEmployeeCountsByRole = async (req, res) => {
-    try {
-        const roleCounts = await Employee.aggregate([
-            {
-                $group: {
-                    _id: "$role",
-                    count: { $sum: 1 }
-                }
-            }
-        ]);
-        
-        const formattedCounts = roleCounts.reduce((acc, item) => {
-            acc[item._id] = item.count;
-            return acc;
-        }, {});
+  try {
+    const { spuId, days } = req.query;
+    const filter = {};
 
-        res.status(200).json(formattedCounts);
-    } catch (error) {
-        console.error("Error fetching employee counts by role:", error);
-        res.status(500).json({ message: "Error fetching employee counts by role", error: error.message });
+    // Filter by SPU if provided
+    if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
+      filter.spu_id = new mongoose.Types.ObjectId(spuId);
     }
+
+    // Filter by recent hires if `days` is provided
+    let cutoff = null;
+    if (days && Number(days) > 0) {
+      const now = new Date();
+      cutoff = new Date(now.getTime() - Number(days) * 24 * 60 * 60 * 1000);
+      filter.createdAt = { $gte: cutoff, $lte: new Date() };
+    }
+
+    // Only count sdw, supervisor, head roles
+    const allowedRoles = ["sdw", "supervisor", "head"];
+
+    const roleCounts = await Employee.aggregate([
+      { $match: { ...filter, role: { $in: allowedRoles } } },
+      {
+        $group: {
+          _id: "$role",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Convert aggregation results into object
+    const formattedCounts = roleCounts.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    // Map backend role keys → readable names
+    const roleDistribution = {
+      "Social Development Workers": formattedCounts.sdw || 0,
+      Supervisors: formattedCounts.supervisor || 0,
+      Heads: formattedCounts.head || 0,
+    };
+
+    // Count how many new employees in the given period (if days provided)
+    const newEmployees = days && Number(days) > 0
+      ? await Employee.countDocuments({ ...filter, role: { $in: allowedRoles } })
+      : 0;
+
+    return res.status(200).json({
+      workerMetrics: {
+        newEmployees,
+        roleDistribution,
+      },
+      scopedToSpu: !!spuId,
+      days: Number(days) || 0,
+      from: cutoff ? cutoff.toISOString() : null,
+      to: cutoff ? new Date().toISOString() : null,
+    });
+  } catch (error) {
+    console.error("Error fetching employee counts by role:", error);
+    res.status(500).json({
+      message: "Error fetching employee counts by role",
+      error: error.message,
+    });
+  }
 };
-
-
 
 //case demographic routes
 // 1. Gender Distribution
@@ -598,6 +680,98 @@ const getFamilyDetails = async (req, res) => {
   }
 };
 
+function fillMissingDates(startDate, endDate, data) {
+  const filled = [];
+  const countsByDate = Object.fromEntries(data.map(d => [d._id.date, d.count]));
+
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+
+  while (current <= end) {
+    const dateStr = current.toISOString().slice(0, 10);
+    filled.push({
+      date: dateStr,
+      count: countsByDate[dateStr] || 0,
+    });
+    current.setDate(current.getDate() + 1);
+  }
+
+  return filled;
+}
+
+
+const getCasesOverTime = async (req, res) => {
+  try {
+    const { spuId, days } = req.query;
+    const now = new Date();
+    const daysNum = Number(days) || 7; // default 7 days if not specified
+    const startDate = new Date(now.getTime() - daysNum * 24 * 60 * 60 * 1000);
+
+    const filter = { is_active: true };
+    if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
+      filter.spu = new mongoose.Types.ObjectId(spuId);
+    }
+    filter.createdAt = { $gte: startDate, $lte: now };
+
+    const rawData = await Sponsored_Member.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: { date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.date": 1 } },
+    ]);
+
+    const filledData = fillMissingDates(startDate, now, rawData);
+
+    res.status(200).json({ casesOverTime: filledData });
+  } catch (error) {
+    console.error("Error fetching cases over time:", error);
+    res.status(500).json({ message: "Error fetching cases over time", error: error.message });
+  }
+};
+
+const getWorkersOverTime = async (req, res) => {
+  try {
+    const { spuId, days } = req.query;
+    const now = new Date();
+    const daysNum = Number(days) || 7; // default 7 days
+    const startDate = new Date(now.getTime() - daysNum * 24 * 60 * 60 * 1000);
+
+    const filter = {};
+    if (spuId && mongoose.Types.ObjectId.isValid(spuId)) {
+      filter.spu = new mongoose.Types.ObjectId(spuId);
+    }
+    filter.createdAt = { $gte: startDate, $lte: now };
+
+    const rawData = await Employee.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.date": 1 } },
+    ]);
+
+    const filledData = fillMissingDates(startDate, now, rawData);
+
+    res.status(200).json({ workersOverTime: filledData });
+  } catch (error) {
+    console.error("Error fetching workers over time:", error);
+    res.status(500).json({
+      message: "Error fetching workers over time",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
     renderHomePage,
     getActiveCasesCount,
@@ -609,7 +783,6 @@ module.exports = {
     getActiveCasesPerSpu,
     getWorkerToCaseRatio,
     getWorkerToSupervisorRatio,
-    getNewEmployeesLast30Days,
     getEmployeeCountsByRole,
     getAverageInterventionsPerCase,
     //case demographics

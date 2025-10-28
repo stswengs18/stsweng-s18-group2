@@ -26,7 +26,7 @@ export default function LocationStatistics() {
 
   const [currentSPU, setCurrentSPU] = useState(""); // selected SPU
   const [projectLocations, setProjectLocation] = useState([]); // SPU list
-  const [timeState, setTimeState] = useState(0); // selected time period
+  const [timePeriod, setTimePeriod] = useState(0); // selected time period
 
   useEffect(() => {
     document.title = "Organization Statistics";
@@ -59,7 +59,7 @@ export default function LocationStatistics() {
 
   // Remove statisticsParams state and useEffect
   // Just call useStatisticsData directly with the current values
-  const { data, loading, error } = useStatisticsData({ timePeriod: timeState, spuId: currentSPU, projectLocations });
+  const { data, loading, error } = useStatisticsData({ timePeriod: timePeriod, spuId: currentSPU, projectLocations });
 
   // console.log(projectLocations);
 
@@ -196,8 +196,8 @@ export default function LocationStatistics() {
               id="time-period"
               name="time-period"
               className="text-input font-label !w-[20rem]"
-              value={timeState}
-              onChange={e => setTimeState(Number(e.target.value))}
+              value={timePeriod}
+              onChange={e => setTimePeriod(Number(e.target.value))}
             >
               <option value={0}>Overall</option>
               <option value={90}>Last 90 days</option>
@@ -339,66 +339,119 @@ export default function LocationStatistics() {
             </div>
           </SectionCard>}
 
-          <SectionCard
-            title="Worker Metrics"
-            headerAction={
-              <button className="text-gray-400 hover:" aria-label="More info">
-                <Info size={18} />
-              </button>
-            }
-          >
-            <div className="flex justify-center py-8 w-[100%]">
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-15 px-4">
-                <div className="relative rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
-                  <p className="font-bold-label">Worker to Case Ratio</p>
-                  <p className="main-logo-text-nav text-center">1 : 26</p>
-                  <p className="font-label text-center">Each worker handles 26 cases</p>
-                </div>
-                <div className="relative rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
-                  <p className="font-bold-label">Worker to Supervisor Ratio</p>
-                  <p className="main-logo-text-nav text-center">4 : 1</p>
-                  <p className="font-label text-center">4 workers per supervisor</p>
-                </div>
-                <div className="relative md:col-span-2 rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
-                  <div className="flex items-center justify-around">
-                    <p className="font-bold-label">New Employees Added:</p>
-                    <div className="text-right">
-                      <p className="main-logo-text-nav text-center">4</p>
-                      <p className="font-label text-center">This period</p>
-                    </div>
-                  </div>
+<SectionCard
+  title="Worker Metrics"
+  headerAction={
+    <button className="text-gray-400 hover:" aria-label="More info">
+      <Info size={18} />
+    </button>
+  }
+>
+  {(() => {
+    const dist = data?.workerDistributionData ?? { totalEmployees: 0, newEmployees: 0, chartData: [] };
+    const isOverall = Number(timePeriod) === 0; // overall / "All time"
+
+    return (
+      <>
+        <div className="flex justify-center py-8 w-[100%]">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+            {/* Worker to Case Ratio */}
+            <div className="relative rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
+              <p className="font-bold-label">Worker to Case Ratio</p>
+              <p className="main-logo-text-nav text-center">
+                {data?.ratioData?.workerToCase
+                  ? `${data.ratioData.workerToCase.workerRatio} : ${data.ratioData.workerToCase.caseRatio}`
+                  : "—"}
+              </p>
+              <p className="font-label text-center">
+                Each worker handles{" "}
+                {data?.ratioData?.workerToCase?.caseRatio ?? 0}{" "}
+                {data?.ratioData?.workerToCase?.caseRatio === 1 ? "case" : "cases"}
+              </p>
+            </div>
+
+            {/* Worker to Supervisor Ratio */}
+            <div className="relative rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
+              <p className="font-bold-label">Worker to Supervisor Ratio</p>
+              <p className="main-logo-text-nav text-center">
+                {data?.ratioData?.workerToSupervisor
+                  ? `${data.ratioData.workerToSupervisor.workerRatio} : ${data.ratioData.workerToSupervisor.supervisorRatio}`
+                  : "—"}
+              </p>
+              <p className="font-label text-center">
+                {data?.ratioData?.workerToSupervisor?.supervisorRatio ?? 0}{" "}
+                {data?.ratioData?.workerToSupervisor?.supervisorRatio === 1 ? "worker" : "workers"} per supervisor
+              </p>
+            </div>
+
+            {/* Overall total workers OR new workers (this period) */}
+            <div className="relative md:col-span-2 rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
+              <div className="flex items-center justify-around">
+                <p className="font-bold-label">
+                  {isOverall ? "Total Workers" : "New Workers Added"}
+                </p>
+                <div className="text-right">
+                  <p className="main-logo-text-nav text-center">
+                    {isOverall ? (dist.totalEmployees ?? 0) : (dist.newEmployees ?? 0)}
+                  </p>
+                  <p className="font-label text-center">
+                    {isOverall ? "Across current scope" : "This period"}
+                  </p>
                 </div>
               </div>
             </div>
-            <p className="font-bold-label mb-5">Employee Distribution by Roles</p>
-            <div className="space-y-4 pt-2">
-              {(() => {
-                // Find the longest label
-                const labels = data.workerDistributionData.chartData.map(role => role.label);
-                const longestLabel = labels.reduce((a, b) => a.length > b.length ? a : b, "");
-                // Estimate width in 'ch' units (character width)
-                const labelWidth = `${longestLabel.length + 2}ch`;
-                return data.workerDistributionData.chartData.map((role, index) => {
-                  const total = data.workerDistributionData.totalEmployees;
-                  const percentage = total > 0 ? (role.value / total) * 100 : 0;
+          </div>
+        </div>
+
+        {/* Worker Distribution by Roles */}
+        <div className="rounded-2xl bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.5),0_5px_2px_#78A18199] ring-1 ring-gray-200">
+          <div className="mb-5 flex items-center justify-between">
+            <p className="font-bold-label">Worker Distribution by Roles</p>
+          </div>
+
+          {(() => {
+            const rows = dist.chartData ?? [];
+            if (!rows.length) {
+              return <p className="font-label text-gray-500">No workers found for the current filters.</p>;
+            }
+
+            const longest = rows.reduce((a, b) => (a.label.length > b.label.length ? a : b), rows[0])?.label ?? "";
+            const labelWidth = `${longest.length + 2}ch`;
+
+            return (
+              <div className="space-y-4 pt-2">
+                {rows.map((role, idx) => {
+                  const total = dist.totalEmployees || 0;
+                  const pct = total > 0 ? (role.value / total) * 100 : 0;
+                  const barClass = role.color || "bg-gray-400";
                   return (
-                    <div key={index} className="flex items-center space-x-4">
+                    <div key={idx} className="flex items-center space-x-4">
                       <span
-                        className="font-label"
+                        className="font-label truncate"
                         style={{ minWidth: labelWidth, maxWidth: labelWidth, display: "inline-block" }}
+                        title={role.label}
                       >
                         {role.label}
                       </span>
+
                       <div className="flex-grow bg-gray-200 rounded-full h-2">
-                        <div className={`h-2 rounded-full ${role.color}`} style={{ width: `${percentage}%` }} />
+                        <div className={`h-2 rounded-full ${barClass}`} style={{ width: `${pct}%` }} />
                       </div>
-                      <span className="font-bold-label">{role.value}</span>
+
+                      <span className="font-bold-label w-10 text-right">{role.value}</span>
                     </div>
                   );
-                });
-              })()}
-            </div>
-          </SectionCard>
+                })}
+              </div>
+            );
+          })()}
+        </div>
+      </>
+    );
+  })()}
+</SectionCard>
+
+
 
           {data?.caseOverTime && <SectionCard
             title="Cases Over Time"

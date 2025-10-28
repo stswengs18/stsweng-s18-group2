@@ -10,7 +10,12 @@ import {
   fetchInterventionFinancialCount,
   fetchInterventionHomeVisitCount,
   fetchProgressReportCount,
-  fetchFamilyDetails
+  fetchFamilyDetails,
+  fetchWorkerToCaseRatio,
+  fetchWorkerToSupervisorRatio,
+  fetchEmployeeCountsByRole,
+  fetchCasesOverTime,
+  fetchWorkersOverTime,
 } from '../../fetch-connections/dashboard-connection';
 
 const USE_MOCK_DATA = true;
@@ -215,10 +220,10 @@ async function getCountByIntervention(spuId, timePeriod) {
 
 async function transformRawData(rawData, spuId, periodData, projectLocations, timePeriod) {
   const interventionColors = ["bg-teal-500", "bg-green-500", "bg-red-500", "bg-yellow-500"];
-  
+
   const spuDistributionColors = Object.fromEntries((projectLocations || []).map(pl => [pl.spu_name, seededColorFor(pl.spu_name)]));
   const countBySpu = getCountBySpu(periodData, projectLocations);
-  
+
   const genderData = getCountGender(periodData);
   const genderDistributionColors = {
     'Male': { hex: '#3B82F6', tw: 'bg-blue-500' },
@@ -275,6 +280,28 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
 
   // Arbitrary case duration for now
   const avgCaseDurationMonths = 12;
+
+  const employeeMetricsResult = await fetchEmployeeCountsByRole(spuId, timePeriod);
+  const newEmployees = employeeMetricsResult?.workerMetrics?.newEmployees || 0;
+  const roleDist = employeeMetricsResult?.workerMetrics?.roleDistribution || {};
+  const roleColors = {
+    "Social Development Workers": "bg-teal-500",
+    Supervisors: "bg-yellow-500",
+    Heads: "bg-red-500",
+  };
+
+  const chartData = Object.entries(roleDist).map(([label, value]) => ({
+    label,
+    value,
+    color: roleColors[label] || "bg-gray-400",
+  }));
+
+  const totalEmployees = Object.values(roleDist).reduce((a, b) => a + b, 0);
+
+
+  // Fetch cases over time and workers over time using the new fetch functions
+  const casesOverTimeResult = await fetchCasesOverTime(spuId, timePeriod);
+  const workersOverTimeResult = await fetchWorkersOverTime(spuId, timePeriod);
 
   return {
     spuStatisticsCards: [
@@ -353,24 +380,19 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
       { title: "Family Income", subtitle: "excluding non-earners", value: `₱${Number(avgIncome).toLocaleString()}` },
       { title: "Case Duration", subtitle: "average time length", value: `${avgCaseDurationMonths} months` },
     ],
+    ratioData: {
+      workerToCase: await fetchWorkerToCaseRatio(),
+      workerToSupervisor: await fetchWorkerToSupervisorRatio(),
+    },
     workerDistributionData: {
       title: "Employee Distribution by Roles",
       subtitle: "Current distribution across all departments",
-      chartData: [
-        { label: "Social Workers", value: 12, color: "bg-teal-600" },
-        { label: "Supervisors", value: 3, color: "bg-yellow-600" },
-        { label: "Heads", value: 8, color: "bg-green-600" },
-      ],
-      totalEmployees: 12 + 3 + 8 + 5,
+      chartData,
+      totalEmployees,
+      newEmployees,
     },
-    caseOverTime: rawData.casesOverTime,
-    workerOverTime: rawData.employeesOverTime,
-    interventionDistribution: [
-      { type: "Type A", value: 32, color: "#0891b2" },
-      { type: "Type B", value: 28, color: "#4ade80" },
-      { type: "Type C", value: 15, color: "#f87171" },
-      { type: "Type D", value: 8, color: "#6b7280" },
-    ],
+    caseOverTime: casesOverTimeResult?.casesOverTime || [],
+    workerOverTime: workersOverTimeResult?.workersOverTime || [],
     periodData
   };
 }

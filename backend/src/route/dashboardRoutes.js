@@ -11,11 +11,12 @@ router.get('/intervention-home-visit-count', dashboardController.getIntervention
 router.get('/active-cases-per-spu', dashboardController.getActiveCasesPerSpu);
 router.get('/workertocaseratio', dashboardController.getWorkerToCaseRatio);
 router.get('/workertosupervisorratio', dashboardController.getWorkerToSupervisorRatio);
-router.get('/newemployeeslast30days', dashboardController.getNewEmployeesLast30Days);
 router.get('/employeecountsbyrole', dashboardController.getEmployeeCountsByRole);
 router.get('/averageinterventionspercase', dashboardController.getAverageInterventionsPerCase);
 router.get('/period-cases', dashboardController.getPeriodCases);
 router.get('/progress-report-count', dashboardController.getProgressReportCount);
+router.get('/cases-over-time', dashboardController.getCasesOverTime);
+router.get('/workers-over-time', dashboardController.getWorkersOverTime);
 
 //case demographic routes
 router.get('/gender-distribution', dashboardController.getGenderDistribution);
