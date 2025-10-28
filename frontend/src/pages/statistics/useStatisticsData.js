@@ -25,14 +25,19 @@ export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [periodData, setPeriodData] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState(0); // progress counter
 
-  console.log(projectLocations);
+  // Hardcoded total number of fetches/steps (only those already in use)
+  const TOTAL_LOADING_STEPS = 15;
+
+  // Helper to increment loadingStatus
+  const incrementLoadingStatus = () => setLoadingStatus(prev => prev + 1);
 
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
+    setLoadingStatus(0);
 
     async function fetchData() {
       try {
@@ -40,23 +45,44 @@ export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations
         if (USE_MOCK_DATA) {
           await new Promise(resolve => setTimeout(resolve, 300));
           rawData = mockStatistics;
+          incrementLoadingStatus();
         } else {
           rawData = {};
         }
 
         const activeCasesResult = await fetchActiveCasesCount(spuId, { signal: controller.signal });
+        incrementLoadingStatus();
         rawData.activeCases = Number(activeCasesResult?.activeCases ?? 0);
 
         const closedCasesResult = await fetchClosedCasesCount(spuId, { signal: controller.signal });
+        incrementLoadingStatus();
         rawData.casesClosed = Number(closedCasesResult?.closedCases ?? 0);
 
         const periodCasesResult = await fetchPeriodCases(spuId, timePeriod, { signal: controller.signal });
+        incrementLoadingStatus();
 
-        // Fetch progress report count for this SPU and time period
         const progressReportResult = await fetchProgressReportCount(spuId, timePeriod);
+        incrementLoadingStatus();
         rawData.progressReportCount = Number(progressReportResult?.progressReportCount ?? 0);
 
+        await fetchInterventionCorrespondenceCount(spuId, timePeriod); incrementLoadingStatus();
+        await fetchInterventionCounselingCount(spuId, timePeriod); incrementLoadingStatus();
+        await fetchInterventionFinancialCount(spuId, timePeriod); incrementLoadingStatus();
+        await fetchInterventionHomeVisitCount(spuId, timePeriod); incrementLoadingStatus();
+
+        await fetchFamilyDetails([]); incrementLoadingStatus();
+
+        await fetchWorkerToCaseRatio(); incrementLoadingStatus();
+        await fetchWorkerToSupervisorRatio(); incrementLoadingStatus();
+
+        await fetchEmployeeCountsByRole(spuId, timePeriod); incrementLoadingStatus();
+
+        await fetchCasesOverTime(spuId, timePeriod); incrementLoadingStatus();
+        await fetchWorkersOverTime(spuId, timePeriod); incrementLoadingStatus();
+
+        // Only call transformRawData and increment once
         const transformedData = await transformRawData(rawData, spuId, periodCasesResult, projectLocations, timePeriod);
+        incrementLoadingStatus();
 
         setData(transformedData);
         setPeriodData(periodCasesResult);
@@ -71,7 +97,7 @@ export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations
     return () => controller.abort();
   }, [spuId, timePeriod, projectLocations]);
 
-  return { data, loading, error };
+  return { data, loading, error, loadingStatus, totalLoadingSteps: TOTAL_LOADING_STEPS };
 }
 
 function hashString(str) {
