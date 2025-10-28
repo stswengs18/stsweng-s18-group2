@@ -121,6 +121,7 @@ const deleteAccountController = require('./controller/deleteAccountController.js
 const profileRoute = require('../src/route/employeeRoute.js');
 const fetchingRoute = require('./route/fetchingRoute.js');
 const fileGenerator = require('./route/fileGeneratorRoutes.js');
+const dashboardRoutes = require('./route/dashboardRoutes.js');
 /**
  *  ============ Routes ==============
  */
@@ -192,6 +193,7 @@ app.delete('/api/delete-account/:account', deleteAccountController.deleteAccount
 
 // File Generator routes
 app.use('/api/file-generator', fileGenerator);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 
