@@ -14,10 +14,19 @@ import SimpleModal from "../../Components/SimpleModal";
 import LineChart from "./components/LineChart";
 import BarChart from "./components/BarChart";
 
+import {
+  fetchSession
+} from "../../fetch-connections/account-connection"
+import { fetchAllSpus } from "../../fetch-connections/spu-connection";
+
+
 export default function LocationStatistics() {
   const navigate = useNavigate();
-  const { data, loading, error } = useStatisticsData();
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
+
+  const [currentSPU, setCurrentSPU] = useState(""); // selected SPU
+  const [projectLocations, setProjectLocation] = useState([]); // SPU list
+  const [timeState, setTimeState] = useState(0); // selected time period
 
   useEffect(() => {
     document.title = "Organization Statistics";
@@ -25,6 +34,34 @@ export default function LocationStatistics() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // const sessionData = await fetchSession();
+        // setUser(sessionData.user);
+        // if (!sessionData.user || !["head", "supervisor"].includes(sessionData.user.role)) {
+        //   navigate("/unauthorized");
+        //   return;
+        // }
+
+        const spus = await fetchAllSpus();
+        const activeSpus = spus.filter(spu => spu.is_active === true);
+        setProjectLocation(activeSpus);
+
+      } catch (err) {
+        console.error("Error during data load", err);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Remove statisticsParams state and useEffect
+  // Just call useStatisticsData directly with the current values
+  const { data, loading, error } = useStatisticsData({ timePeriod: timeState, spuId: currentSPU, projectLocations });
+
+  // console.log(projectLocations);
 
   // Header bar (copied from spu-page)
   const isMobile = windowWidth <= 700;
@@ -59,6 +96,9 @@ export default function LocationStatistics() {
     ...card,
     iconComponent: statCardIcons[index]
   })) || [];
+
+
+  console.log("DATA FETCHED in Frontend:", data);
 
   // Loading spinner
   if (loading) {
@@ -139,12 +179,15 @@ export default function LocationStatistics() {
               id="select-spu"
               name="select-spu"
               className="text-input font-label !w-[20rem]"
+              value={currentSPU}
+              onChange={e => setCurrentSPU(e.target.value)}
             >
-              <option>Select SPU:</option>
-              <option>SPU North</option>
-              <option>SPU South</option>
-              <option>SPU East</option>
-              <option>SPU West</option>
+              <option value="">All SPUs</option>
+              {projectLocations.map(spu => (
+                <option key={spu._id} value={spu._id}>
+                  {spu.spu_name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -153,11 +196,13 @@ export default function LocationStatistics() {
               id="time-period"
               name="time-period"
               className="text-input font-label !w-[20rem]"
+              value={timeState}
+              onChange={e => setTimeState(Number(e.target.value))}
             >
-              <option>Last 30 days</option>
-              <option>Last 7 days</option>
-              <option>Last 90 days</option>
-              <option>Last year</option>
+              <option value={0}>Overall</option>
+              <option value={90}>Last 90 days</option>
+              <option value={30}>Last 30 days</option>
+              <option value={7}>Last 7 days</option>
             </select>
           </div>
         </div>
@@ -180,7 +225,7 @@ export default function LocationStatistics() {
             </div>
           </div>
 
-          <SectionCard
+          {data?.interventionsByTypeData && <SectionCard
             title={data.interventionsByTypeData.title}
             headerAction={
               <button className="text-gray-400 hover:" aria-label="More info">
@@ -216,9 +261,9 @@ export default function LocationStatistics() {
                 })()}
               </div>
             </div>
-          </SectionCard>
+          </SectionCard>}
 
-          <SectionCard>
+          {data?.caseDistributionData && <SectionCard>
             <div>
               <h2 className="header-sm mb-4">{data.caseDistributionData.title}</h2>
               <p className="font-label mb-4">{data.caseDistributionData.subtitle}</p>
@@ -245,12 +290,12 @@ export default function LocationStatistics() {
                 </div>
               </div>
             </div>
-          </SectionCard>
+          </SectionCard>}
 
-          <SectionCard title="Gender Distribution">
+          {data?.genderDistributionData && <SectionCard title="Gender Distribution">
             <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div className="relative h-68 w-68 mx-auto">
+                <div className="relative h-[18rem] w-[18rem] mx-auto">
                   <DoughnutChart data={data.genderDistributionData.chartData} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <span className="header-sm">{data.genderDistributionData.totalCases}</span>
@@ -270,9 +315,9 @@ export default function LocationStatistics() {
                 </div>
               </div>
             </div>
-          </SectionCard>
+          </SectionCard>}
 
-          <SectionCard
+          {data?.keyDemographicsData && <SectionCard
             title="Key Demographics"
             headerAction={
               <button className="text-gray-400 hover:" aria-label="More info">
@@ -292,7 +337,7 @@ export default function LocationStatistics() {
                 ))}
               </div>
             </div>
-          </SectionCard>
+          </SectionCard>}
 
           <SectionCard
             title="Worker Metrics"
@@ -355,7 +400,7 @@ export default function LocationStatistics() {
             </div>
           </SectionCard>
 
-          <SectionCard
+          {data?.caseOverTime && <SectionCard
             title="Cases Over Time"
             headerAction={
               <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
@@ -371,10 +416,10 @@ export default function LocationStatistics() {
                 height={60}
               />
             </div>
-          </SectionCard>
+          </SectionCard>}
 
 
-          <SectionCard
+          {data?.workerOverTime && <SectionCard
             title="Workers Over Time"
             headerAction={
               <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
@@ -391,9 +436,9 @@ export default function LocationStatistics() {
                 height={60}
               />
             </div>
-          </SectionCard>
+          </SectionCard>}
 
-          <SectionCard
+          {/* {data?.interventionDistribution && <SectionCard
             title="Intervention Types Distribution"
             headerAction={
               <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
@@ -401,7 +446,7 @@ export default function LocationStatistics() {
               </button>
             }
           >
-                      <h3 className="font-label">Past 7 Days</h3>
+            <h3 className="font-label">Past 7 Days</h3>
 
             <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
               <BarChart
@@ -409,7 +454,7 @@ export default function LocationStatistics() {
                 height={60}
               />
             </div>
-          </SectionCard>
+          </SectionCard>} */}
 
         </div>
       </main>

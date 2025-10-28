@@ -14,12 +14,13 @@ router.get('/workertosupervisorratio', dashboardController.getWorkerToSupervisor
 router.get('/newemployeeslast30days', dashboardController.getNewEmployeesLast30Days);
 router.get('/employeecountsbyrole', dashboardController.getEmployeeCountsByRole);
 router.get('/averageinterventionspercase', dashboardController.getAverageInterventionsPerCase);
+router.get('/period-cases', dashboardController.getPeriodCases);
+router.get('/progress-report-count', dashboardController.getProgressReportCount);
 
 //case demographic routes
 router.get('/gender-distribution', dashboardController.getGenderDistribution);
 router.get('/average-age', dashboardController.getAverageAge);
-router.get('/average-family-size', dashboardController.getAverageFamilySizeByLastName);
-router.get('/average-family-income', dashboardController.getAverageFamilyIncome);
+router.post('/family-details', dashboardController.getFamilyDetails);
 router.get('/average-interventions', dashboardController.getAverageInterventionsPerCase);
 router.get('/average-case-duration', dashboardController.getAverageCaseDuration);
 

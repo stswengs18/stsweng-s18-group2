@@ -8,9 +8,11 @@ import {
   LinearScale,
   Tooltip,
   Legend,
+  Filler, // <-- import Filler plugin
 } from "chart.js";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
+// Register Chart.js components
+ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
 
 export default function LineChart({ data, color = "#06B6D4", height = 200 }) {
   // data: [{ date, value }]

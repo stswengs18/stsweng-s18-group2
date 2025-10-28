@@ -1,8 +1,13 @@
 const apiUrl = import.meta.env.VITE_API_URL || '/api';
 
-export const fetchActiveCasesCount = async () => {
+export const fetchActiveCasesCount = async (spuId = "") => {
     try {
-        const response = await fetch(`${apiUrl}/dashboard/active-cases-count`, {
+        let url = `${apiUrl}/dashboard/active-cases-count`;
+        if (spuId) {
+            // Add query param for spuId
+            url += `?spuId=${encodeURIComponent(spuId)}`;
+        }
+        const response = await fetch(url, {
             credentials: 'include',
         });
         if (!response.ok) {
@@ -15,9 +20,13 @@ export const fetchActiveCasesCount = async () => {
     }
 };
 
-export const fetchClosedCasesCount = async () => {
+export const fetchClosedCasesCount = async (spuId = "") => {
     try {
-        const response = await fetch(`${apiUrl}/dashboard/closed-cases-count`, {
+        let url = `${apiUrl}/dashboard/closed-cases-count`;
+        if (spuId) {
+            url += `?spuId=${encodeURIComponent(spuId)}`;
+        }
+        const response = await fetch(url, {
             credentials: 'include',
         });
         if (!response.ok) {
@@ -30,14 +39,15 @@ export const fetchClosedCasesCount = async () => {
     }
 };
 
-export const fetchInterventionCorrespondenceCount = async () => {
+export const fetchInterventionCorrespondenceCount = async (spuId = "", days = 0) => {
     try {
-        const response = await fetch(`${apiUrl}/dashboard/intervention-correspondence-count`, {
-            credentials: 'include',
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch intervention correspondence count');
-        }
+        let url = `${apiUrl}/dashboard/intervention-correspondence-count`;
+        const params = [];
+        if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
+        if (days && Number(days) > 0) params.push(`days=${days}`);
+        if (params.length) url += `?${params.join("&")}`;
+        const response = await fetch(url, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to fetch intervention correspondence count');
         return await response.json();
     } catch (error) {
         console.error("Error fetching intervention correspondence count:", error);
@@ -45,14 +55,15 @@ export const fetchInterventionCorrespondenceCount = async () => {
     }
 };
 
-export const fetchInterventionCounselingCount = async () => {
+export const fetchInterventionCounselingCount = async (spuId = "", days = 0) => {
     try {
-        const response = await fetch(`${apiUrl}/dashboard/intervention-counseling-count`, {
-            credentials: 'include',
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch intervention counseling count');
-        }
+        let url = `${apiUrl}/dashboard/intervention-counseling-count`;
+        const params = [];
+        if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
+        if (days && Number(days) > 0) params.push(`days=${days}`);
+        if (params.length) url += `?${params.join("&")}`;
+        const response = await fetch(url, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to fetch intervention counseling count');
         return await response.json();
     } catch (error) {
         console.error("Error fetching intervention counseling count:", error);
@@ -60,14 +71,15 @@ export const fetchInterventionCounselingCount = async () => {
     }
 };
 
-export const fetchInterventionFinancialCount = async () => {
+export const fetchInterventionFinancialCount = async (spuId = "", days = 0) => {
     try {
-        const response = await fetch(`${apiUrl}/dashboard/intervention-financial-count`, {
-            credentials: 'include',
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch intervention financial count');
-        }
+        let url = `${apiUrl}/dashboard/intervention-financial-count`;
+        const params = [];
+        if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
+        if (days && Number(days) > 0) params.push(`days=${days}`);
+        if (params.length) url += `?${params.join("&")}`;
+        const response = await fetch(url, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to fetch intervention financial count');
         return await response.json();
     } catch (error) {
         console.error("Error fetching intervention financial count:", error);
@@ -75,14 +87,15 @@ export const fetchInterventionFinancialCount = async () => {
     }
 };
 
-export const fetchInterventionHomeVisitCount = async () => {
+export const fetchInterventionHomeVisitCount = async (spuId = "", days = 0) => {
     try {
-        const response = await fetch(`${apiUrl}/dashboard/intervention-home-visit-count`, {
-            credentials: 'include',
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch intervention home visit count');
-        }
+        let url = `${apiUrl}/dashboard/intervention-home-visit-count`;
+        const params = [];
+        if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
+        if (days && Number(days) > 0) params.push(`days=${days}`);
+        if (params.length) url += `?${params.join("&")}`;
+        const response = await fetch(url, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to fetch intervention home visit count');
         return await response.json();
     } catch (error) {
         console.error("Error fetching intervention home visit count:", error);
@@ -189,4 +202,95 @@ export const fetchAverageCaseDuration = async () => {
     throw error;
   }
 };
-    
+
+export const fetchPeriodCases = async (spuId = "", days = 0) => {
+    try {
+        console.log("Fetching period cases with spuId:", spuId, "and days:", days);
+        let url = `${apiUrl}/dashboard/period-cases`;
+        const params = [];
+        // Only add params if they are not empty/zero
+        if (spuId && spuId !== "") params.push(`spuId=${encodeURIComponent(spuId)}`);
+        if (days && Number(days) > 0) params.push(`days=${days}`);
+        if (params.length) url += `?${params.join("&")}`;
+        const response = await fetch(url, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to fetch period cases');
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching period cases:", error);
+        throw error;
+    }
+};
+
+export const fetchProgressReportCount = async (spuId = "", days = 0) => {
+    try {
+        let url = `${apiUrl}/dashboard/progress-report-count`;
+        const params = [];
+        if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
+        if (days && Number(days) > 0) params.push(`days=${days}`);
+        if (params.length) url += `?${params.join("&")}`;
+        const response = await fetch(url, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to fetch progress report count');
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching progress report count:", error);
+        throw error;
+    }
+};
+
+export const fetchFamilyDetails = async (caseIds = []) => {
+  try {
+    const response = await fetch(`${apiUrl}/dashboard/family-details`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ caseIds })
+    });
+    if (!response.ok) throw new Error('Failed to fetch family details');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching family details:", error);
+    throw error;
+  }
+};
+
+export const fetchEmployeeCountsByRole = async (spuId = "", days = 0) => {
+  try {
+    let url = `${apiUrl}/dashboard/employeecountsbyrole`;
+    const params = [];
+    if (spuId) params.push(`spuId=${encodeURIComponent(spuId)}`);
+    if (days && Number(days) > 0) params.push(`days=${days}`);
+    if (params.length) url += `?${params.join("&")}`;
+    const response = await fetch(url, { credentials: 'include' });
+    if (!response.ok) throw new Error('Failed to fetch employee counts by role');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching employee counts by role:", error);
+    throw error;
+  }
+};
+
+export const fetchWorkerToCaseRatio = async (spuId = "") => {
+  try {
+    let url = `${apiUrl}/dashboard/workertocaseratio`;
+    if (spuId) url += `?spuId=${encodeURIComponent(spuId)}`;
+    const response = await fetch(url, { credentials: 'include' });
+    if (!response.ok) throw new Error('Failed to fetch worker to case ratio');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching worker to case ratio:", error);
+    throw error;
+  }
+};
+
+export const fetchWorkerToSupervisorRatio = async (spuId = "") => {
+  try {
+    let url = `${apiUrl}/dashboard/workertosupervisorratio`;
+    if (spuId) url += `?spuId=${encodeURIComponent(spuId)}`;
+    const response = await fetch(url, { credentials: 'include' });
+    if (!response.ok) throw new Error('Failed to fetch worker to supervisor ratio');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching worker to supervisor ratio:", error);
+    throw error;
+  }
+};
