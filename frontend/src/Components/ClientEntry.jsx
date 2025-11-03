@@ -30,6 +30,7 @@ function getTextColorForBackground(hsl) {
   return luminance > 0.5 ? "black" : "white";
 }
 
+// wip
 export default function ClientEntry({
   id,
   sm_number,

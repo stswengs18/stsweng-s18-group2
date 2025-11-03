@@ -24,6 +24,9 @@ function Archive() {
   const [currentData, setCurrentData] = useState([]);
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
+  const [selectedClients, setSelectedClients] = useState([]);
+
+  const [deleteMode, setDeleteMode] = useState(false);
 
   const [showDeleteCheckbox, setShowDeleteCheckbox] = useState(false);
   const [selectedClients, setSelectedClients] = useState([]);
