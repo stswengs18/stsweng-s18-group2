@@ -42,6 +42,7 @@ export default function ClientEntry({
   showCheckbox = false,
   onSelectChange,
   isSelected = false,
+  deleteMode = false,
 }) {
   const initials = name.charAt(0).toUpperCase();
 
@@ -59,7 +60,8 @@ export default function ClientEntry({
 
   return (
 <a
-  href={`/case/${id}`}
+  href={deleteMode ? undefined : `/case/${id}`}
+  onClick={deleteMode ? (e) => e.preventDefault() : undefined}
   className={`relative client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label
     ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}
     ${showCheckbox ? "pl-14" : "pl-5"}

@@ -696,6 +696,7 @@ useEffect(() => {
                       showCheckbox={showDeleteCheckbox}
                       onSelectChange={handleSelectChange}
                       isSelected={selectedClients.includes(client.id)}
+                      deleteMode={deleteMode}
                     />
                   ))
                 )}
