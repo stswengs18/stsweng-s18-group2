@@ -407,7 +407,7 @@ useEffect(() => {
                     user?.role == "head" && (
                       <>
                       <button
-                        className={`relative w-[250px] border border-gray-400 rounded-xl text-left pl-5 px-3 py-2 font-bold-label cursor-pointer appearance-none
+                        className={`relative w-[200px] border border-gray-400 rounded-xl text-left pl-5 px-3 py-2 font-bold-label cursor-pointer appearance-none
                                   focus:outline-none transition-colors duration-150
                                   ${timeFilter ? "bg-[#E46455] !text-white" : "bg-white text-black hover:bg-[#f5f5f5]"}`}
                         onClick={() => {
@@ -419,7 +419,7 @@ useEffect(() => {
                         }
                         }
                       >
-                        Select by Date and Time
+                        Select by Date
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="absolute right-1 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 pointer-events-none font-bold-label"
@@ -595,22 +595,7 @@ useEffect(() => {
           {timeFilter && (
             <div className="border border-gray-400 rounded-xl p-6 w-fit bg-white space-y-6">
               {/* time select */}
-              <div className="flex items-center gap-4">
-                <label className="font-bold-label w-36 text-lg">Select Time:</label>
-                <select
-                  className="border rounded-lg px-7 py-4 w-82 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={timeRange}
-                  onChange={(e) => setTimeRange(e.target.value)}
-                >
-                  <option value="">Choose a time range</option>
-                  <option value="morning">06:00-11:59</option>
-                  <option value="afternoon">12:00-17:59</option>
-                  <option value="evening">18:00-23:59</option>
-                  <option value="night">00:00-05:59</option>
-                </select>
-              </div>
-
-              <hr className="border-gray-300" />
+              
 
               {/* date select */}
               <div className="flex items-center gap-4">
