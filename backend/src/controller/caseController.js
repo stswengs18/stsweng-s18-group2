@@ -237,6 +237,7 @@ const getAllCases = async (req, res) => {
                ? `${c.assigned_sdw.first_name} ${c.assigned_sdw.middle_name || ''} ${c.assigned_sdw.last_name}`.trim()
                : null,
                pendingTermination: pendingIds.includes(c._id.toString()) ?? false,
+               createdAt: c.createdAt,
           }));
           
           res.json(simplifiedCases);

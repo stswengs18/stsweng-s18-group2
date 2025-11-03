@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from "react";
-
 function getColorFromId(id) {
   let hash = 0;
   const strId = id.toString();
@@ -41,8 +39,9 @@ export default function ClientEntry({
   assigned_sdw_name,
   archive,
   pendingTermination = false,
-  hideCHColumn = false,
-  hideSDWColumn = false
+  showCheckbox = false,
+  onSelectChange,
+  isSelected = false,
 }) {
   const initials = name.charAt(0).toUpperCase();
 
@@ -54,18 +53,29 @@ export default function ClientEntry({
     textColor = "#ffffff";
   }
 
-  const getGridClasses = () => {
-    if (hideSDWColumn) return 'grid grid-cols-[1fr]';
-    if (hideCHColumn) return 'grid grid-cols-[2fr_2fr]';
-    return 'grid grid-cols-[2fr_1fr_2fr]';
-  };
+  // const handleRowClick = () => {
+  //   window.location.href = `/case/${id}`;
+  // };
 
   return (
 <a
   href={`/case/${id}`}
-  className={`client-entry ${getGridClasses()} items-center p-5 mb-2 rounded-lg font-bold-label transition-colors 
-    ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}`}
+  className={`relative client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label
+    ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}
+    ${showCheckbox ? "pl-14" : "pl-5"}
+    `}
 >
+
+      {/* checkbox column */}
+      {showCheckbox && (
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => onSelectChange?.(id, e.target.checked)}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-[16px] h-[15px] border border-black rounded-[3px] bg-white cursor-pointer"
+        />
+      )}
 
       <div className="flex items-center gap-6">
         <div
@@ -74,18 +84,10 @@ export default function ClientEntry({
         >
           {initials}
         </div>
-        <div className="flex flex-col gap-2">
-          <p>{name}</p>
-          {hideCHColumn && (
-            <p>CH: {sm_number}</p>
-          )}
-          {hideSDWColumn && (
-            <p>Assigned: {assigned_sdw_name}</p>
-          )}
-        </div>
+        <p>{name}</p>
       </div>
-      {!hideCHColumn && !hideSDWColumn && <p className="text-center">{sm_number}</p>}
-      {!hideSDWColumn && <p className="text-center">{assigned_sdw_name}</p>}
+      <p className="text-center">{sm_number}</p>
+      <p className="text-center">{assigned_sdw_name}</p>
 
       {pendingTermination && (
         <div className="col-span-3 text-left mt-4">
