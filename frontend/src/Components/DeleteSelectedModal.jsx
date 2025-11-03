@@ -11,25 +11,32 @@ export default function DeleteSelectedModal({
   setSelectedClients, // pass setter from parent to update selection
 }) {
   const [modalSelectedClients, setModalSelectedClients] = useState([]);
+  const [modalClients, setModalClients] = useState([]);
 
-  // Sync modal selection with parent selection when modal opens
+  useEffect(() => {
+  if (isOpen) {
+    setModalClients(allCases.filter((c) => selectedClientIds.includes(c.id)));
+  }
+  }, [isOpen, allCases, selectedClientIds]); // set once on open
+
   useEffect(() => {
     if (isOpen) {
       setModalSelectedClients(selectedClientIds);
     }
-  }, [isOpen, selectedClientIds]);
+  }, [selectedClientIds, isOpen]);
 
   const handleSelectChange = (id, checked) => {
-    if (!checked) {
-      // Remove from modal and parent state
+    if (checked) {
+      setModalSelectedClients((prev) => [...prev, id]);
+    } else {
       setModalSelectedClients((prev) => prev.filter((c) => c !== id));
-      setSelectedClients((prev) => prev.filter((c) => c !== id));
     }
   };
 
-  const selectedClientsData = allCases.filter((c) =>
-    modalSelectedClients.includes(c.id)
-  );
+  const handleConfirm = () => {
+    setSelectedClients(modalSelectedClients);
+    onConfirm();
+  };
 
   return (
     <AnimatePresence>
@@ -53,8 +60,8 @@ export default function DeleteSelectedModal({
               </p>
 
               <div className="max-h-96 overflow-y-auto border rounded p-3 mb-6 flex flex-col gap-2">
-                {selectedClientsData.length > 0 ? (
-                  selectedClientsData.map((client) => (
+                {modalClients.length > 0 ? (
+                  modalClients.map((client) => (
                     <ClientEntry
                       key={client.id}
                       id={client.id}
@@ -64,8 +71,9 @@ export default function DeleteSelectedModal({
                       assigned_sdw_name={client.assigned_sdw_name}
                       archive={true}
                       showCheckbox={true}
-                      isSelected={true}
+                      isSelected={modalSelectedClients.includes(client.id)}
                       onSelectChange={handleSelectChange}
+                      deleteMode={true}
                     />
                   ))
                 ) : (
@@ -84,7 +92,7 @@ export default function DeleteSelectedModal({
                 </button>
                 <button
                   className="btn-primary font-bold-label"
-                  onClick={onConfirm}
+                  onClick={handleConfirm}
                   disabled={modalSelectedClients.length === 0} // disable confirm if no clients
                 >
                   Confirm Delete
