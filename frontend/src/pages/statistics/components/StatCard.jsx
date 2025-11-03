@@ -8,7 +8,10 @@ export default function StatCard({
   iconComponent: Icon = null,
   iconBgColor = "bg-transparent",
   valueColor = "text-gray-900",
+  windowWidth = 1024, // Add windowWidth prop
 }) {
+  const hideIcon = windowWidth <= 500; // Hide icon when width is 500px or less
+
   return (
     <div className="bg-white shadow-sm rounded-xl p-4 flex justify-around items-center border border-gray-100">
       <div className="flex flex-col justify-between items-centermb-2 max-w-70">
@@ -19,7 +22,7 @@ export default function StatCard({
         {subtext && <p className="body-sm text-center">{subtext}</p>}
       </div>
 
-      {Icon && <Icon className="h-32 w-32" />}
+      {Icon && !hideIcon && <Icon className="h-[6rem] w-[6rem]" />}
     </div>
   );
 }

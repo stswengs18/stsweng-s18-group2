@@ -20,7 +20,7 @@ import {
 
 const USE_MOCK_DATA = true;
 
-export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations = [] } = {}) {
+export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations = [], enabled = true } = {}) {
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,12 +29,17 @@ export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations
   const [loadingStatus, setLoadingStatus] = useState(0); // progress counter
 
   // Hardcoded total number of fetches/steps (only those already in use)
-  const TOTAL_LOADING_STEPS = 15;
+  const TOTAL_LOADING_STEPS = 29;
 
   // Helper to increment loadingStatus
   const incrementLoadingStatus = () => setLoadingStatus(prev => prev + 1);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
     const controller = new AbortController();
     setLoading(true);
     setLoadingStatus(0);
@@ -95,7 +100,7 @@ export function useStatisticsData({ timePeriod = 0, spuId = "", projectLocations
 
     fetchData();
     return () => controller.abort();
-  }, [spuId, timePeriod, projectLocations]);
+  }, [spuId, timePeriod, projectLocations, enabled]);
 
   return { data, loading, error, loadingStatus, totalLoadingSteps: TOTAL_LOADING_STEPS };
 }

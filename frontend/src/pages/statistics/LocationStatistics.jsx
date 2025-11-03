@@ -29,6 +29,12 @@ export default function LocationStatistics() {
   const [loadingStage, setLoadingStage] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
 
+  // --- Responsive breakpoints like spu-page ---
+  const isMobile = windowWidth <= 700;
+  const isVerySmall = windowWidth <= 550;
+  const isTablet = windowWidth <= 1024;
+  const hideSelectLabels = windowWidth <= 360;
+
   useEffect(() => {
     document.title = "Organization Statistics";
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -66,13 +72,20 @@ export default function LocationStatistics() {
     loadData();
   }, [navigate]);
 
-  // Remove statisticsParams state and useEffect
-  // Just call useStatisticsData directly with the current values
-  const { data, loading, error, loadingStatus, totalLoadingSteps } = useStatisticsData({ timePeriod: timePeriod, spuId: currentSPU, projectLocations });
+  // Call useStatisticsData after initial loading is complete
+  const { data, loading: statisticsLoading, error, loadingStatus, totalLoadingSteps } = useStatisticsData({ 
+    timePeriod: timePeriod, 
+    spuId: currentSPU, 
+    projectLocations,
+    enabled: loadingComplete // Only start when basic loading is done
+  });
+
+  // Combined loading state - true if either initial loading or statistics loading
+  const loading = !loadingComplete || statisticsLoading;
 
   // Header bar (copied from spu-page)
-  const isMobile = windowWidth <= 700;
-  const isVerySmall = windowWidth <= 400;
+  // const isMobile = windowWidth <= 700; // Remove this duplicate
+  // const isVerySmall = windowWidth <= 400; // Remove this duplicate
 
   // Loading and error modal
   const [modalData, setModalData] = useState({
@@ -145,13 +158,14 @@ export default function LocationStatistics() {
           </div>
         </a>
 
-        {/* Right side */}
-        <div className="flex items-center space-x-4">
+        {/* Right side - Responsive selects */}
+        <div className={`flex items-center ${isMobile ? 'flex-col gap-2' : 'space-x-4'}`}>
           <div className="flex items-center space-x-2">
+            {!hideSelectLabels && <label className="font-label text-sm">SPU:</label>}
             <select
               id="select-spu"
               name="select-spu"
-              className="text-input font-label !w-[20rem]"
+              className={`text-input font-label ${isTablet ? '!w-[15rem]' : '!w-[20rem]'} ${isMobile ? '!w-[12rem]' : ''}`}
               value={currentSPU}
               onChange={e => setCurrentSPU(e.target.value)}
             >
@@ -165,10 +179,11 @@ export default function LocationStatistics() {
           </div>
 
           <div className="flex items-center space-x-2">
+            {!hideSelectLabels && <label className="font-label text-sm">Period:</label>}
             <select
               id="time-period"
               name="time-period"
-              className="text-input font-label !w-[20rem]"
+              className={`text-input font-label ${isTablet ? '!w-[15rem]' : '!w-[20rem]'} ${isMobile ? '!w-[12rem]' : ''}`}
               value={timePeriod}
               onChange={e => setTimePeriod(Number(e.target.value))}
             >
@@ -186,23 +201,27 @@ export default function LocationStatistics() {
         <main className="min-h-[calc(100vh-4rem)] w-full flex mt-[9rem]">
           <InlineLoading color={loadingColor} text="Loading..." />
         </main>
-      ) : loading ? (
+      ) : statisticsLoading ? (
         <main className="min-h-[calc(100vh-4rem)] w-full flex mt-[9rem]">
           <div className="flex w-full items-center justify-center">
             <InlineLoading
               color="blue"
-              text={`Loading Statistics... (${loadingStatus}/54)`}
+              text={`Loading Statistics... (${loadingStatus}/${totalLoadingSteps})`}
               progress={loadingStatus}
               total={totalLoadingSteps}
             />
           </div>
         </main>
       ) : (
-        <main className="min-h-[calc(100vh-4rem)] w-full flex mt-[9rem]">
-          <div className="flex flex-col w-full max-w-[1280px] mx-auto gap-10 px-8 pb-20">
+        <main className={`min-h-[calc(100vh-4rem)] w-full flex ${windowWidth <= 480 ? 'mt-[12rem]' : 'mt-[9rem]'}`}>
+          <div className={`flex flex-col w-full max-w-[1280px] mx-auto gap-10 px-8 pb-20 ${isMobile ? 'gap-6 px-4' : ''}`}>
             <div>
-              <h2 className="header-sm mb-4">SPU Statistics</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <h2 className={`header-sm mb-4`}>SPU Statistics</h2>
+              <div className={`grid gap-6 ${
+                isMobile ? 'grid-cols-2' : 
+                isTablet ? 'grid-cols-2' : 
+                'grid-cols-3'
+              }`}>
                 {spuStatisticsCards.map((card, index) => (
                   <StatCard
                     key={index}
@@ -210,6 +229,7 @@ export default function LocationStatistics() {
                     value={card.value}
                     subtext={card.subtext}
                     iconComponent={card.iconComponent}
+                    windowWidth={windowWidth} // Pass windowWidth prop
                   />
                 ))}
               </div>
@@ -217,11 +237,11 @@ export default function LocationStatistics() {
 
             {data?.interventionsByTypeData && <SectionCard
               title={data.interventionsByTypeData.title}
-              headerAction={
-                <button className="text-gray-400 hover:" aria-label="More info">
-                  <Info size={18} />
-                </button>
-              }
+              // headerAction={
+              //   <button className="text-gray-400 hover:" aria-label="More info">
+              //     <Info size={18} />
+              //   </button>
+              // }
             >
               <div>
                 <div className="space-y-4 pt-2">
@@ -234,17 +254,28 @@ export default function LocationStatistics() {
                       const maxValue = Math.max(...data.interventionsByTypeData.types.map((t) => t.value));
                       const percentage = maxValue > 0 ? (type.value / maxValue) * 100 : 0;
                       return (
-                        <div key={index} className="flex items-center space-x-4">
-                          <span
-                            className="font-label shrink-0"
-                            style={{ minWidth: labelWidth, maxWidth: labelWidth, display: "inline-block" }}
-                          >
-                            {type.name}
-                          </span>
-                          <div className="flex-grow bg-gray-200 rounded-full h-2">
-                            <div className={`h-2 rounded-full ${type.color}`} style={{ width: `${percentage}%` }} />
+                        <div key={index} className={windowWidth <= 500 ? "flex flex-col space-y-2" : "flex items-center space-x-4"}>
+                          {windowWidth <= 500 && (
+                            <span className="font-label font-semibold text-gray-800">
+                              {type.name}: {type.value}
+                            </span>
+                          )}
+                          <div className={windowWidth <= 500 ? "flex items-center space-x-4" : "contents"}>
+                            {windowWidth > 500 && (
+                              <span
+                                className="font-label shrink-0"
+                                style={{ minWidth: labelWidth, maxWidth: labelWidth, display: "inline-block" }}
+                              >
+                                {type.name}
+                              </span>
+                            )}
+                            <div className="flex-grow bg-gray-200 rounded-full h-2">
+                              <div className={`h-2 rounded-full ${type.color}`} style={{ width: `${percentage}%` }} />
+                            </div>
+                            {windowWidth > 500 && (
+                              <span className="font-label font-semibold text-gray-800 w-8 text-right shrink-0">{type.value}</span>
+                            )}
                           </div>
-                          <span className="font-label font-semibold text-gray-800 w-8 text-right shrink-0">{type.value}</span>
                         </div>
                       );
                     });
@@ -309,11 +340,11 @@ export default function LocationStatistics() {
 
             {data?.keyDemographicsData && <SectionCard
               title="Key Demographics"
-              headerAction={
-                <button className="text-gray-400 hover:" aria-label="More info">
-                  <Info size={18} />
-                </button>
-              }
+              // headerAction={
+              //   <button className="text-gray-400 hover:" aria-label="More info">
+              //     <Info size={18} />
+              //   </button>
+              // }
             >
               <div>
                 <div className="flex flex-col gap-4 pt-2">
@@ -331,11 +362,11 @@ export default function LocationStatistics() {
 
             <SectionCard
               title="Worker Metrics"
-              headerAction={
-                <button className="text-gray-400 hover:" aria-label="More info">
-                  <Info size={18} />
-                </button>
-              }
+              // headerAction={
+              //   <button className="text-gray-400 hover:" aria-label="More info">
+              //     <Info size={18} />
+              //   </button>
+              // }
             >
               {(() => {
                 const dist = data?.workerDistributionData ?? { totalEmployees: 0, newEmployees: 0, chartData: [] };
@@ -415,20 +446,31 @@ export default function LocationStatistics() {
                               const pct = total > 0 ? (role.value / total) * 100 : 0;
                               const barClass = role.color || "bg-gray-400";
                               return (
-                                <div key={idx} className="flex items-center space-x-4">
-                                  <span
-                                    className="font-label truncate"
-                                    style={{ minWidth: labelWidth, maxWidth: labelWidth, display: "inline-block" }}
-                                    title={role.label}
-                                  >
-                                    {role.label}
-                                  </span>
+                                <div key={idx} className={windowWidth <= 700 ? "flex flex-col space-y-2" : "flex items-center space-x-4"}>
+                                  {windowWidth <= 700 && (
+                                    <span className="font-label font-semibold text-gray-800">
+                                      {role.label}: {role.value}
+                                    </span>
+                                  )}
+                                  <div className={windowWidth <= 700 ? "flex items-center space-x-4" : "contents"}>
+                                    {windowWidth > 700 && (
+                                      <span
+                                        className="font-label truncate"
+                                        style={{ minWidth: labelWidth, maxWidth: labelWidth, display: "inline-block" }}
+                                        title={role.label}
+                                      >
+                                        {role.label}
+                                      </span>
+                                    )}
 
-                                  <div className="flex-grow bg-gray-200 rounded-full h-2">
-                                    <div className={`h-2 rounded-full ${barClass}`} style={{ width: `${pct}%` }} />
+                                    <div className="flex-grow bg-gray-200 rounded-full h-2">
+                                      <div className={`h-2 rounded-full ${barClass}`} style={{ width: `${pct}%` }} />
+                                    </div>
+
+                                    {windowWidth > 700 && (
+                                      <span className="font-bold-label w-10 text-right">{role.value}</span>
+                                    )}
                                   </div>
-
-                                  <span className="font-bold-label w-10 text-right">{role.value}</span>
                                 </div>
                               );
                             })}
@@ -443,11 +485,11 @@ export default function LocationStatistics() {
 
             {data?.caseOverTime && <SectionCard
               title="Cases Over Time"
-              headerAction={
-                <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
-                  <Info size={18} />
-                </button>
-              }
+              // headerAction={
+              //   <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
+              //     <Info size={18} />
+              //   </button>
+              // }
             >
               {/* Remove "Past 7 Days" label if showing full range */}
               <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
@@ -465,11 +507,11 @@ export default function LocationStatistics() {
 
             {data?.workerOverTime && <SectionCard
               title="Workers Over Time"
-              headerAction={
-                <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
-                  <Info size={18} />
-                </button>
-              }
+              // headerAction={
+              //   <button className="text-gray-400 hover:text-gray-600" aria-label="More info">
+              //     <Info size={18} />
+              //   </button>
+              // }
             >
               <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
                 <LineChart
