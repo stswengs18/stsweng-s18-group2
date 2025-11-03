@@ -209,6 +209,7 @@ function Archive() {
 
     if (sortOrder === "desc") filtered.reverse();
 
+
     setCurrentData(filtered);
   }, [allCases, currentSPU, sortBy, sortOrder, searchQuery, user, startDate, endDate, timeRange,]);
 
@@ -359,6 +360,11 @@ useEffect(() => {
     // Optionally show toast / modal error
   }
 };
+
+  const handleSelectAll = () => {
+    const allIds = currentData.map(client => client.id); // assuming your list is in `clients`
+    setSelectedClients(allIds); // replace with your actual selected state setter
+  };
   
   
   const handleModalClose = () => {
@@ -590,12 +596,9 @@ useEffect(() => {
               )}
             </div>
           </div>
-          {/* wip */}
-          {/* add ui for selecting by date and time */}
+
           {timeFilter && (
             <div className="border border-gray-400 rounded-xl p-6 w-fit bg-white space-y-6">
-              {/* time select */}
-              
 
               {/* date select */}
               <div className="flex items-center gap-4">
@@ -616,6 +619,13 @@ useEffect(() => {
                     className="border rounded-lg px-7 py-4 w-65 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+                <button
+                  onClick={handleSelectAll}
+                  className="px-6 py-3 text-white rounded-lg text-xl font-semibold ml-8 mr-6"
+                  style={{ backgroundColor: "#3186B2" }}
+                >
+                  Select All
+                </button>
               </div>
             </div>
           )}
