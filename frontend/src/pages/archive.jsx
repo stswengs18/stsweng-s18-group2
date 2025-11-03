@@ -261,6 +261,15 @@ useEffect(() => {
   setArchiveEmp(filtered);
 }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
+// Reset date filters when delete mode is turned off
+useEffect(() => {
+  if (!deleteMode) {
+    // When delete mode is turned OFF
+    setStartDate("");
+    setEndDate("");
+  }
+}, [deleteMode]);
+
   // toggle function for selecting clients in delete mode
   const handleSelectChange = (id, isChecked) => {
     setSelectedClients(prev => {
