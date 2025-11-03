@@ -24,7 +24,6 @@ function Archive() {
   const [currentData, setCurrentData] = useState([]);
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
-  const [selectedClients, setSelectedClients] = useState([]);
 
   const [deleteMode, setDeleteMode] = useState(false);
 
@@ -35,7 +34,6 @@ function Archive() {
   
   const [modalType, setModalType] = useState(null); // 'confirm' | 'none'
 
-  const [deleteMode, setDeleteMode] = useState(false);
 
   const [timeFilter, setTimeFilter] = useState(false);
 
