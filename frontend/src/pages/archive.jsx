@@ -27,6 +27,8 @@ function Archive() {
 
   const [deleteMode, setDeleteMode] = useState(false);
 
+  const [allSelected, setAllSelected] = useState(false);
+
   const [showDeleteCheckbox, setShowDeleteCheckbox] = useState(false);
   const [selectedClients, setSelectedClients] = useState([]);
 
@@ -326,6 +328,11 @@ useEffect(() => {
     setFilteredCases(filtered);
   };
 
+useEffect(() => {
+  // Deselect if data changes
+  setAllSelected(false);
+  setSelectedClients([]);
+}, [currentData]);
 
   // handle date filter apply
   const handleDateApply = () => {
@@ -371,8 +378,15 @@ useEffect(() => {
 };
 
   const handleSelectAll = () => {
-    const allIds = currentData.map(client => client.id); // assuming your list is in `clients`
-    setSelectedClients(allIds); // replace with your actual selected state setter
+    if (allSelected) {
+    // Currently all selected → deselect everything
+    setSelectedClients([]);
+    } else {
+      // Select everything
+      const allIds = currentData.map(client => client.id);
+      setSelectedClients(allIds);
+    }
+    setAllSelected(!allSelected);
   };
   
   
@@ -633,7 +647,7 @@ useEffect(() => {
                   className="px-6 py-3 text-white rounded-lg text-xl font-semibold ml-8 mr-6"
                   style={{ backgroundColor: "#3186B2" }}
                 >
-                  Select All
+                  {allSelected ? "Deselect All" : "Select All"}
                 </button>
               </div>
             </div>
