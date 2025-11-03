@@ -7,5 +7,10 @@ backend/node_modules
 # frontend
 frontend/node_modules
 
+# Environment files
+.env
+frontend/.env
+backend/.env
+
 # General
 .DS_Store

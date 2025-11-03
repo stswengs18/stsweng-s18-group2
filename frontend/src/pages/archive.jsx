@@ -30,49 +30,68 @@ function Archive() {
 
   const [loadingStage, setLoadingStage] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  const isMobile = windowWidth <= 700;
+  const isVerySmall = windowWidth <= 400;
+  const isSmallLayout = windowWidth <= 900;
+  const hideCHColumn = windowWidth <= 800;
+  const hideSDWColumn = windowWidth <= 380;
+  const hideSpuColumn = windowWidth <= 800;
+  const hideTypeColumn = windowWidth <= 400;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.title = `Archive`;
   }, []);
 
-    useEffect(() => {
-        // Fetch all SPUs (including inactive) 
-        const loadSpus = async () => {
-            const spus = await fetchAllSpus();
-            const activeSpus = Array.isArray(spus) ? spus.filter(spu => spu.is_active) : [];
-            setProjectLocation(activeSpus);
-        };
-        loadSpus();
-    }, []);
+  useEffect(() => {
+    // Fetch all SPUs (including inactive) 
+    const loadSpus = async () => {
+      const spus = await fetchAllSpus();
+      const activeSpus = Array.isArray(spus) ? spus.filter(spu => spu.is_active) : [];
+      setProjectLocation(activeSpus);
+    };
+    loadSpus();
+  }, []);
 
-    useEffect(() => {
-        const loadSessionAndCases = async () => {
-            try {
-                setLoadingStage(0); // red
-                const sessionData = await fetchSession();
-                const currentUser = sessionData.user;
-                setUser(currentUser);
+  useEffect(() => {
+    const loadSessionAndCases = async () => {
+      try {
+        setLoadingStage(0); // red
+        const sessionData = await fetchSession();
+        const currentUser = sessionData.user;
+        setUser(currentUser);
 
-                if (!currentUser || !["head", "supervisor"].includes(currentUser.role)) {
-                    navigate("/unauthorized");
-                    return;
-                }
+        if (!currentUser || !["head", "supervisor"].includes(currentUser.role)) {
+          navigate("/unauthorized");
+          return;
+        }
 
-                setLoadingStage(1); // blue
+        setLoadingStage(1); // blue
 
-                const cases = await fetchAllCases();
-                setAllCases(cases);
+        const cases = await fetchAllCases();
+        setAllCases(cases);
 
-                setLoadingStage(2); // green
-                setLoadingComplete(true);
-            } catch (err) {
-                console.error("Error loading archive page:", err);
-                navigate("/unauthorized");
-            }
-            
-        };
-        loadSessionAndCases();
-      }, []);
+        setLoadingStage(2); // green
+        setLoadingComplete(true);
+      } catch (err) {
+        console.error("Error loading archive page:", err);
+        navigate("/unauthorized");
+      }
+
+    };
+    loadSessionAndCases();
+  }, []);
   // ===== Single initial fetch (session, SPUs, cases, employees) =====
   useEffect(() => {
     const loadAll = async () => {
@@ -147,50 +166,49 @@ function Archive() {
   }, [allCases, currentSPU, sortBy, sortOrder, searchQuery, user]);
 
   // ===== EMPLOYEES: client-side filtering/sorting only =====
-useEffect(() => {
-  if (viewMode !== "employees") return;
+  useEffect(() => {
+    if (viewMode !== "employees") return;
 
-  setDeleteMode(false);
-  let filtered = allEmployees.filter((w) => w.is_active === false);
+    let filtered = allEmployees.filter((w) => w.is_active === false);
 
-  // Filter by SPU id
-  if (currentSPU) {
-    filtered = filtered.filter((w) => w.spu_id === currentSPU);
-  }
+    // Filter by SPU id
+    if (currentSPU) {
+      filtered = filtered.filter((w) => w.spu_id === currentSPU);
+    }
 
-  // Filter by search
-  if (searchQuery.trim() !== "") {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter((w) => {
-      const name = (w.name || "").toLowerCase();
-      const idStr = w.id?.toString() || "";
-      return name.includes(q) || idStr.includes(q);
+    // Filter by search
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter((w) => {
+        const name = (w.name || "").toLowerCase();
+        const idStr = w.id?.toString() || "";
+        return name.includes(q) || idStr.includes(q);
+      });
+    }
+
+    // ✅ Filter by role if "Find By" has a role type selected
+    if (["head", "supervisor", "sdw"].includes(sortBy)) {
+      filtered = filtered.filter(
+        (w) => (w.role || "").toLowerCase() === sortBy
+      );
+    }
+
+    // Fixed role priority order
+    const roleOrder = { head: 1, supervisor: 2, sdw: 3 };
+
+    filtered.sort((a, b) => {
+      const roleA = roleOrder[a.role?.toLowerCase()] ?? 99;
+      const roleB = roleOrder[b.role?.toLowerCase()] ?? 99;
+
+      if (roleA !== roleB) return roleA - roleB; // lower number first
+      return (a.name || "").localeCompare(b.name || "");
     });
-  }
 
-  // ✅ Filter by role if "Find By" has a role type selected
-  if (["head", "supervisor", "sdw"].includes(sortBy)) {
-    filtered = filtered.filter(
-      (w) => (w.role || "").toLowerCase() === sortBy
-    );
-  }
+    // Reverse if needed
+    if (sortOrder === "desc") filtered.reverse();
 
-  // Fixed role priority order
-  const roleOrder = { head: 1, supervisor: 2, sdw: 3 };
-
-  filtered.sort((a, b) => {
-    const roleA = roleOrder[a.role?.toLowerCase()] ?? 99;
-    const roleB = roleOrder[b.role?.toLowerCase()] ?? 99;
-
-    if (roleA !== roleB) return roleA - roleB; // lower number first
-    return (a.name || "").localeCompare(b.name || "");
-  });
-
-  // Reverse if needed
-  if (sortOrder === "desc") filtered.reverse();
-
-  setArchiveEmp(filtered);
-}, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
+    setArchiveEmp(filtered);
+  }, [allEmployees, viewMode, currentSPU, sortBy, sortOrder, searchQuery]);
 
   // toggle function for selecting clients in delete mode
   const toggleClientSelection = (clientId) => {
@@ -206,33 +224,59 @@ useEffect(() => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
-        <a href="/" className="main-logo">
-          <div className="main-logo-setup folder-logo"></div>
-          <div className="flex flex-col">
-            <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
-            <p className="main-logo-text-nav">Case Management System</p>
-          </div>
-        </a>
+      <div className="fixed top-0 left-0 right-0 z-60 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
+        <div className="flex items-center gap-4">
+          {isMobile && (
+            <button
+              className="side-icon-setup menu-button"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+            </button>
+          )}
 
-        <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full max-w-[40rem] font-label">
-          <div className="nav-search"></div>
-          <input
-            type="text"
-            placeholder="Search"
-            className="focus:outline-none flex-1"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <a href="/" className="main-logo main-logo-text-nav">
+            <div className="main-logo-setup folder-logo"></div>
+            <div className="flex flex-col">
+              {isVerySmall ? (
+                <>
+                  <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila</p>
+                  <p className="main-logo-text-nav">CMS</p>
+                </>
+              ) : (
+                <>
+                  <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
+                  <p className="main-logo-text-nav">Case Management System</p>
+                </>
+              )}
+            </div>
+          </a>
         </div>
+
+        {!isMobile && (
+          <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full max-w-[40rem] font-label">
+            <div className="nav-search"></div>
+            <input
+              type="text"
+              placeholder="Search"
+              className="focus:outline-none flex-1"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        )}
       </div>
 
       <main className="min-h-[calc(100vh-4rem)] w-full flex mt-[9rem]">
-        <SideBar user={user} />
+        <SideBar 
+          user={user} 
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          isMobile={isMobile}
+        />
 
-        <div className="flex flex-col w-full gap-15 ml-[15rem]">
-          <div className="flex justify-between gap-10">
-            <div className="flex gap-5 justify-between items-center w-full">
+        <div className={`flex flex-col w-full gap-8 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8`}>
+          <div className={`flex ${isSmallLayout ? 'flex-col' : 'justify-between'} gap-10`}>
+            <div className={`flex gap-5 ${isSmallLayout ? 'justify-between items-center w-full' : 'justify-between items-center w-full'}`}>
               <div className="flex gap-5 w-full">
                 <select
                   className="text-input font-label max-w-[150px]"
@@ -244,22 +288,6 @@ useEffect(() => {
                   <option value="employees">Employees</option>
                 </select>
 
-                                {user?.role === "head" && <select
-                                    className="text-input font-label max-w-[30rem]"
-                                    value={currentSPU}
-                                    id="spu"
-                                    onChange={(e) => setCurrentSPU(e.target.value)}
-                                >
-                                    <option value="">All SPUs</option>
-                                    {projectLocation.map((project) => (
-                                        <option
-                                            key={project._id || project.spu_name || project.projectCode}
-                                            value={project.spu_name}
-                                        >
-                                            {project.spu_name} {project.spu_code ? `(${project.spu_code})` : project.projectCode ? `(${project.projectCode})` : ''}
-                                        </option>
-                                    ))}
-                                </select>}
                 {user?.role === "head" && (
                   <select
                     className="text-input font-label max-w-[30rem]"
@@ -276,6 +304,54 @@ useEffect(() => {
                   </select>
                 )}
 
+                {!isSmallLayout && (
+                  <>
+                    <select
+                      className="text-input font-label max-w-[20rem]"
+                      value={sortBy}
+                      id="filter"
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      {viewMode === "cases" ? (
+                        <>
+                          <option value="">Sort By</option>
+                          <option value="name">Name</option>
+                          <option value="sm_number">CH Number</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="">Find By</option>
+                          <option value="name">Name</option>
+                          <option value="head">Head</option>
+                          <option value="supervisor">Supervisor</option>
+                          <option value="sdw">Social Development Worker</option>
+                        </>
+                      )}
+                    </select>
+
+                    <button
+                      className="btn-outline font-bold-label"
+                      onClick={() => setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))}
+                    >
+                      <div className="icon-static-setup order-button"></div>
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {user?.role === "sdw" && !isSmallLayout && (
+                <button
+                  onClick={() => navigate("/create-case")}
+                  className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                >
+                  <p>+</p>
+                  <p>New Case</p>
+                </button>
+              )}
+            </div>
+
+            {isSmallLayout && (
+              <div className="flex gap-5 w-full">
                 <select
                   className="text-input font-label max-w-[20rem]"
                   value={sortBy}
@@ -305,57 +381,40 @@ useEffect(() => {
                 >
                   <div className="icon-static-setup order-button"></div>
                 </button>
-              </div>
 
-              {user?.role === "sdw" && (
-                <button
-                  onClick={() => navigate("/create-case")}
-                  className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
-                >
-                  <p>+</p>
-                  <p>New Case</p>
-                </button>
-              )}
-            </div>
-          </div>
-          {viewMode === "cases" ? (
-            user?.role == "head" && (
-              <div className="flex justify-between items-center w-full">
-                {deleteMode && (
-                <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-6">
-                  <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
-                  <p className="font-[700] text-[16px] leading-[140%] text-justify text-[#006599]">
-                    Check the boxes <span className="font-[400]">of the cases you want to delete.</span>
-                  </p>
-                </div>
+                {user?.role === "sdw" && (
+                  <button
+                    onClick={() => navigate("/create-case")}
+                    className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                  >
+                    <p>+</p>
+                    <p>New Case</p>
+                  </button>
                 )}
-                <div className="flex gap-5 ml-auto">
-                  <button
-                    className="btn-delete-case font-bold-label"
-                    onClick={() => setDeleteMode(true)}
-                    disabled={deleteMode}
-                  >
-                    {deleteMode ? 'Delete Selected' : 'Delete'}
-                  </button>
-                  {deleteMode && (
-                  <button
-                    className="btn-cancel-delete font-bold-label"
-                    onClick={() => setDeleteMode(false)}
-                  >
-                    Cancel
-                  </button>
-                  )}
-                </div>
               </div>
-            )
-          ) : null}
-          <div className="flex flex-col w/full gap-3">
+            )}
+          </div>
+
+          {isMobile && (
+            <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full font-label">
+              <div className="nav-search"></div>
+              <input
+                type="text"
+                placeholder="Search"
+                className="focus:outline-none flex-1"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="flex flex-col w-full gap-3">
             {viewMode === "cases" ? (
               <>
-                <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                <div className={`${hideSDWColumn ? 'grid grid-cols-[1fr]' : hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                   <p className="font-bold-label ml-[20%]">Name</p>
-                  <p className="font-bold-label text-center">CH Number</p>
-                  <p className="font-bold-label text-center">SDW Assigned</p>
+                  {!hideCHColumn && !hideSDWColumn && <p className="font-bold-label text-center">CH Number</p>}
+                  {!hideSDWColumn && <p className="font-bold-label text-center">SDW Assigned</p>}
                 </div>
 
                 {currentData.length === 0 ? (
@@ -370,16 +429,18 @@ useEffect(() => {
                       name={client.name}
                       assigned_sdw_name={client.assigned_sdw_name}
                       archive={true}
+                      hideCHColumn={hideCHColumn}
+                      hideSDWColumn={hideSDWColumn}
                     />
                   ))
                 )}
               </>
             ) : (
               <>
-                <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                <div className={`${hideTypeColumn ? 'grid grid-cols-[1fr]' : hideSpuColumn ? 'grid grid-cols-[2fr_1fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                   <p className="font-bold-label ml-[20%]">Worker</p>
-                  <p className="font-bold-label text-center">Type</p>
-                  <p className="font-bold-label text-center">SPU</p>
+                  {!hideTypeColumn && <p className="font-bold-label text-center">Type</p>}
+                  {!hideSpuColumn && !hideTypeColumn && <p className="font-bold-label text-center">SPU</p>}
                 </div>
 
                 {archiveEmp.length === 0 ? (
@@ -394,6 +455,8 @@ useEffect(() => {
                       spu={worker.spu}
                       spu_id={worker.spu_id}
                       archive={true}
+                      hideSpuColumn={hideSpuColumn}
+                      hideTypeColumn={hideTypeColumn}
                     />
                   ))
                 )}
