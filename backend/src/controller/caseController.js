@@ -1011,7 +1011,7 @@ const deleteOneCase = async (req, res) => {
 
           try {
                // 1. Delete all family members using the existing deleteFamilyMember helper (suppressing responses with a dummy res)
-               const members = await Family_Relationship.findMany({ sponsor_id: caseSelected }, { session });
+               const members = await Family_Relationship.find({ sponsor_id: caseSelected }, { session });
                
                const dummyRes = { status: () => dummyRes, json: () => {}, end: () => {} };
 
