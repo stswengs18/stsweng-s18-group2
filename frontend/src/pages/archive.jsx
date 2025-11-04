@@ -353,16 +353,14 @@ useEffect(() => {
 
 
   // confirm delete handler
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async (confirmedClients) => {
   try {
-    if (!selectedClients.length) return;
+    if (!confirmedClients?.length) return;
 
-    // Call backend API
-    const result = await deleteClients(selectedClients);
+    const result = await deleteClients(confirmedClients);
     console.log('Deleted clients:', result);
 
-    // Update local state (filter them out)
-    setAllCases(prev => prev.filter(c => !selectedClients.includes(c.id)));
+    setAllCases(prev => prev.filter(c => !confirmedClients.includes(c.id)));
 
     // Reset UI
     setSelectedClients([]);
@@ -373,7 +371,6 @@ useEffect(() => {
 
   } catch (err) {
     console.error('Delete failed:', err);
-    // Optionally show toast / modal error
   }
 };
 

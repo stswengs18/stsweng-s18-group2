@@ -34,8 +34,7 @@ export default function DeleteSelectedModal({
   };
 
   const handleConfirm = () => {
-    setSelectedClients(modalSelectedClients);
-    onConfirm();
+    onConfirm(modalSelectedClients);
   };
 
   return (
