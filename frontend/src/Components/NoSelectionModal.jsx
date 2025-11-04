@@ -15,7 +15,7 @@ export default function NoSelectionModal({ isOpen, onClose }) {
 
           <div className="relative bg-white rounded-lg drop-shadow-card max-w-[40rem] w-full min-h-[16rem] z-10 overflow-hidden flex flex-col">
             <div className="w-full p-5 drop-shadow-base" style={{ backgroundColor: "var(--accent-white)" }}>
-              <h2 className="header-sub">No Clients Selected</h2>
+              <h2 className="header-sub">No Cases Selected</h2>
             </div>
 
             <div className="flex flex-col justify-between flex-1 p-10">

@@ -4,6 +4,7 @@ import ClientEntry from "../Components/ClientEntry";
 import WorkerEntry from "../Components/WorkerEntry";
 import SideBar from "../Components/SideBar";
 import DeleteSelectedModal from "../Components/DeleteSelectedModal";
+import SimpleModal from "../Components/SimpleModal";
 import { fetchAllCases } from "../fetch-connections/case-connection";
 import { deleteClients } from "../fetch-connections/case-connection";
 import { fetchHeadView, fetchSession, fetchSupervisorView } from "../fetch-connections/account-connection";
@@ -24,6 +25,8 @@ function Archive() {
   const [currentData, setCurrentData] = useState([]);
   const [user, setUser] = useState(null);
   const [projectLocation, setProjectLocation] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   const [deleteMode, setDeleteMode] = useState(false);
 
@@ -35,6 +38,12 @@ function Archive() {
   const [showModal, setShowModal] = useState(false);
   
   const [modalType, setModalType] = useState(null); // 'confirm' | 'none'
+
+  // Simple success/error modal states
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [resultModalTitle, setResultModalTitle] = useState("");
+  const [resultModalMessage, setResultModalMessage] = useState("");
+  const [resultModalIcon, setResultModalIcon] = useState(null);
 
 
   const [timeFilter, setTimeFilter] = useState(false);
@@ -54,6 +63,23 @@ function Archive() {
 
   const [loadingStage, setLoadingStage] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
+
+  const isMobile = windowWidth <= 700;
+  const isVerySmall = windowWidth <= 400;
+  const isSmallLayout = windowWidth <= 700;
+  const shortenTitle = windowWidth <= 500;
+  const moveNewCaseToNewRow = windowWidth <= 400;
+  const hideCHColumn = windowWidth <= 800;
+  const hideSDWColumn = windowWidth <= 380;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.title = `Archive`;
@@ -269,6 +295,8 @@ useEffect(() => {
     // When delete mode is turned OFF
     setStartDate("");
     setEndDate("");
+    setSelectedClients([]);
+    setAllSelected(false);
   }
 }, [deleteMode]);
 
@@ -276,13 +304,18 @@ useEffect(() => {
   const handleSelectChange = (id, isChecked) => {
     setSelectedClients(prev => {
       if (isChecked) {
-        // add to selected
-        return [...prev, id];
+        // add to selected (avoid duplicates)
+        return prev.includes(id) ? prev : [...prev, id];
       } else {
         // remove from selected
         return prev.filter(clientId => clientId !== id);
       }
     });
+    
+    // Update allSelected state based on current selection
+    if (!isChecked) {
+      setAllSelected(false);
+    }
   };
   
   // Open delete flow: show confirm modal if any selected, otherwise show "no selection" modal
@@ -329,10 +362,13 @@ useEffect(() => {
   };
 
 useEffect(() => {
-  // Deselect if data changes
-  setAllSelected(false);
-  setSelectedClients([]);
-}, [currentData]);
+  // Only reset selections if we're not in delete mode
+  // This prevents clearing selections during filtering/sorting operations
+  if (!deleteMode) {
+    setAllSelected(false);
+    setSelectedClients([]);
+  }
+}, [currentData, deleteMode]);
 
   // handle date filter apply
   const handleDateApply = () => {
@@ -354,25 +390,52 @@ useEffect(() => {
 
   // confirm delete handler
   const handleDeleteConfirm = async (confirmedClients) => {
-  try {
-    if (!confirmedClients?.length) return;
+    try {
+      if (!confirmedClients?.length) {
+        // Show error modal
+        setResultModalTitle("No Selection");
+        setResultModalMessage("No clients selected for deletion.");
+        setResultModalIcon(<div className="warning-icon mx-auto"></div>);
+        setShowResultModal(true);
+        return { success: false, message: "No clients selected for deletion." };
+      }
 
-    const result = await deleteClients(confirmedClients);
-    console.log('Deleted clients:', result);
+      const result = await deleteClients(confirmedClients);
+      console.log('Deleted clients:', result);
 
-    setAllCases(prev => prev.filter(c => !confirmedClients.includes(c.id)));
+      // Update the UI by removing deleted clients
+      setAllCases(prev => prev.filter(c => !confirmedClients.includes(c.id)));
 
-    // Reset UI
-    setSelectedClients([]);
-    setDeleteMode(false);
-    setShowDeleteCheckbox(false);
-    setShowModal(false);
-    setModalType(null);
+      // Reset UI state
+      setSelectedClients([]);
+      setDeleteMode(false);
+      setShowDeleteCheckbox(false);
+      setShowModal(false);
+      setModalType(null);
 
-  } catch (err) {
-    console.error('Delete failed:', err);
-  }
-};
+      // Show success modal
+      setResultModalTitle("Success");
+      setResultModalMessage(`Successfully deleted ${confirmedClients.length} case(s).`);
+      setResultModalIcon(<div className="success-icon mx-auto"></div>);
+      setShowResultModal(true);
+
+      return { success: true };
+
+    } catch (err) {
+      console.error('Delete failed:', err);
+      
+      // Show error modal
+      setResultModalTitle("Error");
+      setResultModalMessage(err.message || "Failed to delete clients. Please try again.");
+      setResultModalIcon(<div className="warning-icon mx-auto"></div>);
+      setShowResultModal(true);
+      
+      return { 
+        success: false, 
+        message: err.message || "Failed to delete clients. Please try again." 
+      };
+    }
+  };
 
   const handleSelectAll = () => {
     if (allSelected) {
@@ -400,33 +463,70 @@ useEffect(() => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
-        <a href="/" className="main-logo">
-          <div className="main-logo-setup folder-logo"></div>
-          <div className="flex flex-col">
-            <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
-            <p className="main-logo-text-nav">Case Management System</p>
-          </div>
-        </a>
+      {/* Simple Success/Error Modal - managed like ProfileModal */}
+      <SimpleModal
+        isOpen={showResultModal}
+        onClose={() => setShowResultModal(false)}
+        title={resultModalTitle}
+        bodyText={resultModalMessage}
+        imageCenter={resultModalIcon}
+        confirm={false}
+        onConfirm={() => setShowResultModal(false)}
+      />
 
-        <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full max-w-[40rem] font-label">
-          <div className="nav-search"></div>
-          <input
-            type="text"
-            placeholder="Search"
-            className="focus:outline-none flex-1"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+      <div className="fixed top-0 left-0 right-0 z-60 w-full max-w-[1280px] mx-auto flex justify-between items-center py-5 px-8 bg-white">
+        <div className="flex items-center gap-4">
+          {isMobile && (
+            <button
+              className="side-icon-setup menu-button"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+            </button>
+          )}
+
+          <a href="/" className="main-logo main-logo-text-nav">
+            <div className="main-logo-setup folder-logo"></div>
+            <div className="flex flex-col">
+              {isVerySmall ? (
+                <>
+                  <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila</p>
+                  <p className="main-logo-text-nav">CMS</p>
+                </>
+              ) : (
+                <>
+                  <p className="main-logo-text-nav-sub mb-[-1rem]">Unbound Manila Foundation Inc.</p>
+                  <p className="main-logo-text-nav">Case Management System</p>
+                </>
+              )}
+            </div>
+          </a>
         </div>
+
+        {!isMobile && (
+          <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full max-w-[40rem] font-label">
+            <div className="nav-search"></div>
+            <input
+              type="text"
+              placeholder="Search"
+              className="focus:outline-none flex-1"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        )}
       </div>
 
       <main className="min-h-[calc(100vh-4rem)] w-full flex mt-[9rem]">
-        <SideBar user={user} />
+        <SideBar 
+          user={user} 
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          isMobile={isMobile}
+        />
 
-        <div className="flex flex-col w-full gap-15 ml-[15rem]">
-          <div className="flex justify-between gap-10">
-            <div className="flex gap-5 justify-between items-center w-full">
+        <div className={`flex flex-col w-full gap-15 ${isMobile ? 'ml-0' : 'ml-[15rem]'} px-8`}>
+          <div className={`flex w-full ${isSmallLayout ? 'flex-col' : 'justify-between'} gap-10`}>
+            <div className={`flex gap-5 ${isSmallLayout ? 'justify-between items-center w-full' : 'justify-between items-center w-full'}`}>
               <div className="flex gap-5 w-full">
                 {deleteMode ? (
                   viewMode === "cases" ? (
@@ -457,37 +557,39 @@ useEffect(() => {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
-                      <div className="flex gap-5 ml-auto">
-                        <button
-                          className="btn-delete-case font-bold-label"
-                          onClick={() => {
-                             if (!deleteMode) {
-                                // First click: enter delete mode
-                                setDeleteMode(true);
-                                setShowDeleteCheckbox(true);
-                            } else {
-                                // Already in delete mode with selections: trigger delete flow
-                                openDeleteFlow();
-                            }                       
-                          }}
-                          // disabled={deleteMode}
-                        >
-                          {deleteMode ? 'Delete Selected' : 'Delete'}
-                        </button>
-                        {deleteMode && (
-                        <button
-                          className="btn-cancel-delete font-bold-label"
-                          onClick={() => {
-                            setDeleteMode(false)
-                            setShowDeleteCheckbox(false)
-                            setTimeFilter(false);
-                            setSelectedClients([]);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                        )}
-                      </div>
+                      {!isSmallLayout && (
+                        <div className="flex gap-5 ml-auto">
+                          <button
+                            className="btn-delete-case font-bold-label"
+                            onClick={() => {
+                               if (!deleteMode) {
+                                  // First click: enter delete mode
+                                  setDeleteMode(true);
+                                  setShowDeleteCheckbox(true);
+                              } else {
+                                  // Already in delete mode with selections: trigger delete flow
+                                  openDeleteFlow();
+                              }                       
+                            }}
+                            // disabled={deleteMode}
+                          >
+                            {deleteMode ? 'Delete Selected' : 'Delete'}
+                          </button>
+                          {deleteMode && (
+                          <button
+                            className="btn-cancel-delete font-bold-label"
+                            onClick={() => {
+                              setDeleteMode(false)
+                              setShowDeleteCheckbox(false)
+                              setTimeFilter(false);
+                              setSelectedClients([]);
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          )}
+                        </div>
+                      )}
                       
                       </>
                     )
@@ -536,38 +638,127 @@ useEffect(() => {
                   </select>
                 )}
 
-                <select
-                  className="text-input font-label max-w-[20rem]"
-                  value={sortBy}
-                  id="filter"
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  {viewMode === "cases" ? (
-                    <>
-                      <option value="">Sort By</option>
-                      <option value="name">Name</option>
-                      <option value="sm_number">CH Number</option>
-                    </>
-                  ) : (
-                    <>
-                      <option value="">Find By</option>
-                      <option value="name">Name</option>
-                      <option value="head">Head</option>
-                      <option value="supervisor">Supervisor</option>
-                      <option value="sdw">Social Development Worker</option>
-                    </>
-                  )}
-                </select>
+                {!isSmallLayout && (
+                  <>
+                    <select
+                      className="text-input font-label max-w-[20rem]"
+                      value={sortBy}
+                      id="filter"
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      {viewMode === "cases" ? (
+                        <>
+                          <option value="">Sort By</option>
+                          <option value="name">Name</option>
+                          <option value="sm_number">CH Number</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="">Find By</option>
+                          <option value="name">Name</option>
+                          <option value="head">Head</option>
+                          <option value="supervisor">Supervisor</option>
+                          <option value="sdw">Social Development Worker</option>
+                        </>
+                      )}
+                    </select>
 
+                    <button
+                      className="btn-outline font-bold-label"
+                      onClick={() => setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))}
+                    >
+                      <div className="icon-static-setup order-button"></div>
+                    </button>
+                  </>
+                )}
+
+                {viewMode === "cases" && user?.role === "head" && !isSmallLayout && (
+                  <div className="w-max-content flex gap-5 ml-auto">
+                    <button
+                      className="btn-delete-case font-bold-label"
+                      onClick={() => {
+                        if (!deleteMode) {
+                              // First click: enter delete mode
+                              setDeleteMode(true);
+                              setShowDeleteCheckbox(true);
+                          } else {
+                              // Already in delete mode with selections: trigger delete flow
+                              openDeleteFlow();
+                          }
+                          
+                      }}
+                    >
+                      {deleteMode ? 'Delete Selected' : 'Delete'}
+                    </button>
+                    {deleteMode && (
+                    <button
+                      className="btn-cancel-delete font-bold-label"
+                      onClick={() => {
+                        setDeleteMode(false)
+                        setShowDeleteCheckbox(false)
+                        setSelectedClients([]);
+                        setTimeFilter(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    )}
+                  </div>
+                )}
+                </>
+                )}
+              </div>
+
+              {user?.role === "sdw" && !isSmallLayout && !moveNewCaseToNewRow && (
                 <button
-                  className="btn-outline font-bold-label"
-                  onClick={() => setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))}
+                  onClick={() => navigate("/create-case")}
+                  className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
                 >
-                  <div className="icon-static-setup order-button"></div>
+                  <p>+</p>
+                  <p>New Case</p>
                 </button>
-                {viewMode === "cases" ? (
-                  user?.role == "head" && (
-                    <div className="flex gap-5 ml-auto">
+              )}
+            </div>
+
+            {isSmallLayout && (
+              <div className="flex justify-between items-center w-full">
+                {!deleteMode && (
+                  <div className="flex gap-5">
+                    <select
+                      className="text-input font-label max-w-[20rem]"
+                      value={sortBy}
+                      id="filter"
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      {viewMode === "cases" ? (
+                        <>
+                          <option value="">Sort By</option>
+                          <option value="name">Name</option>
+                          <option value="sm_number">CH Number</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="">Find By</option>
+                          <option value="name">Name</option>
+                          <option value="head">Head</option>
+                          <option value="supervisor">Supervisor</option>
+                          <option value="sdw">Social Development Worker</option>
+                        </>
+                      )}
+                    </select>
+
+                    <button
+                      className="btn-outline font-bold-label"
+                      onClick={() => setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))}
+                    >
+                      <div className="icon-static-setup order-button"></div>
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex gap-5">
+                  {viewMode === "cases" && user?.role === "head" && (
+                    <>
                       <button
                         className="btn-delete-case font-bold-label"
                         onClick={() => {
@@ -581,7 +772,6 @@ useEffect(() => {
                             }
                             
                         }}
-                        // disabled={deleteMode}
                       >
                         {deleteMode ? 'Delete Selected' : 'Delete'}
                       </button>
@@ -598,14 +788,24 @@ useEffect(() => {
                         Cancel
                       </button>
                       )}
-                    </div>
-                  )
-                ) : null}
-                </>
-                )}
-              </div>
+                    </>
+                  )}
 
-              {user?.role === "sdw" && (
+                  {user?.role === "sdw" && !moveNewCaseToNewRow && (
+                    <button
+                      onClick={() => navigate("/create-case")}
+                      className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
+                    >
+                      <p>+</p>
+                      <p>New Case</p>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {user?.role === "sdw" && moveNewCaseToNewRow && (
+              <div className="flex justify-center w-full">
                 <button
                   onClick={() => navigate("/create-case")}
                   className="btn-outline font-bold-label flex gap-4 whitespace-nowrap"
@@ -613,22 +813,51 @@ useEffect(() => {
                   <p>+</p>
                   <p>New Case</p>
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
+
+          {isMobile && (
+            <div className="flex gap-5 items-center bg-purple-100 rounded-full px-8 py-4 w-full font-label">
+              <div className="nav-search"></div>
+              <input
+                type="text"
+                placeholder="Search"
+                className="focus:outline-none flex-1"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          )}
 
           {timeFilter && (
             <div className="border border-gray-400 rounded-xl p-6 w-fit bg-white space-y-6">
 
               {/* date select */}
-              <div className="flex items-center gap-4">
-                <label className="font-bold-label w-36 text-lg">Select Date:</label>
+              <div className={`${windowWidth <= 750 ? 'flex flex-col gap-4' : 'flex items-center gap-4'}`}>
+                {windowWidth <= 750 && (
+                  <div className="flex justify-between items-center">
+                    <label className="font-bold-label text-lg">Select Date:</label>
+                    <button
+                      onClick={handleSelectAll}
+                      className="px-6 py-3 text-white rounded-lg text-xl font-semibold"
+                      style={{ backgroundColor: "#3186B2" }}
+                    >
+                      {allSelected ? "Deselect All" : "Select All"}
+                    </button>
+                  </div>
+                )}
+                
+                {windowWidth > 750 && (
+                  <label className="font-bold-label w-36 text-lg">Select Date:</label>
+                )}
+                
                 <div className="flex items-center gap-3">
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="border rounded-lg px-7 py-4 w-65 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`border rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${windowWidth <= 380 ? 'w-auto px-3 py-2' : 'w-65 px-7 py-4'}`}
                   />
                   <span className="text-2xl">to</span>
                   <input
@@ -636,16 +865,19 @@ useEffect(() => {
                     value={endDate}
                     min={startDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="border rounded-lg px-7 py-4 w-65 text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`border rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${windowWidth <= 380 ? 'w-auto px-3 py-2' : 'w-65 px-7 py-4'}`}
                   />
                 </div>
-                <button
-                  onClick={handleSelectAll}
-                  className="px-6 py-3 text-white rounded-lg text-xl font-semibold ml-8 mr-6"
-                  style={{ backgroundColor: "#3186B2" }}
-                >
-                  {allSelected ? "Deselect All" : "Select All"}
-                </button>
+                
+                {windowWidth > 750 && (
+                  <button
+                    onClick={handleSelectAll}
+                    className="px-6 py-3 text-white rounded-lg text-xl font-semibold ml-8 mr-6"
+                    style={{ backgroundColor: "#3186B2" }}
+                  >
+                    {allSelected ? "Deselect All" : "Select All"}
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -653,8 +885,8 @@ useEffect(() => {
             deleteMode && (
               <div className="flex justify-between items-center w-full">
                 {deleteMode && (
-                <div className="w-[611px] h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 pl-6">
-                  <div className="info-icon w-[17px] h-[17px] bg-white opacity-100"></div>
+                <div className="max-w-[611px] w-full min-h-[38px] rounded-[9px] border border-[#0000004F] flex items-center gap-5 px-6 py-3">
+                  <div className="info-icon w-[17px] h-[17px] bg-white opacity-100 flex-shrink-0"></div>
                   <p className="font-[700] text-[16px] leading-[140%] text-justify text-[#006599]">
                     Check the boxes <span className="font-[400]">of the cases you want to delete.</span>
                   </p>
@@ -704,10 +936,10 @@ useEffect(() => {
           <div className="flex flex-col w/full gap-3">
             {viewMode === "cases" ? (
               <>
-                <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                <div className={`${hideSDWColumn ? 'grid grid-cols-[1fr]' : hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                   <p className="font-bold-label ml-[20%]">Name</p>
-                  <p className="font-bold-label text-center">CH Number</p>
-                  <p className="font-bold-label text-center">SDW Assigned</p>
+                  {!hideCHColumn && !hideSDWColumn && <p className="font-bold-label text-center">CH Number</p>}
+                  {!hideSDWColumn && <p className="font-bold-label text-center">SDW Assigned</p>}
                 </div>
 
                 {currentData.length === 0 ? (
@@ -727,16 +959,18 @@ useEffect(() => {
                       onSelectChange={handleSelectChange}
                       isSelected={selectedClients.includes(client.id)}
                       deleteMode={deleteMode}
+                      hideCHColumn={hideCHColumn}
+                      hideSDWColumn={hideSDWColumn}
                     />
                   ))
                 )}
               </>
             ) : (
               <>
-                <div className="grid grid-cols-[2fr_1fr_2fr] items-center border-b border-gray-400 pb-2 mb-2">
+                <div className={`${hideSDWColumn ? 'grid grid-cols-[1fr]' : hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'} items-center border-b border-gray-400 pb-2 mb-2`}>
                   <p className="font-bold-label ml-[20%]">Worker</p>
-                  <p className="font-bold-label text-center">Type</p>
-                  <p className="font-bold-label text-center">SPU</p>
+                  {!hideCHColumn && !hideSDWColumn && <p className="font-bold-label text-center">Type</p>}
+                  {!hideSDWColumn && <p className="font-bold-label text-center">SPU</p>}
                 </div>
 
                 {archiveEmp.length === 0 ? (

@@ -15,8 +15,17 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen, isMob
     };
 
     const sidebarClasses = isMobile 
-        ? `side-nav fixed z-50 ${isMenuOpen ? 'mobile-open' : 'mobile-closed'}` 
+        ? `side-nav fixed z-50 h-screen w-60 bg-white pt-32 transition-transform duration-300 ease-in-out ${
+            isMenuOpen ? 'transform translate-x-0' : 'transform -translate-x-full'
+        }` 
         : 'side-nav fixed z-20';
+    
+    const sidebarStyle = isMobile ? {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        boxShadow: '2px 0 8px rgba(0, 0, 0, 0.15)'
+    } : {};
 
     return (
         <>
@@ -42,7 +51,7 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen, isMob
                 ></div>
             )}
             
-            <div className={sidebarClasses}>
+            <div className={sidebarClasses} style={sidebarStyle}>
                 <SideItem
                     href="/"
                     iconClass="home-button"
@@ -78,34 +87,6 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen, isMob
                     isActive={false}
                 />}
             </div>
-
-            <style jsx>{`
-                .mobile-closed {
-                    transform: translateX(-100%);
-                    transition: transform 0.3s ease;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    height: 100vh;
-                    width: 15rem;
-                    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-                    background: white;
-                    padding-top: 8rem;
-                }
-                
-                .mobile-open {
-                    transform: translateX(0);
-                    transition: transform 0.3s ease;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    height: 100vh;
-                    width: 15rem;
-                    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-                    background: white;
-                    padding-top: 8rem;
-                }
-            `}</style>
         </>
     );
 }

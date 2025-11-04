@@ -659,6 +659,9 @@ function CaseFrontend({ creating = false }) {
 
     const [home_visitations, setHomeVisitations] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedHomeVisitData = await fetchAllHomeVisitForms(clientId);
             // console.log("Fetched Home Visit: ", fetchedHomeVisitData);
@@ -691,10 +694,13 @@ function CaseFrontend({ creating = false }) {
             setHomeVisitations(homeVisitInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const [counselings, setCounselings] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedCounselingData = await fetchAllCounselingInterventionsByMemberId(clientId);
             //console.log("Fetched Counseling: ", fetchedCounselingData);
@@ -728,10 +734,13 @@ function CaseFrontend({ creating = false }) {
             setCounselings(counselingInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const [financial_assistances, setFinancialAssistances] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedFinancialData = await fetchAllFinInterventions(clientId);
             //console.log("Fetched Financial: ", fetchedFinancialData);
@@ -765,10 +774,13 @@ function CaseFrontend({ creating = false }) {
             setFinancialAssistances(financialInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const [correspondences, setCorrespondences] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedCorrespondenceData = await fetchAllCorrespInterventions(clientId);
             //console.log("Fetched Correspondence: ", fetchedCorrespondenceData);
@@ -802,7 +814,7 @@ function CaseFrontend({ creating = false }) {
             setCorrespondences(correspondenceInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const interventions = {
         "Home Visitation": home_visitations,
@@ -814,6 +826,9 @@ function CaseFrontend({ creating = false }) {
     const [progress_reports, setProgressReports] = useState([]);
 
     useEffect(() => {
+        // Skip loading progress reports when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedProgressData = await fetchProgressReportsForCase(clientId);
             //console.log("Fetched Progress Reports: ", fetchedProgressData);
@@ -841,11 +856,14 @@ function CaseFrontend({ creating = false }) {
         };
 
         loadData();
-    }, []);
+    }, [creating]);
 
     const [caseClosureForm, setCaseClosureForm] = useState(null);
 
     useEffect(() => {
+        // Skip loading case closure data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedClosureForm = await fetchCaseClosureData(clientId);
             // console.log("Fetched Closure Form: ", fetchedClosureForm);
@@ -859,7 +877,7 @@ function CaseFrontend({ creating = false }) {
         };
 
         loadData();
-    }, []);
+    }, [creating]);
 
     const handleNewIntervention = (caseID) => {
         const path = `/intervention-form/?action=create&caseID=${caseID}`;
@@ -947,7 +965,7 @@ function CaseFrontend({ creating = false }) {
 
         setModalTitle("Confirm Creation");
         setModalBody("Are you sure you want to create this client? Important fields will no longer become editable once created. Once made, cases can no longer be deleted.");
-        setModalImageCenter(<div className="info-icon mx-auto" />);
+        setModalImageCenter(<div className="warning-icon mx-auto" />);
         setModalConfirm(true);
         setModalOnConfirm(() => async () => {
             const payload = {

@@ -38,7 +38,7 @@ export default function RegisterSpu({ isOpen, onClose, existingSpus = [], onRegi
     // Show confirmation dialog first
     setModalTitle("Confirm SPU Creation");
     setModalBody("Are you sure you want to create this SPU? Once created, it will be permanently recorded in the system. Even if deactivated later, it will still appear as an option in the archives.");
-    setModalImageCenter(<div className="info-icon mx-auto"></div>);
+    setModalImageCenter(<div className="warning-icon mx-auto"></div>);
     setModalConfirm(true);
     setShowModal(true);
     setModalOnConfirm(() => async () => {

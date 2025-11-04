@@ -43,6 +43,8 @@ export default function ClientEntry({
   onSelectChange,
   isSelected = false,
   deleteMode = false,
+  hideCHColumn = false,
+  hideSDWColumn = false,
 }) {
   const initials = name.charAt(0).toUpperCase();
 
@@ -54,18 +56,19 @@ export default function ClientEntry({
     textColor = "#ffffff";
   }
 
-  // const handleRowClick = () => {
-  //   window.location.href = `/case/${id}`;
-  // };
+  const handleRowClick = (e) => {
+    if (deleteMode) {
+      e.preventDefault();
+      onSelectChange?.(id, !isSelected);
+    }
+  };
 
   return (
 <a
   href={deleteMode ? undefined : `/case/${id}`}
-  onClick={deleteMode ? (e) => {
-    e.preventDefault() 
-    onSelectChange?.(id, !isSelected);
-  } : undefined}
-  className={`relative client-entry grid grid-cols-[2fr_1fr_2fr] items-center p-5 mb-2 rounded-lg font-bold-label
+  onClick={handleRowClick}
+  className={`relative client-entry items-center p-5 mb-2 rounded-lg font-bold-label
+    ${hideSDWColumn ? 'grid grid-cols-[1fr]' : hideCHColumn ? 'grid grid-cols-[2fr_2fr]' : 'grid grid-cols-[2fr_1fr_2fr]'}
     ${pendingTermination ? "bg-white border border-red-500" : "bg-white border border-transparent"}
     ${showCheckbox ? "pl-14" : "pl-5"}
     ${deleteMode ? "cursor-pointer hover:bg-gray-50" : ""}
@@ -77,8 +80,10 @@ export default function ClientEntry({
         <input
           type="checkbox"
           checked={isSelected}
-          onClick={(e) => e.stopPropagation()}
-          onChange={(e) => onSelectChange?.(id, e.target.checked)}
+          onChange={(e) => {
+            e.stopPropagation();
+            onSelectChange?.(id, e.target.checked);
+          }}
           className="absolute left-2 top-1/2 -translate-y-1/2 w-[16px] h-[15px] border border-black rounded-[3px] bg-white cursor-pointer"
         />
       )}
@@ -90,10 +95,18 @@ export default function ClientEntry({
         >
           {initials}
         </div>
-        <p>{name}</p>
+        <div className="flex flex-col">
+          <p>{name}</p>
+          {hideCHColumn && (
+            <p className="font-label">CH: {sm_number}</p>
+          )}
+          {hideSDWColumn && (
+            <p className="font-label">SDW: {assigned_sdw_name}</p>
+          )}
+        </div>
       </div>
-      <p className="text-center">{sm_number}</p>
-      <p className="text-center">{assigned_sdw_name}</p>
+      {!hideCHColumn && !hideSDWColumn && <p className="text-center font-label">{sm_number}</p>}
+      {!hideSDWColumn && <p className="text-center font-label">{assigned_sdw_name}</p>}
 
       {pendingTermination && (
         <div className="col-span-3 text-left mt-4">

@@ -282,7 +282,7 @@ function CounselingForm() {
 
         setModalTitle("Confirm Creation");
         setModalBody("Are you sure you want to save this Counseling Form? This cannot be edited or deleted after creation.");
-        setModalImageCenter(<div className="info-icon mx-auto" />);
+        setModalImageCenter(<div className="warning-icon mx-auto" />);
         setModalConfirm(true);
         setModalOnConfirm(() => async () => {
             setShowModal(false);
