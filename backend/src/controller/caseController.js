@@ -1059,8 +1059,7 @@ const deleteOneCase = async (req, res) => {
                     message: 'Case and all related records deleted successfully',
                     deletedCase
                });
-                
-               return getCaseById(req, res);
+               
 
           } catch (error) {
                // If anything fails, abort the transaction
@@ -1105,7 +1104,6 @@ const deleteManyCases = async (req, res) => {
                // validate id quickly
                if (!mongoose.Types.ObjectId.isValid(id)) {
                     results.push({ id, success: false, error: 'Invalid ObjectId' });
-                    continue;
                }
 
                const dummyReq = { params: { caseID: id } };
