@@ -924,6 +924,7 @@ useEffect(() => {
                   selectedClientIds={selectedClients}
                   allCases={allCases}
                   setSelectedClients={setSelectedClients}
+                  windowWidth={windowWidth}
                 />
 
                 <NoSelectionModal

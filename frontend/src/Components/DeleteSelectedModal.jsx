@@ -10,6 +10,7 @@ export default function DeleteSelectedModal({
   selectedClientIds = [],
   allCases = [],
   setSelectedClients, // pass setter from parent to update selection
+  windowWidth = 1024,
 }) {
   const [modalSelectedClients, setModalSelectedClients] = useState([]);
   const [modalClients, setModalClients] = useState([]);
@@ -22,6 +23,9 @@ export default function DeleteSelectedModal({
   const [modalImageCenter, setModalImageCenter] = useState(null);
   const [modalConfirm, setModalConfirm] = useState(false);
   const [modalOnConfirm, setModalOnConfirm] = useState(() => { });
+
+  const hideCHColumn = windowWidth <= 800;
+  const hideSDWColumn = windowWidth <= 380;
 
   useEffect(() => {
     if (isOpen) {
@@ -129,7 +133,7 @@ export default function DeleteSelectedModal({
       <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 flex items-center justify-center z-80"
+          className="fixed inset-0 flex items-center justify-center z-80 p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -143,19 +147,19 @@ export default function DeleteSelectedModal({
           ></div>
 
           <div 
-            className="relative bg-white rounded-lg drop-shadow-card max-w-[60rem] w-full min-h-[18rem] z-10 overflow-hidden flex flex-col"
+            className="relative bg-white rounded-lg drop-shadow-card max-w-[60rem] w-full min-h-[18rem] z-10 overflow-hidden flex flex-col mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-full p-5 drop-shadow-base" style={{ backgroundColor: "var(--accent-white)" }}>
-              <h2 className="header-sub">Confirm Deletion</h2>
+            <div className="w-full p-4 sm:p-5 drop-shadow-base" style={{ backgroundColor: "var(--accent-white)" }}>
+              <h2 className="header-sub text-lg sm:text-xl">Confirm Deletion</h2>
             </div>
 
-            <div className="flex flex-col justify-between flex-1 p-6">
-              <p className="font-label mb-4">
+            <div className="flex flex-col justify-between flex-1 p-4 sm:p-6">
+              <p className="font-label mb-4 text-sm sm:text-base">
                 You are about to delete the following {modalSelectedClients.length} case(s). This action cannot be undone.
               </p>
 
-              <div className="max-h-96 overflow-y-auto border rounded p-3 mb-6 flex flex-col gap-2">
+              <div className="max-h-64 sm:max-h-96 overflow-y-auto border rounded p-2 sm:p-3 mb-4 sm:mb-6 flex flex-col gap-1 sm:gap-2">
                 {modalClients.length > 0 ? (
                   modalClients.map((client) => (
                     <ClientEntry
@@ -170,24 +174,26 @@ export default function DeleteSelectedModal({
                       isSelected={modalSelectedClients.includes(client.id)}
                       onSelectChange={handleSelectChange}
                       deleteMode={true}
+                      hideCHColumn={hideCHColumn}
+                      hideSDWColumn={hideSDWColumn}
                     />
                   ))
                 ) : (
-                  <p className="font-label text-gray-600 text-center">
+                  <p className="font-label text-gray-600 text-center text-sm sm:text-base">
                     No clients selected.
                   </p>
                 )}
               </div>
 
-              <div className="flex justify-center gap-6">
+              <div className="flex justify-center gap-4 sm:gap-6 sm:flex-row">
                 <button
-                  className="btn-outline font-bold-label"
+                  className="btn-outline font-bold-label px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
                 <button
-                  className="btn-primary font-bold-label"
+                  className="btn-primary font-bold-label px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
                   onClick={handleConfirm}
                   disabled={modalSelectedClients.length === 0 || isDeleting}
                 >
