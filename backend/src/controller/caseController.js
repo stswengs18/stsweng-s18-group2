@@ -1010,42 +1010,48 @@ const deleteOneCase = async (req, res) => {
           session.startTransaction();
 
           try {
-               // 1. Delete all family members using the existing deleteFamilyMember helper (suppressing responses with a dummy res)
-               const members = await Family_Relationship.find({ sponsor_id: caseSelected }, { session });
+               // 1. Delete all family members and their relationships
+               const members = await Family_Relationship.find({ sponsor_id: caseSelected }).session(session);
                
-               const dummyRes = { status: () => dummyRes, json: () => {}, end: () => {} };
-
                for (const member of members) {
                     const famId = member.family_id && member.family_id._id ? member.family_id._id.toString() : member.family_id.toString();
-                    const loopReq = { params: { famID: famId, caseID: caseSelected._id.toString() } };
-                    // deleteFamilyMember is defined in this file; call it to remove relationship and possibly member
-                    await deleteFamilyMember(loopReq, dummyRes);
+                    
+                    // Delete the relationship
+                    await Family_Relationship.deleteOne({ 
+                         family_id: famId, 
+                         sponsor_id: caseSelected._id 
+                    }).session(session);
+
+                    // Check if family member has other relationships before deleting
+                    const hasOtherRelationships = await Family_Relationship.findOne({ 
+                         family_id: famId 
+                    }).session(session);
+                    
+                    if (!hasOtherRelationships) {
+                         await Family_Member.deleteOne({ _id: famId }).session(session);
+                    }
                }
 
-               // 2. Delete all family relationships
+               // 2. Delete associated case closures
+               await Case_Closure.deleteMany({ sm: caseSelected }).session(session);
 
-               await Family_Relationship.deleteMany({ sponsor_id: caseSelected }, { session });
-
-               // 3. Delete associated case closures
-               await Case_Closure.deleteMany({ sm: caseSelected }, { session });
-
-               // 4. Delete associated interventions
+               // 3. Delete associated interventions
                await Promise.all([
                     // Delete correspondence interventions
-                    Intervention_Correspondence.deleteMany({ sm: caseSelected }, { session }),
+                    Intervention_Correspondence.deleteMany({ sm: caseSelected }).session(session),
                     // Delete counseling interventions
-                    Intervention_Counseling.deleteMany({ sm: caseSelected }, { session }),
+                    Intervention_Counseling.deleteMany({ sm: caseSelected }).session(session),
                     // Delete financial interventions
-                    Intervention_Financial.deleteMany({ sm: caseSelected }, { session }),
+                    Intervention_Financial.deleteMany({ sm: caseSelected }).session(session),
                     // Delete home visit interventions
-                    Intervention_HomeVisit.deleteMany({ sm: caseSelected }, { session })
+                    Intervention_HomeVisit.deleteMany({ sm: caseSelected }).session(session)
                ]);
 
-               // 5. Delete associated progress reports
-               await Progress_Report.deleteMany({ sm: caseSelected }, { session });
+               // 4. Delete associated progress reports
+               await Progress_Report.deleteMany({ sm: caseSelected }).session(session);
 
-               // 6. Finally delete the sponsored member case
-               const deletedCase = await Sponsored_Member.findByIdAndDelete(caseSelected, { session });
+               // 5. Finally delete the sponsored member case
+               const deletedCase = await Sponsored_Member.findByIdAndDelete(caseSelected._id).session(session);
 
                if (!deletedCase) {
                     throw new Error('Case not found');
