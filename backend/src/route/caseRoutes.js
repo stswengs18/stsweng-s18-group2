@@ -28,8 +28,8 @@ router.put('/add-family-member/:caseID', caseController.addFamilyMember);
 router.put('/delete-family-member/:caseID/:famID', caseController.deleteFamilyMember);
 
 // DELETE route for cases
-router.delete('/delete-one/:caseID', caseController.deleteOneCase);
-router.delete('/delete-multiple/', caseController.deleteManyCases);
+router.put('/delete-one/:caseID', caseController.deleteOneCase);
+router.put('/delete-multiple/', caseController.deleteManyCases);
 
 // Generic ID route must be last
 router.get('/:id', caseController.getCaseById);
