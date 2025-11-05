@@ -92,7 +92,6 @@ function CaseFrontend({ creating = false }) {
         assigned_sdw: "",
         spu: "",
         classifications: "",
-
         pendingTermination: false
     });
 
@@ -256,6 +255,7 @@ function CaseFrontend({ creating = false }) {
             assessment: data.assessment || "",
             recommendation: data.recommendation || "",
             evaluation: data.evaluation || "",
+            
         });
         setEditingField(null);
     };
@@ -659,6 +659,9 @@ function CaseFrontend({ creating = false }) {
 
     const [home_visitations, setHomeVisitations] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedHomeVisitData = await fetchAllHomeVisitForms(clientId);
             // console.log("Fetched Home Visit: ", fetchedHomeVisitData);
@@ -691,10 +694,13 @@ function CaseFrontend({ creating = false }) {
             setHomeVisitations(homeVisitInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const [counselings, setCounselings] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedCounselingData = await fetchAllCounselingInterventionsByMemberId(clientId);
             //console.log("Fetched Counseling: ", fetchedCounselingData);
@@ -728,10 +734,13 @@ function CaseFrontend({ creating = false }) {
             setCounselings(counselingInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const [financial_assistances, setFinancialAssistances] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedFinancialData = await fetchAllFinInterventions(clientId);
             //console.log("Fetched Financial: ", fetchedFinancialData);
@@ -765,10 +774,13 @@ function CaseFrontend({ creating = false }) {
             setFinancialAssistances(financialInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const [correspondences, setCorrespondences] = useState([]);
     useEffect(() => {
+        // Skip loading intervention data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedCorrespondenceData = await fetchAllCorrespInterventions(clientId);
             //console.log("Fetched Correspondence: ", fetchedCorrespondenceData);
@@ -802,7 +814,7 @@ function CaseFrontend({ creating = false }) {
             setCorrespondences(correspondenceInterventions);
         };
         loadData();
-    }, []);
+    }, [creating]);
 
     const interventions = {
         "Home Visitation": home_visitations,
@@ -814,6 +826,9 @@ function CaseFrontend({ creating = false }) {
     const [progress_reports, setProgressReports] = useState([]);
 
     useEffect(() => {
+        // Skip loading progress reports when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedProgressData = await fetchProgressReportsForCase(clientId);
             //console.log("Fetched Progress Reports: ", fetchedProgressData);
@@ -841,11 +856,14 @@ function CaseFrontend({ creating = false }) {
         };
 
         loadData();
-    }, []);
+    }, [creating]);
 
     const [caseClosureForm, setCaseClosureForm] = useState(null);
 
     useEffect(() => {
+        // Skip loading case closure data when creating a new case
+        if (creating) return;
+        
         const loadData = async () => {
             const fetchedClosureForm = await fetchCaseClosureData(clientId);
             // console.log("Fetched Closure Form: ", fetchedClosureForm);
@@ -859,7 +877,7 @@ function CaseFrontend({ creating = false }) {
         };
 
         loadData();
-    }, []);
+    }, [creating]);
 
     const handleNewIntervention = (caseID) => {
         const path = `/intervention-form/?action=create&caseID=${caseID}`;
@@ -947,7 +965,7 @@ function CaseFrontend({ creating = false }) {
 
         setModalTitle("Confirm Creation");
         setModalBody("Are you sure you want to create this client? Important fields will no longer become editable once created. Once made, cases can no longer be deleted.");
-        setModalImageCenter(<div className="info-icon mx-auto" />);
+        setModalImageCenter(<div className="warning-icon mx-auto" />);
         setModalConfirm(true);
         setModalOnConfirm(() => async () => {
             const payload = {
@@ -1220,349 +1238,363 @@ function CaseFrontend({ creating = false }) {
                             </div>
                         </div>
 
-                        <section className="grid gap-6" id="core-fields">
-                            {/* STATUS + DOWNLOAD */}
-                            {!creating && (
-                                <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-                                    <div className="grid auto-cols-max grid-flow-col gap-3">
-                                        {data.is_active ? (
-                                            <div className="font-bold-label rounded-full bg-[var(--color-green)] p-2 px-8 !text-white">
-                                                Active
-                                            </div>
-                                        ) : (
-                                            <div className="font-bold-label rounded-full bg-[var(--accent-dark)] p-2 px-8 !text-white">
-                                                Inactive
-                                            </div>
-                                        )}
 
-                                        {data.pendingTermination && (
-                                            <div className="font-bold-label rounded-full bg-red-600 p-2 px-8 !text-white">
-                                                Pending Termination
-                                            </div>
-                                        )}
-                                    </div>
 
-                                    <button
-                                        className="btn-blue font-bold-label drop-shadow-base justify-self-end"
-                                        data-cy="download-case"
-                                        onClick={() => generateCaseReport(clientId)}
-                                    >
-                                        Download
-                                    </button>
-                                </div>
-                            )}
 
-                            {/* HEADER ROW */}
-                            {(editingField === "all" || editingField === "core-fields") && (
-                                <div className="grid grid-cols-[1fr_auto] items-center">
-                                    <h1 className="header-main">Core Details</h1>
-                                    {!creating && (
-                                        <button
-                                            className={
-                                                editingField === "core-fields"
-                                                    ? "icon-button-setup x-button"
-                                                    : "icon-button-setup dots-button"
-                                            }
-                                            onClick={() => {
-                                                if (editingField) {
-                                                    resetFields();
-                                                } else {
-                                                    setEditingField("core-fields");
-                                                }
-                                            }}
-                                        />
-                                    )}
-                                </div>
-                            )}
 
-                            {/* EDIT / CREATE MODE */}
-                            {(editingField === "all" || editingField === "core-fields") ? (
-                                <>
-                                    {/* Names + CH Number */}
-                                    <div
-                                        className={
-                                            windowWidth < 400
-                                                ? "grid gap-5 grid-cols-1"
-                                                : windowWidth <= 800
-                                                    ? "grid gap-5 grid-cols-2"
-                                                    : "grid gap-5 grid-cols-3"
-                                        }
-                                    >
-                                        {/* First Name */}
-                                        <div className="grid gap-2 min-w-0">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> First Name
-                                            </label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.first_name}
-                                                placeholder="First Name"
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, first_name: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full min-w-0"
-                                                data-cy="fname"
-                                            />
-                                        </div>
 
-                                        {/* Middle Name */}
-                                        <div
-                                            className={
-                                                windowWidth <= 800
-                                                    ? "grid gap-2 min-w-0" // <=800: DO NOT span; sits beside First Name
-                                                    : "grid gap-2 min-w-0"
-                                            }
-                                        >
-                                            <label className="font-bold-label">Middle Name</label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.middle_name}
-                                                placeholder="Middle Name"
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, middle_name: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full min-w-0"
-                                                data-cy="mname"
-                                            />
-                                        </div>
 
-                                        {/* Last Name */}
-                                        <div className="grid gap-2 min-w-0">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> Last Name
-                                            </label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.last_name}
-                                                placeholder="Last Name"
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, last_name: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full min-w-0"
-                                                data-cy="lname"
-                                            />
-                                        </div>
 
-                                        {/* CH Number */}
-                                        <div className="grid gap-2 min-w-0">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> CH Number
-                                            </label>
-                                            <input
-                                                disabled={!creating}
-                                                type="text"
-                                                value={drafts.sm_number}
-                                                placeholder="CH Number"
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, sm_number: e.target.value }))
-                                                }
-                                                className="text-input font-label w-full"
-                                                style={{
-                                                    maxWidth: windowWidth <= 400 ? "100%" : "30rem",
-                                                }}
-                                                data-cy="sm-number"
-                                            />
 
-                                        </div>
-                                    </div>
 
-                                    {/* SPU + SDW + CLASSIFICATION */}
-                                    <div
-                                        className={`grid gap-6 ${windowWidth < 600
-                                            ? "[grid-template-columns:repeat(1,minmax(0,1fr))]"
-                                            : "[grid-template-columns:repeat(2,minmax(0,1fr))]"
-                                            }`}
-                                    >
-                                        {/* SPU */}
-                                        <div className="grid gap-2 min-w-0">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> SPU Project
-                                            </label>
-                                            <select
-                                                className="text-input font-label w-full max-w-full min-w-0"
-                                                value={drafts.spu}
-                                                disabled={!["head", "supervisor"].includes(user?.role)}
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, spu: e.target.value }))
-                                                }
-                                                data-cy="spu"
-                                            >
-                                                <option value="">Select SPU</option>
-                                                {projectLocation.map((spu) => (
-                                                    <option key={spu._id} value={spu._id}>
-                                                        {spu.spu_name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
 
-                                        {/* SDW */}
-                                        <div className="grid gap-2 min-w-0">
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> Social Development Worker
-                                            </label>
-                                            <select
-                                                className="text-input font-label w-full max-w-full min-w-0"
-                                                disabled={!["head", "supervisor"].includes(user?.role)}
-                                                value={drafts.assigned_sdw}
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, assigned_sdw: e.target.value }))
-                                                }
-                                                data-cy="assigned-sdw"
-                                            >
-                                                <option value="">Select SDW</option>
-                                                {socialDevelopmentWorkers
-                                                    .filter((sdw) => {
-                                                        const selectedSPUName = projectLocation.find(
-                                                            (spu) => spu._id === drafts.spu
-                                                        )?.spu_name;
-                                                        return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
-                                                    })
-                                                    .map((sdw) => (
-                                                        <option key={sdw.id} value={sdw.id}>
-                                                            {sdw.username}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </div>
+<section className="grid gap-6" id="core-fields">
+  {/* STATUS + DOWNLOAD */}
+  {!creating && (
+    <div className="grid grid-cols-[1fr_auto] items-center gap-4">
+      <div className="grid auto-cols-max grid-flow-col gap-3">
+        {data.is_active ? (
+          <div className="font-bold-label rounded-full bg-[var(--color-green)] p-2 px-8 !text-white">
+            Active
+          </div>
+        ) : (
+          <div className="font-bold-label rounded-full bg-[var(--accent-dark)] p-2 px-8 !text-white">
+            Inactive
+          </div>
+        )}
 
-                                        {/* CLASSIFICATION — full row <1000; own row <600 */}
-                                        <div
-                                            className={`grid gap-2 min-w-0 ${windowWidth < 1000 && windowWidth >= 600
-                                                ? "col-span-2"
-                                                : windowWidth < 600
-                                                    ? "col-span-1"
-                                                    : ""
-                                                }`}
-                                        >
-                                            <label className="font-bold-label">
-                                                <span className="text-red-500">*</span> Classification
-                                            </label>
-                                            <select
-                                                className="text-input font-label w-full min-w-0"
-                                                value={drafts.classifications}
-                                                onChange={(e) =>
-                                                    setDrafts((p) => ({ ...p, classifications: e.target.value }))
-                                                }
-                                            >
-                                                <option value="">Select Classification</option>
-                                                {classificationList.map((item) => (
-                                                    <option key={item} value={item}>
-                                                        {item}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
+        {data.pendingTermination && (
+          <div className="font-bold-label rounded-full bg-red-600 p-2 px-8 !text-white">
+            Pending Termination
+          </div>
+        )}
+      </div>
 
-                                    {/* SUBMIT */}
-                                    {editingField === "core-fields" && (
-                                        <button
-                                            className="btn-transparent-rounded my-3 justify-self-end"
-                                            onClick={async () => {
-                                                if (forceSubmitAfterConfirm) {
-                                                    await handleSubmitCoreUpdate();
-                                                    setForceSubmitAfterConfirm(false);
-                                                    return;
-                                                }
+      <button
+        className="btn-blue font-bold-label drop-shadow-base justify-self-end"
+        data-cy="download-case"
+        onClick={() => generateCaseReport(clientId)}
+      >
+        Download
+      </button>
+    </div>
+  )}
 
-                                                const valid = await checkCore();
-                                                if (!valid) return;
+  {/* HEADER ROW */}
+  {(editingField === "all" || editingField === "core-fields") && (
+    <div className="grid grid-cols-[1fr_auto] items-center">
+      <h1 className="header-main">Core Details</h1>
+      {!creating && (
+        <button
+          className={
+            editingField === "core-fields"
+              ? "icon-button-setup x-button"
+              : "icon-button-setup dots-button"
+          }
+          onClick={() => {
+            if (editingField) {
+              resetFields();
+            } else {
+              setEditingField("core-fields");
+            }
+          }}
+        />
+      )}
+    </div>
+  )}
 
-                                                if (valid === "pending-super-confirm") {
-                                                    setModalTitle("SDW Outside Supervision");
-                                                    setModalBody(
-                                                        "You are about to assign the case to an SDW that is not under your supervision. You will no longer be able to modify the case. Are you sure you want to proceed?"
-                                                    );
-                                                    setModalImageCenter(<div className="warning-icon mx-auto" />);
-                                                    setModalConfirm(true);
+  {/* EDIT / CREATE MODE */}
+  {(editingField === "all" || editingField === "core-fields") ? (
+    <>
+      {/* Names */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid gap-2 min-w-0">
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> First Name
+          </label>
+          <input
+            disabled={!creating}
+            type="text"
+            value={drafts.first_name}
+            placeholder="First Name"
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, first_name: e.target.value }))
+            }
+            className="text-input font-label w-full min-w-0"
+            data-cy="fname"
+          />
+        </div>
 
-                                                    setModalOnConfirm(() => async () => {
-                                                        setForceSubmitAfterConfirm(true);
-                                                        setShowModal(false);
-                                                        await handleSubmitCoreUpdate();
-                                                    });
+        <div className="grid gap-2 min-w-0">
+          <label className="font-bold-label">Middle Name</label>
+          <input
+            disabled={!creating}
+            type="text"
+            value={drafts.middle_name}
+            placeholder="Middle Name"
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, middle_name: e.target.value }))
+            }
+            className="text-input font-label w-full min-w-0"
+            data-cy="mname"
+          />
+        </div>
 
-                                                    setModalOnClose(() => () => {
-                                                        setForceSubmitAfterConfirm(false);
-                                                    });
+        <div className="grid gap-2 min-w-0">
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> Last Name
+          </label>
+          <input
+            disabled={!creating}
+            type="text"
+            value={drafts.last_name}
+            placeholder="Last Name"
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, last_name: e.target.value }))
+            }
+            className="text-input font-label w-full min-w-0"
+            data-cy="lname"
+          />
+        </div>
+      </div>
 
-                                                    setShowModal(true);
-                                                    return;
-                                                }
+      {/* CH Number */}
+      <div className="grid gap-2 w-full">
+        <label className="font-bold-label">
+          <span className="text-red-500">*</span> CH Number
+        </label>
+        <input
+          disabled={!creating}
+          type="text"
+          value={drafts.sm_number}
+          placeholder="CH Number"
+          onChange={(e) =>
+            setDrafts((p) => ({ ...p, sm_number: e.target.value }))
+          }
+          className="text-input font-label w-full max-w-[30rem]"
+          data-cy="sm-number"
+        />
+      </div>
 
-                                                await handleSubmitCoreUpdate();
-                                            }}
-                                            data-cy="submit-core-details-section"
-                                        >
-                                            Submit Changes
-                                        </button>
-                                    )}
-                                </>
-                            ) : (
-                                /* VIEW MODE */
-                                <>
-                                    <div className="grid grid-cols-[1fr_auto] items-center">
-                                        <h1 className="header-main">{`${data.first_name} ${data.middle_name} ${data.last_name}`}</h1>
-                                        {data.is_active && !isTerminated && (
-                                            <button
-                                                className={
-                                                    editingField === "core-fields"
-                                                        ? "icon-button-setup x-button"
-                                                        : "icon-button-setup dots-button"
-                                                }
-                                                onClick={() => {
-                                                    if (editingField) {
-                                                        resetFields();
-                                                    } else {
-                                                        setEditingField("core-fields");
-                                                    }
-                                                }}
-                                                data-cy="edit-core-details-section"
-                                            />
-                                        )}
-                                    </div>
+      {/* SPU + SDW + CLASSIFICATION */}
+      <div
+        className={`grid gap-6 ${
+          windowWidth < 600
+            ? "[grid-template-columns:repeat(1,minmax(0,1fr))]"
+            : "[grid-template-columns:repeat(2,minmax(0,1fr))]"
+        }`}
+      >
+        {/* SPU */}
+        <div className="grid gap-2 min-w-0">
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> SPU Project
+          </label>
+          <select
+            className="text-input font-label w-full max-w-full min-w-0"
+            value={drafts.spu}
+            disabled={!["head", "supervisor"].includes(user?.role)}
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, spu: e.target.value }))
+            }
+            data-cy="spu"
+          >
+            <option value="">Select SPU</option>
+            {projectLocation.map((spu) => (
+              <option key={spu._id} value={spu._id}>
+                {spu.spu_name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-                                    <h2 className="header-sub">{data.sm_number}</h2>
+        {/* SDW */}
+        <div className="grid gap-2 min-w-0">
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> Social Development Worker
+          </label>
+          <select
+            className="text-input font-label w-full max-w-full min-w-0"
+            disabled={!["head", "supervisor"].includes(user?.role)}
+            value={drafts.assigned_sdw}
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, assigned_sdw: e.target.value }))
+            }
+            data-cy="assigned-sdw"
+          >
+            <option value="">Select SDW</option>
+            {socialDevelopmentWorkers
+              .filter((sdw) => {
+                const selectedSPUName = projectLocation.find(
+                  (spu) => spu._id === drafts.spu
+                )?.spu_name;
+                return sdw.spu_id === selectedSPUName && sdw.role === "sdw";
+              })
+              .map((sdw) => (
+                <option key={sdw.id} value={sdw.id}>
+                  {sdw.username}
+                </option>
+              ))}
+          </select>
+        </div>
 
-                                    {/* VIEW GRID */}
-                                    <div
-                                        className={`grid gap-4 ${windowWidth < 600
-                                            ? "[grid-template-columns:repeat(1,minmax(0,1fr))]"
-                                            : "[grid-template-columns:repeat(2,minmax(0,1fr))]"
-                                            }`}
-                                    >
-                                        <p className="font-label min-w-0 break-words">
-                                            <span className="font-bold-label">SPU Project:</span>{" "}
-                                            {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
-                                        </p>
+        {/* CLASSIFICATION — full row <1000; own row <600 */}
+        <div
+          className={`grid gap-2 min-w-0 ${
+            windowWidth < 1000 && windowWidth >= 600
+              ? "col-span-2"
+              : windowWidth < 600
+              ? "col-span-1"
+              : ""
+          }`}
+        >
+          <label className="font-bold-label">
+            <span className="text-red-500">*</span> Classification
+          </label>
+          <select
+            className="text-input font-label w-full min-w-0"
+            value={drafts.classifications}
+            onChange={(e) =>
+              setDrafts((p) => ({ ...p, classifications: e.target.value }))
+            }
+          >
+            <option value="">Select Classification</option>
+            {classificationList.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-                                        <p className="font-label min-w-0 break-words">
-                                            <span className="font-bold-label">Social Development Worker:</span>{" "}
-                                            {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)
-                                                ?.username || "-"}
-                                        </p>
+      {/* SUBMIT */}
+      {editingField === "core-fields" && (
+        <button
+          className="btn-transparent-rounded my-3 justify-self-end"
+          onClick={async () => {
+            if (forceSubmitAfterConfirm) {
+              await handleSubmitCoreUpdate();
+              setForceSubmitAfterConfirm(false);
+              return;
+            }
 
-                                        <p
-                                            className={`font-label min-w-0 break-words ${windowWidth < 1000 && windowWidth >= 600
-                                                ? "col-span-2"
-                                                : windowWidth < 600
-                                                    ? "col-span-1"
-                                                    : ""
-                                                }`}
-                                        >
-                                            <span className="font-bold-label">Classification:</span>{" "}
-                                            {data.classifications || "-"}
-                                        </p>
-                                    </div>
-                                </>
-                            )}
-                        </section>
+            const valid = await checkCore();
+            if (!valid) return;
 
-                        {/* IDENTIFYING DATA SECTION */}
+            if (valid === "pending-super-confirm") {
+              setModalTitle("SDW Outside Supervision");
+              setModalBody(
+                "You are about to assign the case to an SDW that is not under your supervision. You will no longer be able to modify the case. Are you sure you want to proceed?"
+              );
+              setModalImageCenter(<div className="warning-icon mx-auto" />);
+              setModalConfirm(true);
+
+              setModalOnConfirm(() => async () => {
+                setForceSubmitAfterConfirm(true);
+                setShowModal(false);
+                await handleSubmitCoreUpdate();
+              });
+
+              setModalOnClose(() => () => {
+                setForceSubmitAfterConfirm(false);
+              });
+
+              setShowModal(true);
+              return;
+            }
+
+            await handleSubmitCoreUpdate();
+          }}
+          data-cy="submit-core-details-section"
+        >
+          Submit Changes
+        </button>
+      )}
+    </>
+  ) : (
+    /* VIEW MODE */
+    <>
+      <div className="grid grid-cols-[1fr_auto] items-center">
+        <h1 className="header-main">{`${data.first_name} ${data.middle_name} ${data.last_name}`}</h1>
+        {data.is_active && !isTerminated && (
+          <button
+            className={
+              editingField === "core-fields"
+                ? "icon-button-setup x-button"
+                : "icon-button-setup dots-button"
+            }
+            onClick={() => {
+              if (editingField) {
+                resetFields();
+              } else {
+                setEditingField("core-fields");
+              }
+            }}
+            data-cy="edit-core-details-section"
+          />
+        )}
+      </div>
+
+      <h2 className="header-sub">{data.sm_number}</h2>
+
+      {/* VIEW GRID: same JS rules for layout */}
+      <div
+        className={`grid gap-4 ${
+          windowWidth < 600
+            ? "[grid-template-columns:repeat(1,minmax(0,1fr))]"
+            : "[grid-template-columns:repeat(2,minmax(0,1fr))]"
+        }`}
+      >
+        <p className="font-label min-w-0 break-words">
+          <span className="font-bold-label">SPU Project:</span>{" "}
+          {projectLocation.find((p) => p._id === data.spu)?.spu_name || "-"}
+        </p>
+
+        <p className="font-label min-w-0 break-words">
+          <span className="font-bold-label">Social Development Worker:</span>{" "}
+          {socialDevelopmentWorkers.find((w) => w.id === data.assigned_sdw)
+            ?.username || "-"}
+        </p>
+
+        <p
+          className={`font-label min-w-0 break-words ${
+            windowWidth < 1000 && windowWidth >= 600
+              ? "col-span-2"
+              : windowWidth < 600
+              ? "col-span-1"
+              : ""
+          }`}
+        >
+          <span className="font-bold-label">Classification:</span>{" "}
+          {data.classifications || "-"}
+        </p>
+      </div>
+    </>
+  )}
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         <section className='flex flex-col gap-8' id="identifying-data" ref={ref1}>
                             {/* Header and Edit Button */}
                             <div className="flex justify-between items-center">
@@ -1792,6 +1824,10 @@ function CaseFrontend({ creating = false }) {
                                     <p><span className="font-bold-label">Religion:</span> {data.religion || "-"}</p>
                                     <p><span className="font-bold-label">Present Address:</span> {data.present_address || "-"}</p>
                                     <p><span className="font-bold-label">Place of Birth:</span> {data.pob || "-"}</p>
+                                    <p>
+                                    <span className="font-bold-label">Case Created At:</span>{" "}
+                                    {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "-"}
+                                    </p>
                                 </div>
                             )}
                         </section>

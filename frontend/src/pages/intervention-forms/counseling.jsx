@@ -234,13 +234,13 @@ function CounselingForm() {
       return false
     };
 
-    setModalTitle("Confirm Creation");
-    setModalBody("Are you sure you want to save this Counseling Form? This cannot be edited or deleted after creation.");
-    setModalImageCenter(<div className="info-icon mx-auto" />);
-    setModalConfirm(true);
-    setModalOnConfirm(() => async () => {
-      setShowModal(false);
-      setIsProcessing(true);
+        setModalTitle("Confirm Creation");
+        setModalBody("Are you sure you want to save this Counseling Form? This cannot be edited or deleted after creation.");
+        setModalImageCenter(<div className="warning-icon mx-auto" />);
+        setModalConfirm(true);
+        setModalOnConfirm(() => async () => {
+            setShowModal(false);
+            setIsProcessing(true);
 
       const created = await handleCreate();
 
