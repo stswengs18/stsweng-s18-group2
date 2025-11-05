@@ -76,12 +76,15 @@ export default function RegisterSpu({ isOpen, onClose, existingSpus = [], onRegi
   };
 
   const handleModalClose = () => {
-    if (modalConfirm) {
-      setShowModal(false);
-      modalOnConfirm?.();
-    } else {
-      setShowModal(false);
-    }
+    setShowModal(false);
+  };
+
+  const handleModalConfirm = () => {
+    modalOnConfirm?.();
+  };
+
+  const handleModalCancel = () => {
+    setShowModal(false);
   };
 
   return (
@@ -93,8 +96,8 @@ export default function RegisterSpu({ isOpen, onClose, existingSpus = [], onRegi
         bodyText={modalBody}
         imageCenter={modalImageCenter}
         confirm={modalConfirm}
-        onConfirm={modalOnConfirm}
-        onCancel={handleModalClose}
+        onConfirm={handleModalConfirm}
+        onCancel={handleModalCancel}
       />
 
       <AnimatePresence>

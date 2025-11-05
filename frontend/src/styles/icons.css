@@ -159,6 +159,11 @@
   -webkit-mask-image: url("/spu.svg");
 }
 
+.statistics-button {
+  mask-image: url("/statistics.svg");
+  -webkit-mask-image: url("/statistics.svg");
+}
+
 .chevron-button {
   height: 4rem;
   width: 4rem;

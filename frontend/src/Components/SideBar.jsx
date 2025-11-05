@@ -60,6 +60,13 @@ export default function SideBar({ user, isMenuOpen = false, setIsMenuOpen, isMob
                 />
 
                 {(user?.role == "head") && <SideItem
+                    href="/statistics"
+                    iconClass="statistics-button"
+                    label="Statistics"
+                    isActive={false}
+                />}
+
+                {(user?.role == "head") && <SideItem
                     href="/spu"
                     iconClass="spu-button"
                     label="SPU's"
