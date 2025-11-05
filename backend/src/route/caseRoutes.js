@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const caseController = require('../controller/caseController'); // Changed from controllers to controller
+// const dashboardController = require('../controller/dashboardController');
 
 // Fixed-path GET routes first
 router.get('/getsdw', caseController.getAllSDWs);
 router.get('/allCases', caseController.getAllCases);
 router.get('/', caseController.getAllCases); // Alternative endpoint for getAllCases
+// router.get('/active-cases-count', dashboardController.getActiveCasesCount);
+// router.get('/closed-cases-count', dashboardController.getClosedCasesCount);
+// router.get('/intervention-correspondence-count', dashboardController.getInterventionCorrespondenceCount);
 
 // Parameterized GET routes
 router.get('/case-by-sm-number/:sm_number', caseController.getCaseBySMNumber);

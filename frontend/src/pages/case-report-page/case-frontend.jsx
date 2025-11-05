@@ -966,6 +966,7 @@ function CaseFrontend({ creating = false }) {
         setModalTitle("Confirm Creation");
         setModalBody("Are you sure you want to create this client? Important fields will no longer become editable once created. Once made, cases can no longer be deleted.");
         setModalImageCenter(<div className="warning-icon mx-auto" />);
+        setModalImageCenter(<div className="warning-icon mx-auto" />);
         setModalConfirm(true);
         setModalOnConfirm(() => async () => {
             const payload = {
@@ -2486,3 +2487,5 @@ function CaseFrontend({ creating = false }) {
 }
 
 export default CaseFrontend;
+
+//
