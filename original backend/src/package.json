@@ -1,0 +1,35 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev-server": "nodemon server.js",
+    "frontend": "cd ../../frontend-dev-test && npm run dev",
+    "dev": "concurrently \"npm run dev-server\" \"npm run frontend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "docxtemplater": "^3.65.2",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.1",
+    "pizzip": "^3.2.0",
+    "react-router-dom": "^7.6.2",
+    "cors": "^2.8.5",
+    "joi": "^17.13.3",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

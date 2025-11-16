@@ -53,8 +53,6 @@ export default function LocationStatistics() {
         const currentUser = sessionData?.user;
         setCurrentUser(currentUser); // added
 
-        console.log(currentUser)
-
         if (!currentUser || (currentUser.role !== "head" && currentUser.role !== "supervisor")) {
           navigate("/unauthorized");
           return;

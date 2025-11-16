@@ -401,7 +401,7 @@ useEffect(() => {
       }
 
       const result = await deleteClients(confirmedClients);
-      console.log('Deleted clients:', result);
+      // console.log('Deleted clients:', result);
 
       // Update the UI by removing deleted clients
       setAllCases(prev => prev.filter(c => !confirmedClients.includes(c.id)));
@@ -459,7 +459,7 @@ useEffect(() => {
   if (!loadingComplete) return <Loading color={loadingColor} />;
 
   // for debugging filteredCases
-  console.log("Client data received:", filteredCases.length > 0 ? filteredCases : currentData);
+  // console.log("Client data received:", filteredCases.length > 0 ? filteredCases : currentData);
 
   return (
     <>
