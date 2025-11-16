@@ -1,0 +1,124 @@
+/* TOP NAVBAR */
+.main-logo-text-nav {
+    font-family: 'ADLaM Display', cursive;
+    font-size: 2rem;
+    color: var(--color-primary);
+}
+
+.main-logo-text-nav-sub {
+    @apply font-sans text-[1.6rem];
+    color: var(--color-primary);
+}
+
+
+.main-logo {
+  @apply flex gap-4;
+}
+
+.main-logo-setup {
+  width: 4.5rem;
+  height: 4rem;
+
+  background-color: var(--color-primary);
+
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  transition: all 0.4s ease;
+}
+
+.main-logo-setup:hover {
+  transform: scale(1.2);
+  background-color: var(--color-primary);
+}
+
+.main-logo-setup:active {
+  transform: scale(0.9);
+  background-color: var(--color-primary);
+}
+
+.folder-logo {
+  mask-image: url("/folder-logo.svg");
+  -webkit-mask-image: url("/folder-logo.svg");
+}
+
+.unauthorized-logo {
+  mask-image: url("/unauthorized.svg");
+  -webkit-mask-image: url("/unauthorized.svg");
+}
+
+.nav-search {
+  width: 2rem;
+  height: 2rem;
+
+  background-color: var(--color-black);
+
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  transition: all 0.4s ease;
+
+  mask-image: url("/search.svg");
+  -webkit-mask-image: url("/search.svg");
+}
+
+/* SIDE NAV */
+
+.side-nav {
+    @apply flex flex-col gap-[2rem] px-8 items-center;
+}
+
+.side-item {
+    @apply flex flex-col gap-2 p-5 items-center justify-center;
+    @apply font-sans font-semibold text-[1.6rem];
+    color: var(--color-black);
+    transition: all 0.4s ease;
+}
+
+.side-item:hover {
+    color: var(--color-primary);   
+}
+
+.side-item:hover .side-icon-setup {
+  background-color: var(--color-primary);
+}
+
+.side-icon-setup {
+  width: 3rem;
+  height: 3rem;
+
+  background-color: var(--color-black);
+
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  transition: all 0.4s ease;
+}
+
+.side-item:hover {
+  transform: scale(1.2);
+}
+
+.side-item:active {
+  transform: scale(0.9);
+}
+
+.side-item.active {
+    color: var(--color-primary);
+}
+
+.side-icon-setup.active {
+  background-color: var(--color-primary);
+}

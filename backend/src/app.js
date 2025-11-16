@@ -36,17 +36,18 @@ corsOptions = {
         if (!origin) return callback(null, true);
         
         // Get allowed origins from environment
-        let allowedOrigins = process.env.ALLOWED_ORIGINS ? 
+        const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
             process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()) : [];
         
-        // If no ALLOWED_ORIGINS set, use wildcard defaults for Vercel/Render/localhost
+        // If no ALLOWED_ORIGINS set, fall back to old logic
         if (allowedOrigins.length === 0) {
-            allowedOrigins = [
-                'https://*.vercel.app',
-                'https://*.onrender.com',
-                'http://localhost:3000',
-                'http://localhost:5173'
-            ];
+            if (process.env.NODE_ENV === 'production') {
+                const prodOrigin = process.env.PROD_ORIGIN || 'https://vercel.com/stswengs18s-projects/unbound-stsweng';
+                return origin === prodOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
+            } else {
+                const devOrigin = process.env.DEV_ORIGIN || 'https://unbound-stsweng-git-dev-branch-stswengs18s-projects.vercel.app/';
+                return origin === devOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
+            }
         }
         
         // Check if origin matches any allowed pattern
@@ -72,11 +73,10 @@ corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Handle preflight globally
 app.set('trust proxy', 1);
 app.use(
     session({
@@ -116,7 +116,6 @@ const deleteAccountController = require('./controller/deleteAccountController.js
 const profileRoute = require('../src/route/employeeRoute.js');
 const fetchingRoute = require('./route/fetchingRoute.js');
 const fileGenerator = require('./route/fileGeneratorRoutes.js');
-const dashboardRoutes = require('./route/dashboardRoutes'); // Add this line
 /**
  *  ============ Routes ==============
  */
@@ -126,9 +125,6 @@ app.use((req, res, next) => {
   // console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
   next();
 });
-
-// Health check (for Render)
-app.get('/health', (req, res) => res.status(200).send('ok'));
 
 // To test sessions, please go to localhost:3000
 app.get("/test-session", (req, res) => {
@@ -165,8 +161,8 @@ app.use(isAuthenticated);
 app.use('/api/cases', caseRoutes);
 // All account routes
 app.use('/api', accountRoutes);
-app.use('/api', fetchingRoute); // Employee routes (head, supervisor, etc.)
-app.use('/api/dashboard', dashboardRoutes); // Dashboard routes only
+app.use('/api', fetchingRoute);
+// Intervention routes
 app.use('/api/intervention', interventionRoutes);
 app.use('/api/interventions/financial',interventFinRoutes);
 app.use('/api/interventions/correspondence',interventCorrespRoutes);
@@ -188,8 +184,11 @@ app.delete('/api/case-closure/delete/:caseID/:formID', caseClosureController.del
 // Delete Accoute routes
 app.delete('/api/delete-account/:account', deleteAccountController.deleteAccount);
 
+
 // File Generator routes
 app.use('/api/file-generator', fileGenerator);
+
+
 
 // 404 Route
 app.use((req, res) => {
