@@ -24,6 +24,7 @@ export default function LocationStatistics() {
   const [currentSPU, setCurrentSPU] = useState(""); // selected SPU
   const [projectLocations, setProjectLocation] = useState([]); // SPU list
   const [timePeriod, setTimePeriod] = useState(0); // selected time period
+  const [currentUser, setCurrentUser] = useState(null); // added
 
   // --- Loading system like spu-page ---
   const [loadingStage, setLoadingStage] = useState(0);
@@ -50,9 +51,18 @@ export default function LocationStatistics() {
         // --- Session check ---
         const sessionData = await fetchSession();
         const currentUser = sessionData?.user;
-        if (!currentUser || currentUser.role !== "head") {
+        setCurrentUser(currentUser); // added
+
+        console.log(currentUser)
+
+        if (!currentUser || (currentUser.role !== "head" && currentUser.role !== "supervisor")) {
           navigate("/unauthorized");
           return;
+        }
+
+        // Auto-set SPU for supervisors
+        if (currentUser.role === "supervisor") {
+          setCurrentSPU(currentUser.spu_id || "");
         }
 
         setLoadingStage(1); // blue
@@ -121,6 +131,8 @@ export default function LocationStatistics() {
   // --- Loading spinner like spu-page ---
   const loadingColor = loadingStage === 0 ? "red" : loadingStage === 1 ? "blue" : "green";
 
+  
+
   // Always render the navbar/header
   return (
     <>
@@ -160,23 +172,25 @@ export default function LocationStatistics() {
 
         {/* Right side - Responsive selects */}
         <div className={`flex items-center ${isMobile ? 'flex-col gap-2' : 'space-x-4'}`}>
-          <div className="flex items-center space-x-2">
-            {!hideSelectLabels && <label className="font-label text-sm">SPU:</label>}
-            <select
-              id="select-spu"
-              name="select-spu"
-              className={`text-input font-label ${isTablet ? '!w-[15rem]' : '!w-[20rem]'} ${isMobile ? '!w-[12rem]' : ''}`}
-              value={currentSPU}
-              onChange={e => setCurrentSPU(e.target.value)}
-            >
-              <option value="">All SPUs</option>
-              {projectLocations.map(spu => (
-                <option key={spu._id} value={spu._id}>
-                  {spu.spu_name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {currentUser?.role === 'head' && ( // only show for head
+            <div className="flex items-center space-x-2">
+              {!hideSelectLabels && <label className="font-label text-sm">SPU:</label>}
+              <select
+                id="select-spu"
+                name="select-spu"
+                className={`text-input font-label ${isTablet ? '!w-[15rem]' : '!w-[20rem]'} ${isMobile ? '!w-[12rem]' : ''}`}
+                value={currentSPU}
+                onChange={e => setCurrentSPU(e.target.value)}
+              >
+                <option value="">All SPUs</option>
+                {projectLocations.map(spu => (
+                  <option key={spu._id} value={spu._id}>
+                    {spu.spu_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="flex items-center space-x-2">
             {!hideSelectLabels && <label className="font-label text-sm">Period:</label>}
