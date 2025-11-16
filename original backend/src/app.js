@@ -74,8 +74,27 @@ corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Handle preflight globally
 app.options('*', cors(corsOptions));
+if (process.env.DEBUG_ROUTES === 'true') {
+    app.get('/api/_routes', (req, res) => {
+        const list = [];
+        app._router.stack.forEach((mw) => {
+            if (mw.route) {
+                const methods = Object.keys(mw.route.methods).map(m => m.toUpperCase());
+                list.push({ path: mw.route.path, methods });
+            } else if (mw.name === 'router' && mw.handle?.stack) {
+                mw.handle.stack.forEach(h => {
+                    if (h.route) {
+                        const methods = Object.keys(h.route.methods).map(m => m.toUpperCase());
+                        list.push({ path: h.route.path, methods });
+                    }
+                });
+            }
+        });
+        res.json(list);
+    });
+    console.log('DEBUG_ROUTES enabled');
+}
 
 app.set('trust proxy', 1);
 app.use(

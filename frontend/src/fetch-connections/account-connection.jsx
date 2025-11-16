@@ -21,7 +21,21 @@
 // }
 
 // fetch-connections/create-account-connection.js
-const apiUrl = import.meta.env.VITE_API_URL || '/api';
+const resolvedApi =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  ''; // try multiple env names
+
+// If still empty, hard fallback (replace with your Render URL)
+const apiUrl = (resolvedApi
+  ? resolvedApi.replace(/\/+$/,'')
+  : 'https://your-render-service.onrender.com') + '/api';
+
+// Simple runtime warning (development only)
+if (import.meta.env.DEV && (import.meta.env.VITE_API_URL === undefined)) {
+  console.warn('[account-connection] VITE_API_URL not set, using fallback:', apiUrl);
+}
+
 export const fetchEmployeeById = async (employeeId) => {
   try {
     const response = await fetch(`${apiUrl}/employee/${employeeId}`, {
@@ -163,10 +177,10 @@ export const fetchSession = async () => {
 
 export const fetchAllSDWs = async () => {
   try {
-    const response = await fetch(`${apiUrl}/cases/getsdw`,{
-            method: 'GET',
-            credentials: 'include',
-        });
+    const response = await fetch(`${apiUrl}/cases/getsdw`, {
+      method: 'GET',
+      credentials: 'include',
+    });
     if (!response.ok) throw new Error('Failed to fetch employees');
     return await response.json();
   } catch (err) {
