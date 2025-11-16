@@ -1058,9 +1058,9 @@ function CaseFrontend({ creating = false }) {
             );
 
             // Allow access if supervisor's SPU matches case's SPU
-            console.log("SUPERVISOR CHECK", user.spu_id, data.spu);
+            // console.log("SUPERVISOR CHECK", user.spu_id, data.spu);
             if (user.spu_id === data.spu) {
-                console.log("Supervisor can view archived case in their SPU");
+                // console.log("Supervisor can view archived case in their SPU");
                 canViewArchivedInSPU = true;
             }
         }

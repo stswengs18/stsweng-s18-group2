@@ -150,7 +150,7 @@ const getInterventionHomeVisitCount = async (req, res) => {
         const rawDays = req.query.days;
         const spuId = req.query.spuId || '';
 
-        console.log("Received request for Intervention Home Visit Count with spuId:", spuId, "and days:", rawDays);
+        // console.log("Received request for Intervention Home Visit Count with spuId:", spuId, "and days:", rawDays);
 
         // Use UTC "now" for consistent filtering
         const now = new Date();
@@ -171,7 +171,7 @@ const getInterventionHomeVisitCount = async (req, res) => {
         }
 
         // Debug: log filter and now
-        console.log("HomeVisit filter:", filter, "now:", now.toISOString());
+        // console.log("HomeVisit filter:", filter, "now:", now.toISOString());
 
         const count = await Intervention_Homevisit.countDocuments(filter);
         res.status(200).json({ interventionHomeVisitCount: count });
@@ -561,7 +561,7 @@ const getProgressReportCount = async (req, res) => {
         const rawDays = req.query.days;
         const spuId = req.query.spuId || '';
 
-        console.log("Received request for Progress Report Count with spuId:", spuId, "and days:", rawDays);
+        // console.log("Received request for Progress Report Count with spuId:", spuId, "and days:", rawDays);
 
         const now = new Date();
         const daysNum = rawDays === undefined ? 0 : Number(rawDays);
@@ -581,7 +581,7 @@ const getProgressReportCount = async (req, res) => {
             filter.createdAt = { $gte: cutoff, $lte: now };
         }
 
-        console.log("ProgressReport filter:", filter, "now:", now.toISOString());
+        // console.log("ProgressReport filter:", filter, "now:", now.toISOString());
 
         const count = await Progress_Report.countDocuments(filter);
         res.status(200).json({ progressReportCount: count });

@@ -265,7 +265,7 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
   const totalSPUCases = countBySpu.total;
 
   const interventionTypes = await getCountByIntervention(spuId, timePeriod);
-  console.log(interventionTypes);
+  // console.log(interventionTypes);
 
   // Calculate average interventions & reports per case for the period
   const casesArray = Array.isArray(periodData?.cases)
@@ -422,3 +422,4 @@ async function transformRawData(rawData, spuId, periodData, projectLocations, ti
     periodData
   };
 }
+//
