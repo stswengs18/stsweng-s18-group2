@@ -165,8 +165,8 @@ app.use(isAuthenticated);
 app.use('/api/cases', caseRoutes);
 // All account routes
 app.use('/api', accountRoutes);
-app.use('/api/dashboard', dashboardRoutes); // Add this line (dashboard routes)
-app.use('/api/dashboard', fetchingRoute); // Keep this if fetchingRoute has additional dashboard routes
+app.use('/api', fetchingRoute); // Employee routes (head, supervisor, etc.)
+app.use('/api/dashboard', dashboardRoutes); // Dashboard routes only
 app.use('/api/intervention', interventionRoutes);
 app.use('/api/interventions/financial',interventFinRoutes);
 app.use('/api/interventions/correspondence',interventCorrespRoutes);
