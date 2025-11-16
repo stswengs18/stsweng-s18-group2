@@ -116,6 +116,7 @@ const deleteAccountController = require('./controller/deleteAccountController.js
 const profileRoute = require('../src/route/employeeRoute.js');
 const fetchingRoute = require('./route/fetchingRoute.js');
 const fileGenerator = require('./route/fileGeneratorRoutes.js');
+const dashboardRoutes = require('./route/dashboardRoutes'); // Add this line
 /**
  *  ============ Routes ==============
  */
@@ -164,7 +165,8 @@ app.use(isAuthenticated);
 app.use('/api/cases', caseRoutes);
 // All account routes
 app.use('/api', accountRoutes);
-app.use('/api/dashboard', fetchingRoute); // Explicitly mount dashboard routes
+app.use('/api/dashboard', dashboardRoutes); // Add this line (dashboard routes)
+app.use('/api/dashboard', fetchingRoute); // Keep this if fetchingRoute has additional dashboard routes
 app.use('/api/intervention', interventionRoutes);
 app.use('/api/interventions/financial',interventFinRoutes);
 app.use('/api/interventions/correspondence',interventCorrespRoutes);
