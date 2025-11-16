@@ -36,18 +36,17 @@ corsOptions = {
         if (!origin) return callback(null, true);
         
         // Get allowed origins from environment
-        const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
+        let allowedOrigins = process.env.ALLOWED_ORIGINS ? 
             process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()) : [];
         
-        // If no ALLOWED_ORIGINS set, fall back to old logic
+        // If no ALLOWED_ORIGINS set, use wildcard defaults for Vercel/Render/localhost
         if (allowedOrigins.length === 0) {
-            if (process.env.NODE_ENV === 'production') {
-                const prodOrigin = process.env.PROD_ORIGIN || 'https://vercel.com/stswengs18s-projects/unbound-stsweng';
-                return origin === prodOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
-            } else {
-                const devOrigin = process.env.DEV_ORIGIN || 'https://unbound-stsweng-git-dev-branch-stswengs18s-projects.vercel.app/';
-                return origin === devOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
-            }
+            allowedOrigins = [
+                'https://*.vercel.app',
+                'https://*.onrender.com',
+                'http://localhost:3000',
+                'http://localhost:5173'
+            ];
         }
         
         // Check if origin matches any allowed pattern
@@ -73,10 +72,11 @@ corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight globally
 app.set('trust proxy', 1);
 app.use(
     session({
@@ -126,6 +126,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check (for Render)
+app.get('/health', (req, res) => res.status(200).send('ok'));
+
 // To test sessions, please go to localhost:3000
 app.get("/test-session", (req, res) => {
     // Check if a value already exists in the session
@@ -161,8 +164,7 @@ app.use(isAuthenticated);
 app.use('/api/cases', caseRoutes);
 // All account routes
 app.use('/api', accountRoutes);
-app.use('/api', fetchingRoute);
-// Intervention routes
+app.use('/api/dashboard', fetchingRoute); // Explicitly mount dashboard routes
 app.use('/api/intervention', interventionRoutes);
 app.use('/api/interventions/financial',interventFinRoutes);
 app.use('/api/interventions/correspondence',interventCorrespRoutes);
@@ -184,11 +186,8 @@ app.delete('/api/case-closure/delete/:caseID/:formID', caseClosureController.del
 // Delete Accoute routes
 app.delete('/api/delete-account/:account', deleteAccountController.deleteAccount);
 
-
 // File Generator routes
 app.use('/api/file-generator', fileGenerator);
-
-
 
 // 404 Route
 app.use((req, res) => {
