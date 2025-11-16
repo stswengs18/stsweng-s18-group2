@@ -4,13 +4,15 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path');
+//const path = require('path');
+// const path = require('path');
+
+// branch 1
 
 /**
  *  Configuration/Initialization
  */
-// Load .env from parent directory
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config();
 
 const app = express();
 
@@ -76,16 +78,9 @@ corsOptions = {
 
 app.use(cors(corsOptions));
 app.set('trust proxy', 1);
-
-// Check if MONGODB_URI exists before creating session store
-if (!process.env.MONGODB_URI) {
-    console.error('MONGODB_URI environment variable is not set!');
-    process.exit(1);
-}
-
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || process.env.SECRET_KEY || "secret-key", 
+        secret: process.env.SECRET_KEY || "secret-key", 
         resave: false,        
         saveUninitialized: false,
         store: MongoStore.create({
@@ -93,10 +88,10 @@ app.use(
             collectionName: "sessions",
         }),
         cookie: {
-            maxAge: process.env.COOKIE_MAX_AGE ? parseInt(process.env.COOKIE_MAX_AGE) : 24 * 60 * 60 * 1000, // 24 hours default
+            maxAge: process.env.COOKIE_MAX_AGE ? parseInt(process.env.COOKIE_MAX_AGE) : null, 
             httpOnly: true, 
-            secure: process.env.NODE_ENV === 'production', // Only secure in production
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Use 'lax' for localhost
+            secure: true, // Keep true since you're using HTTPS everywhere
+            sameSite: 'none'
         }
     })
 );
@@ -121,7 +116,6 @@ const deleteAccountController = require('./controller/deleteAccountController.js
 const profileRoute = require('../src/route/employeeRoute.js');
 const fetchingRoute = require('./route/fetchingRoute.js');
 const fileGenerator = require('./route/fileGeneratorRoutes.js');
-const dashboardRoutes = require('./route/dashboardRoutes.js');
 /**
  *  ============ Routes ==============
  */
@@ -193,7 +187,6 @@ app.delete('/api/delete-account/:account', deleteAccountController.deleteAccount
 
 // File Generator routes
 app.use('/api/file-generator', fileGenerator);
-app.use('/api/dashboard', dashboardRoutes);
 
 
 
