@@ -184,9 +184,9 @@ app.delete('/api/case-closure/delete/:caseID/:formID', caseClosureController.del
 // Delete Accoute routes
 app.delete('/api/delete-account/:account', deleteAccountController.deleteAccount);
 
-
 // File Generator routes
 app.use('/api/file-generator', fileGenerator);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 
