@@ -188,6 +188,9 @@ app.delete('/api/delete-account/:account', deleteAccountController.deleteAccount
 app.use('/api/file-generator', fileGenerator);
 app.use('/api/dashboard', dashboardRoutes);
 
+app.get('/api/dashboard/debug', (req, res) => {
+  res.json({ ok: true, message: 'Dashboard debug route is live' });
+});
 
 
 // 404 Route
